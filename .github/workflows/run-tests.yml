@@ -1,0 +1,31 @@
+name: Run Tests
+on:
+  workflow_dispatch:
+  push:
+    paths: ["src/**", "tests/**"]
+  pull_request:
+    paths: ["src/**", "tests/**"]
+jobs:
+  pytest-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Conda
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: "pip install -f https://download.pytorch.org/whl/torch_stable.html -r requirements.txt"
+      - name: Run Tests and Record Coverage
+        run: "coverage run --source src -m pytest tests"
+        env:
+          PYTHONPATH: src
+      - name: Export Coverage Report
+        run: "coverage xml"
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: unittests
