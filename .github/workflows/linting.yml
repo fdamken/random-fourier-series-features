@@ -45,6 +45,6 @@ jobs:
         with:
           python-version: 3.8
       - name: Install Dependencies
-        run: "pip install pylint==2.8.2"
+        run: "pip install -f https://download.pytorch.org/whl/torch_stable.html -r requirements.txt"
       - name: Run PyLint
         run: "pylint src/rfsf"
