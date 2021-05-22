@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies
         run: "pip install -f https://download.pytorch.org/whl/torch_stable.html -r requirements.txt"
       - name: Run Tests and Record Coverage
-        run: "coverage run --source src -m pytest tests"
+        run: "coverage run --source rfsf -m pytest tests"
         working-directory: src
       - name: Export Coverage Report
         run: "coverage xml"
