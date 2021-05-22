@@ -30,4 +30,4 @@ class RandomFourierFeatureKernel(FeatureBasedKernel[Tuple[torch.Tensor, torch.Te
             bias = self._bias_distribution.sample((self._num_features,))
         else:
             weights, bias = state
-        return np.sqrt(2 / self._num_features) * np.cos(self._length_scale * x @ weights.T + bias), (weights, bias)
+        return np.sqrt(2 / self._num_features) * np.cos(self._length_scale * (x @ weights.T) + bias), (weights, bias)
