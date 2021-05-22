@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from rfsf.kernel.feature_based_kernel import DegenerateKernel
+from rfsf.kernel.degenerate_kernel import DegenerateKernel
 from rfsf.util.assertions import assert_axis_length, assert_positive
 
 
@@ -14,7 +14,7 @@ class RandomFourierFeaturesKernel(DegenerateKernel):
         A. Rahimi and B. Recht. "Random Features for Large-Scale Kernel Machines.", NIPS, 2007
     """
 
-    def __init__(self, input_dim: int, num_features: int, length_scale: torch.Tensor = None):
+    def __init__(self, input_dim: int, num_features: int, length_scale: torch.Tensor = None, device: torch.device = None):
         """
         Constructor.
 
@@ -24,7 +24,7 @@ class RandomFourierFeaturesKernel(DegenerateKernel):
         :param length_scale: length scale to resemble; approximately equivalent to the length scale of the SE kernel
         """
 
-        super().__init__()
+        super().__init__(device=device)
 
         assert_positive(input_dim, "input_dim")
         assert_positive(num_features, "num_features")
@@ -34,14 +34,14 @@ class RandomFourierFeaturesKernel(DegenerateKernel):
 
         self._input_dim = input_dim
         self._num_features = num_features
-        self._length_scale = length_scale
+        self._length_scale = torch.nn.Parameter(length_scale, requires_grad=length_scale.requires_grad).to(device=self.device)
 
         weight_distribution = torch.distributions.MultivariateNormal(torch.zeros(input_dim), torch.eye(input_dim))
         bias_distribution = torch.distributions.Uniform(0.0, 2 * np.pi)
-        self._weights = weight_distribution.sample((self._num_features,))
-        self._biases = bias_distribution.sample((self._num_features,))
+        self._weights = weight_distribution.sample((self._num_features,)).to(device=self.device)
+        self._biases = bias_distribution.sample((self._num_features,)).to(device=self.device)
 
-        self.register_parameters(length_scale)
+        self.register_parameters(self._length_scale)
 
     def forward_features(self, x: torch.Tensor) -> torch.Tensor:
         """Computes the random fourier features."""

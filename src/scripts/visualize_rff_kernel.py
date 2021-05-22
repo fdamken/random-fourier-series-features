@@ -25,7 +25,7 @@ def main():
     ax11.set_title("Exact RBF Kernel")
     for i, (ax21, ax22) in enumerate(axs):
         num_features = 10 ** i
-        rff = RandomFourierFeaturesKernel(1, num_features, length_scale=length_scale)
+        rff = RandomFourierFeaturesKernel(1, num_features, length_scale=torch.tensor(length_scale))
         rff_mat = rff(x, x).numpy()
         ax21.imshow(rff_mat, extent=[x.min(), x.max(), x.min(), x.max()])
         ax22.imshow(np.isclose(rff_mat, rbf_mat, atol=0.01), extent=[x.min(), x.max(), x.min(), x.max()], vmin=0, vmax=1)

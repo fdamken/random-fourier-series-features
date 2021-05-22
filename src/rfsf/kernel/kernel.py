@@ -3,7 +3,7 @@ from typing import List, NoReturn
 
 import torch
 
-from rfsf.util.assertions import assert_dim, assert_same_axis_length
+from rfsf.util.assertions import assert_dim, assert_same_axis_length, assert_device
 
 
 class Kernel(ABC):
@@ -12,8 +12,11 @@ class Kernel(ABC):
     method, i.e., to get the value of a kernel, it has to be invoked like a function.
     """
 
-    def __init__(self):
-        self._parameters: List[torch.Tensor] = []
+    def __init__(self, device: torch.device = None):
+        if device is None:
+            device = torch.device("cpu")
+        self._device = device
+        self._parameters: List[torch.nn.Parameter] = []
 
     def __call__(self, p: torch.Tensor, q: torch.Tensor) -> torch.Tensor:
         """
@@ -30,6 +33,8 @@ class Kernel(ABC):
         :return: the value of the kernel evaluated for all combinations of the different tensor entries, i.e., the Gram
                  matrix of the two arguments; shape `(N, M)`
         """
+        assert_device(p, self.device, "p")
+        assert_device(q, self.device, "q")
         assert_dim(p, 2, "p")
         assert_dim(q, 2, "q")
         assert_same_axis_length(p, q, 1, "p", "q")
@@ -58,7 +63,7 @@ class Kernel(ABC):
         """
         raise NotImplementedError()  # pragma: no cover
 
-    def register_parameters(self, *params: torch.Tensor) -> NoReturn:
+    def register_parameters(self, *params: torch.nn.Parameter) -> NoReturn:
         """
         Tests for all of the given tensors whether they have `requires_grad` set to `True` and if so, treats them as a
         hyperparameter such that they will be returned by :py:meth:`.parameters`.
@@ -70,7 +75,12 @@ class Kernel(ABC):
                 self._parameters.append(param)
 
     @property
-    def parameters(self) -> List[torch.Tensor]:
+    def device(self) -> torch.device:
+        """Gets the device this kernel is running on."""
+        return self._device
+
+    @property
+    def parameters(self) -> List[torch.nn.Parameter]:
         """Gets the learnable parameters, i.e., hyperparameters, of this kernel. All of the parameters have
-           `requires_grad` set to `True`."""
+        `requires_grad` set to `True`."""
         return self._parameters

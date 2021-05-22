@@ -13,7 +13,7 @@ class SkLearnKernelWrapper(Kernel):
 
         :param kernel: kernel to wrap
         """
-        super().__init__()
+        super().__init__(device=torch.device("cpu"))
         self._kernel = kernel
 
     def forward(self, p: torch.Tensor, q: torch.Tensor) -> torch.Tensor:

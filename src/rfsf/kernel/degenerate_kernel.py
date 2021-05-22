@@ -3,7 +3,7 @@ from abc import abstractmethod
 import torch
 
 from rfsf.kernel.kernel import Kernel
-from rfsf.util.assertions import assert_dim
+from rfsf.util.assertions import assert_dim, assert_device
 
 
 class DegenerateKernel(Kernel):
@@ -25,6 +25,7 @@ class DegenerateKernel(Kernel):
         :param x: input data; shape `(N, k)`
         :return: features for the given input data; shape `(N, d)`, where `d` is the dimensionality of the feature space
         """
+        assert_device(x, self.device, "x")
         assert_dim(x, 2, "x")
         return self.forward_features(x)
 

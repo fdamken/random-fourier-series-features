@@ -2,7 +2,7 @@ import pytest
 import torch
 from sklearn.gaussian_process.kernels import DotProduct
 
-from rfsf.kernel.feature_based_kernel import DegenerateKernel
+from rfsf.kernel.degenerate_kernel import DegenerateKernel
 from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
