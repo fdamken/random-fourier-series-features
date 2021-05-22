@@ -19,13 +19,13 @@ jobs:
         run: "pip install -f https://download.pytorch.org/whl/torch_stable.html -r requirements.txt"
       - name: Run Tests and Record Coverage
         run: "coverage run --source src -m pytest tests"
-        env:
-          PYTHONPATH: src
+        working-directory: src
       - name: Export Coverage Report
         run: "coverage xml"
+        working-directory: src
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: coverage.xml
+          files: src/coverage.xml
           flags: unittests

@@ -3,8 +3,8 @@ from typing import Optional, Tuple
 import numpy as np
 import torch
 
-from kernel.feature_based_kernel import FeatureBasedKernel
-from util.assertions import assert_positive, assert_axis_length
+from rfsf.kernel.feature_based_kernel import FeatureBasedKernel
+from rfsf.util.assertions import assert_axis_length, assert_positive
 
 
 class RandomFourierFeatureKernel(FeatureBasedKernel[Tuple[torch.Tensor, torch.Tensor]]):  # pylint: disable=unsubscriptable-object

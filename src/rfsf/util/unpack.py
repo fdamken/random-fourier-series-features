@@ -1,4 +1,5 @@
-from typing import TypeVar, Union, Tuple
+from typing import Tuple, TypeVar, Union
+
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 V = TypeVar("V")  # pylint: disable=invalid-name

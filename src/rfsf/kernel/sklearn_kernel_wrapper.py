@@ -1,7 +1,7 @@
 import sklearn.gaussian_process
 import torch
 
-from kernel.kernel import Kernel
+from rfsf.kernel.kernel import Kernel
 
 
 class SkLearnKernelWrapper(Kernel):

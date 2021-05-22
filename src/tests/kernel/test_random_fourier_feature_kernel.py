@@ -3,8 +3,8 @@ import pytest
 import torch
 from sklearn.gaussian_process.kernels import RBF
 
-from kernel.random_fourier_feature_kernel import RandomFourierFeatureKernel
-from kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
+from rfsf.kernel.random_fourier_feature_kernel import RandomFourierFeatureKernel
+from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 def test_constructor():

@@ -2,8 +2,8 @@ import pytest
 import torch
 from sklearn.gaussian_process.kernels import DotProduct
 
-from kernel.feature_based_kernel import FeatureBasedKernel
-from kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
+from rfsf.kernel.feature_based_kernel import FeatureBasedKernel
+from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 class MockFeatureKernel(FeatureBasedKernel):

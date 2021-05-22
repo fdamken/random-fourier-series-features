@@ -1,4 +1,4 @@
-from typing import Union, NoReturn, Optional
+from typing import NoReturn, Optional, Union
 
 import numpy as np
 import torch

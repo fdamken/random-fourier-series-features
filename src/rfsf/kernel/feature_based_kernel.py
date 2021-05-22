@@ -1,11 +1,12 @@
 from abc import abstractmethod
-from typing import Optional, Tuple, TypeVar, Generic, Union
+from typing import Generic, Optional, Tuple, TypeVar, Union
 
 import torch
 
-from kernel.kernel import Kernel
-from util.assertions import assert_dim
-from util.unpack import unpack
+from rfsf.kernel.kernel import Kernel
+from rfsf.util.assertions import assert_dim
+from rfsf.util.unpack import unpack
+
 
 T = TypeVar("T")  # pylint: disable=invalid-name
 

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import torch
 
-from util.assertions import assert_dim, assert_same_axis_length
+from rfsf.util.assertions import assert_dim, assert_same_axis_length
 
 
 class Kernel(ABC):

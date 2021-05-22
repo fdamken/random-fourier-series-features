@@ -2,7 +2,7 @@ import pytest
 import torch
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, ExpSineSquared, Matern, RationalQuadratic, WhiteKernel
 
-from kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
+from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 @pytest.mark.parametrize("reference", [ConstantKernel(), DotProduct(), ExpSineSquared(), Matern(), RBF(), RationalQuadratic(), WhiteKernel()])
