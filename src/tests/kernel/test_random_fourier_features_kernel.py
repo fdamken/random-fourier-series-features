@@ -21,12 +21,12 @@ def test_compute(samples_p, samples_q, dim):
     rff(p, q)
 
 
-@pytest.mark.parametrize("length_scale", [0.1, 1.0, 2.0])
+@pytest.mark.parametrize("length_scale", [1.0, 1.5])
 def test_convergence(length_scale):
     rbf = SkLearnKernelWrapper(RBF(length_scale=length_scale))
     x = torch.arange(-5.0, 5.0, 0.01).unsqueeze(dim=1)
     expected = rbf(x, x)
-    for num_features in 10 ** np.arange(10, dtype=int):
+    for num_features in 10 ** np.arange(6, dtype=int):
         rff = RandomFourierFeaturesKernel(1, num_features, length_scale=torch.tensor(length_scale))
         actual = rff(x, x)
         if torch.allclose(actual, expected, atol=0.01):
