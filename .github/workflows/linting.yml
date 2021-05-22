@@ -1,0 +1,50 @@
+name: Linting
+on:
+  workflow_dispatch:
+  push:
+    paths: ["src/**"]
+  pull_request:
+    paths: ["src/**"]
+jobs:
+  black:
+    name: Checking Formatting with Black
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install Dependencies
+        run: "pip install black==21.5b1"
+      - name: Run Black
+        run: "black --check src"
+  isort:
+    name: Checking Import Order with isort
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: "pip install isort==5.8.0"
+      - name: Run isort
+        run: "isort --check --diff src"
+  pylint:
+    name: Checking Code Smells with PyLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install Dependencies
+        run: "pip install pylint==2.8.2"
+      - name: Run PyLint
+        run: "pylint src/rfsf"
