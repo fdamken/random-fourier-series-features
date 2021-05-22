@@ -26,7 +26,7 @@ def test_convergence():
     rbf = SkLearnKernelWrapper(RBF(length_scale=length_scale))
     x = torch.arange(-5.0, 5.0, 0.01).unsqueeze(dim=1)
     expected = rbf(x, x)
-    for num_features in 10 ** np.arange(0, 10 + 1, dtype=int):
+    for num_features in 10 ** np.arange(10, dtype=int):
         rff = RandomFourierFeatureKernel(1, num_features, length_scale=length_scale)
         actual = rff(x, x)
         if torch.allclose(actual, expected, atol=0.01):

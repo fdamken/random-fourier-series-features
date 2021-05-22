@@ -1,5 +1,3 @@
-from typing import Optional, Tuple
-
 import numpy as np
 import torch
 
@@ -7,8 +5,26 @@ from rfsf.kernel.feature_based_kernel import FeatureBasedKernel
 from rfsf.util.assertions import assert_axis_length, assert_positive
 
 
-class RandomFourierFeatureKernel(FeatureBasedKernel[Tuple[torch.Tensor, torch.Tensor]]):  # pylint: disable=unsubscriptable-object
+class RandomFourierFeatureKernel(FeatureBasedKernel):
+    """
+    Implementation of Random Fourier Features (RFFs) which can be used to approximate the Squared Exponential (SE)
+    kernel.
+
+    .. seealso::
+        A. Rahimi and B. Recht. "Random Features for Large-Scale Kernel Machines.", NIPS, 2007
+    """
+
     def __init__(self, input_dim: int, num_features: int, length_scale: float = 1.0, weight_distribution: torch.distributions.Distribution = None):
+        """
+        Constructor.
+
+        :param input_dim: dimensionality of the input space
+        :param num_features: number of features to use; the higher the number of features, the better the approximation
+                             of the SE kernel
+        :param length_scale: length scale to resemble; approximately equivalent to the length scale of the SE kernel
+        :param weight_distribution: distributions to use to sample the weights from; defaults to a Gaussian with zero
+                                    mean and unit covariance; samples have to have shape `(input_dim,)`
+        """
         assert_positive(input_dim, "input_dim")
         assert_positive(num_features, "num_features")
         assert_positive(length_scale, "length_scale")
@@ -19,15 +35,10 @@ class RandomFourierFeatureKernel(FeatureBasedKernel[Tuple[torch.Tensor, torch.Te
         self._input_dim = input_dim
         self._num_features = num_features
         self._length_scale = length_scale
-        self._weight_distribution = weight_distribution
-        self._bias_distribution = torch.distributions.Uniform(0.0, 2 * np.pi)
+        self._weights = weight_distribution.sample((self._num_features,))
+        self._biases = torch.distributions.Uniform(0.0, 2 * np.pi).sample((self._num_features,))
 
-    def forward_features(self, x: torch.Tensor, state: Optional[Tuple[torch.Tensor, torch.Tensor]]) -> Tuple[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    def forward_features(self, x: torch.Tensor) -> torch.Tensor:
+        """Computes the random fourier features."""
         assert_axis_length(x, 1, self._input_dim, "x")
-
-        if state is None:
-            weights = self._weight_distribution.sample((self._num_features,))
-            bias = self._bias_distribution.sample((self._num_features,))
-        else:
-            weights, bias = state
-        return np.sqrt(2 / self._num_features) * np.cos(self._length_scale * (x @ weights.T) + bias), (weights, bias)
+        return np.sqrt(2 / self._num_features) * np.cos(self._length_scale * (x @ self._weights.T) + self._biases)

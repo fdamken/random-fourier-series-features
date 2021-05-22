@@ -8,8 +8,8 @@ from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 def main():
-    np.random.seed(12345)
-    torch.random.manual_seed(12345)
+    # np.random.seed(12345)
+    # torch.random.manual_seed(12345)
 
     length_scale = 1.0
     rbf = SkLearnKernelWrapper(RBF(length_scale=length_scale))

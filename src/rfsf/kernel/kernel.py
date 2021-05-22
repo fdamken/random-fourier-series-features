@@ -6,7 +6,26 @@ from rfsf.util.assertions import assert_dim, assert_same_axis_length
 
 
 class Kernel(ABC):
+    """
+    Abstract base class for a kernel, also known as a *covariance function*. Every kernel implements the `__call__`
+    method, i.e., to get the value of a kernel, it has to be invoked like a function.
+    """
+
     def __call__(self, p: torch.Tensor, q: torch.Tensor) -> torch.Tensor:
+        """
+        Computes the kernel between the given two tensors. The tensors are required to have a batch-dimension as the
+        axis that can be used to compute the Gram matrix between different tensors.
+
+        .. note::
+            This method forwards the computation to :py:meth:`.forward`, which has to be overwritten by subclasses. Do
+            not overwrite the :py:meth:`.__call__` method directly as it ensures that the in-/output tensors have the
+            correct shapes!
+
+        :param p: first argument to the tensor; shape `(N, k)`
+        :param q: second argument to the kernel; shape `(M, k)`
+        :return: the value of the kernel evaluated for all combinations of the different tensor entries, i.e., the Gram
+                 matrix of the two arguments; shape `(N, M)`
+        """
         assert_dim(p, 2, "p")
         assert_dim(q, 2, "q")
         assert_same_axis_length(p, q, 1, "p", "q")
@@ -20,4 +39,17 @@ class Kernel(ABC):
 
     @abstractmethod
     def forward(self, p: torch.Tensor, q: torch.Tensor) -> torch.Tensor:
+        """
+        Carries out the computation of the kernel.
+
+        .. note::
+            Do not invoke this method directly, but rather invoke :py:meth:`.__call__`.
+
+        .. seealso:: methods :py:meth:`.__call__`
+
+        :param p: shape `(N, k)`; first argument to the tensor
+        :param q: shape `(M, k)`; second argument to the kernel
+        :return: shape `(N, M)`; the value of the kernel evaluated for all combinations of the different tensor entries,
+                 i.e., the Gram matrix of the two arguments
+        """
         raise NotImplementedError()  # pragma: no cover
