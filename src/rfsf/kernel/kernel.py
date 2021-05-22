@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List, NoReturn
 
 import torch
 
@@ -10,6 +11,9 @@ class Kernel(ABC):
     Abstract base class for a kernel, also known as a *covariance function*. Every kernel implements the `__call__`
     method, i.e., to get the value of a kernel, it has to be invoked like a function.
     """
+
+    def __init__(self):
+        self._parameters: List[torch.Tensor] = []
 
     def __call__(self, p: torch.Tensor, q: torch.Tensor) -> torch.Tensor:
         """
@@ -53,3 +57,20 @@ class Kernel(ABC):
                  i.e., the Gram matrix of the two arguments
         """
         raise NotImplementedError()  # pragma: no cover
+
+    def register_parameters(self, *params: torch.Tensor) -> NoReturn:
+        """
+        Tests for all of the given tensors whether they have `requires_grad` set to `True` and if so, treats them as a
+        hyperparameter such that they will be returned by :py:meth:`.parameters`.
+
+        :param params: parameters to register
+        """
+        for param in params:
+            if param.requires_grad:
+                self._parameters.append(param)
+
+    @property
+    def parameters(self) -> List[torch.Tensor]:
+        """Gets the learnable parameters, i.e., hyperparameters, of this kernel. All of the parameters have
+           `requires_grad` set to `True`."""
+        return self._parameters

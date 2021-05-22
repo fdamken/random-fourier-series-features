@@ -11,6 +11,12 @@ def assert_dim(x: Union[np.ndarray, torch.Tensor], expected_dim: int, name: str)
     assert len(x.shape) == expected_dim, f"{name} has to be {expected_dim}-dimensional"
 
 
+def assert_scalar(x: Union[np.ndarray, torch.Tensor], name: str) -> NoReturn:
+    """Asserts that the given array/tensor `x` is a scalar, i.e., it has a zero-length shape. `name` is the name of the
+       variable that is checked and is used for the error message if the assertion fails."""
+    assert_dim(x, 0, name)
+
+
 def assert_axis_length(x: Union[np.ndarray, torch.Tensor], axis: int, expected_length: int, name: str) -> NoReturn:
     """Asserts that axis `axis` of the array/tensor `x` has length `expected_length`. `name` is the name of the variable
     that is checked and is used for the error message if the assertion fails."""
@@ -26,7 +32,11 @@ def assert_same_axis_length(x1: Union[np.ndarray, torch.Tensor], x2: Union[np.nd
     assert x1.shape[axis1] == x2.shape[axis2], f"{name1} and {name2} must have same axis lengths for axis {axis1} and {axis2}, respectively"
 
 
-def assert_positive(n: Union[int, float], name: str) -> NoReturn:
+def assert_positive(n: Union[int, float, np.ndarray, torch.Tensor], name: str) -> NoReturn:
     """Asserts that `n` is positive. `name` is the name of the variable that is checked and is used for the error
-    message if the assertion fails."""
+    message if the assertion fails. If `n` is an array/tensor, it has to be a scalar according to
+    :py:meth:`.is_scalar`."""
+    if isinstance(n, (np.ndarray, torch.Tensor)):
+        assert_scalar(n, name)
+        n = n.item()
     assert n > 0, f"{name} has to be positive"

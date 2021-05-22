@@ -27,7 +27,7 @@ def test_convergence(length_scale):
     x = torch.arange(-5.0, 5.0, 0.01).unsqueeze(dim=1)
     expected = rbf(x, x)
     for num_features in 10 ** np.arange(10, dtype=int):
-        rff = RandomFourierFeaturesKernel(1, num_features, length_scale=length_scale)
+        rff = RandomFourierFeaturesKernel(1, num_features, length_scale=torch.tensor(length_scale))
         actual = rff(x, x)
         if torch.allclose(actual, expected, atol=0.01):
             break
@@ -35,3 +35,21 @@ def test_convergence(length_scale):
         # noinspection PyUnboundLocalVariable
         assert False, f"Random Fourier Features did not converge with at most {num_features} features!"  # pylint: disable=undefined-loop-variable
     print(f"Converged with {num_features} features!")  # pylint: disable=undefined-loop-variable
+
+
+def test_parameters_no_grad():
+    rff = RandomFourierFeaturesKernel(1, 1, length_scale=torch.tensor(2.0))
+    assert len(rff.parameters) == 0
+
+
+def test_parameters_grad():
+    param = torch.tensor(2.0, requires_grad=True)
+    rff = RandomFourierFeaturesKernel(1, 1, length_scale=param)
+    assert len(rff.parameters) == 1
+    assert rff.parameters == [param]
+
+
+def test_parameters_grad_default():
+    rff = RandomFourierFeaturesKernel(1, 1)
+    assert len(rff.parameters) == 1
+    assert rff.parameters[0].item() == 1.0
