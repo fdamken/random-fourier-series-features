@@ -25,6 +25,7 @@ class RandomFourierSeriesFeaturesKernel(DegenerateKernel):
 
         self._input_dim = input_dim
         self._num_features = num_features
+        self._num_harmonics = num_harmonics
         self._length_scale = torch.nn.Parameter(length_scale, requires_grad=length_scale.requires_grad).to(device=self.device)
         self._amplitudes_sqrt = torch.nn.Parameter(amplitudes_sqrt, requires_grad=amplitudes_sqrt.requires_grad).to(device=self.device)
         self._phases = torch.nn.Parameter(phases, requires_grad=phases.requires_grad).to(device=self.device)
@@ -38,10 +39,16 @@ class RandomFourierSeriesFeaturesKernel(DegenerateKernel):
 
     def forward_features(self, x: torch.Tensor) -> torch.Tensor:
         assert_axis_length(x, 1, self._input_dim, "x")
+
+        biases = self._biases.unsqueeze(dim=0).unsqueeze(dim=2)
+        phases = self._phases.unsqueeze(dim=0).unsqueeze(dim=1)
+
         normalization = np.sqrt(2 / self._num_features)
-        rff_activations = x @ self._weights.T / self._length_scale + self._biases
-        harmonics = (self._amplitudes * torch.cos(rff_activations.unsqueeze(dim=2) + self._phases)).sum(dim=2)
-        return normalization * harmonics
+        weighted_inputs = (x @ self._weights.T).unsqueeze(dim=2)
+        harmonic_multipliers = (torch.arange(self._num_harmonics + 1, device=self.device)).unsqueeze(dim=0).unsqueeze(dim=1)
+        harmonics_activations = harmonic_multipliers * weighted_inputs + biases + phases
+        harmonics = self._amplitudes * torch.cos(harmonics_activations)
+        return normalization * harmonics.sum(dim=2) / self._amplitudes.sum()
 
     @property
     def _amplitudes(self) -> torch.Tensor:
