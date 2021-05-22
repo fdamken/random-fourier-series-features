@@ -3,13 +3,13 @@ import torch
 from matplotlib import pyplot as plt
 from sklearn.gaussian_process.kernels import RBF
 
-from rfsf.kernel.random_fourier_feature_kernel import RandomFourierFeatureKernel
+from rfsf.kernel.random_fourier_features_kernel import RandomFourierFeaturesKernel
 from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 def main():
-    # np.random.seed(12345)
-    # torch.random.manual_seed(12345)
+    np.random.seed(12345)
+    torch.random.manual_seed(12345)
 
     length_scale = 1.0
     rbf = SkLearnKernelWrapper(RBF(length_scale=length_scale))
@@ -25,7 +25,7 @@ def main():
     ax11.set_title("Exact RBF Kernel")
     for i, (ax21, ax22) in enumerate(axs):
         num_features = 10 ** i
-        rff = RandomFourierFeatureKernel(1, num_features, length_scale=length_scale)
+        rff = RandomFourierFeaturesKernel(1, num_features, length_scale=length_scale)
         rff_mat = rff(x, x).numpy()
         ax21.imshow(rff_mat, extent=[x.min(), x.max(), x.min(), x.max()])
         ax22.imshow(np.isclose(rff_mat, rbf_mat, atol=0.01), extent=[x.min(), x.max(), x.min(), x.max()], vmin=0, vmax=1)

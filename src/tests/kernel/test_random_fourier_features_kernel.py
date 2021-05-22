@@ -3,19 +3,19 @@ import pytest
 import torch
 from sklearn.gaussian_process.kernels import RBF
 
-from rfsf.kernel.random_fourier_feature_kernel import RandomFourierFeatureKernel
+from rfsf.kernel.random_fourier_features_kernel import RandomFourierFeaturesKernel
 from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 def test_constructor():
-    RandomFourierFeatureKernel(2, 100)
+    RandomFourierFeaturesKernel(2, 100)
 
 
 @pytest.mark.parametrize("samples_p", [1, 2, 3, 5])
 @pytest.mark.parametrize("samples_q", [1, 2, 3, 5])
 @pytest.mark.parametrize("dim", [1, 2, 3, 5])
 def test_compute(samples_p, samples_q, dim):
-    rff = RandomFourierFeatureKernel(dim, 100)
+    rff = RandomFourierFeaturesKernel(dim, 100)
     p = torch.rand(size=(samples_p, dim))
     q = torch.rand(size=(samples_q, dim))
     rff(p, q)
@@ -27,7 +27,7 @@ def test_convergence():
     x = torch.arange(-5.0, 5.0, 0.01).unsqueeze(dim=1)
     expected = rbf(x, x)
     for num_features in 10 ** np.arange(10, dtype=int):
-        rff = RandomFourierFeatureKernel(1, num_features, length_scale=length_scale)
+        rff = RandomFourierFeaturesKernel(1, num_features, length_scale=length_scale)
         actual = rff(x, x)
         if torch.allclose(actual, expected, atol=0.01):
             break

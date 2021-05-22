@@ -6,7 +6,7 @@ from rfsf.kernel.kernel import Kernel
 from rfsf.util.assertions import assert_dim
 
 
-class FeatureBasedKernel(Kernel):
+class DegenerateKernel(Kernel):
     """
     Abstract subclass of :py:class:`rfsf.kernel.kernel.Kernel` that is feature-based, i.e., it resembles a degenerate
     kernel of which the value is computed by explicitly lifting the input values into a feature space and computing the

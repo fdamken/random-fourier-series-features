@@ -2,12 +2,12 @@ import pytest
 import torch
 from sklearn.gaussian_process.kernels import DotProduct
 
-from rfsf.kernel.feature_based_kernel import FeatureBasedKernel
+from rfsf.kernel.feature_based_kernel import DegenerateKernel
 from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
-class MockFeatureKernel(FeatureBasedKernel):
-    def forward_features(self, x: torch.Tensor, state=None) -> torch.Tensor:
+class MockFeatureKernel(DegenerateKernel):
+    def forward_features(self, x: torch.Tensor) -> torch.Tensor:
         return x
 
 

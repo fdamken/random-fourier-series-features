@@ -1,11 +1,11 @@
 import numpy as np
 import torch
 
-from rfsf.kernel.feature_based_kernel import FeatureBasedKernel
+from rfsf.kernel.feature_based_kernel import DegenerateKernel
 from rfsf.util.assertions import assert_axis_length, assert_positive
 
 
-class RandomFourierFeatureKernel(FeatureBasedKernel):
+class RandomFourierFeaturesKernel(DegenerateKernel):
     """
     Implementation of Random Fourier Features (RFFs) which can be used to approximate the Squared Exponential (SE)
     kernel.
