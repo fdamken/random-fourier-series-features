@@ -2,9 +2,9 @@ name: Run Tests
 on:
   workflow_dispatch:
   push:
-    paths: ["src/**", "tests/**"]
+    paths: ["src/**"]
   pull_request:
-    paths: ["src/**", "tests/**"]
+    paths: ["src/**"]
 jobs:
   pytest-coverage:
     runs-on: ubuntu-latest
