@@ -3,7 +3,7 @@ from abc import abstractmethod
 import torch
 
 from rfsf.kernel.kernel import Kernel
-from rfsf.util.assertions import assert_dim, assert_device
+from rfsf.util.assertions import assert_device, assert_dim
 
 
 class DegenerateKernel(Kernel):

@@ -1,4 +1,4 @@
-from typing import NoReturn, Optional, Union, Tuple
+from typing import NoReturn, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -19,7 +19,7 @@ def assert_dim(x: Union[np.ndarray, torch.Tensor], expected_dim: int, name: str)
 
 def assert_scalar(x: Union[np.ndarray, torch.Tensor], name: str) -> NoReturn:
     """Asserts that the given array/tensor `x` is a scalar, i.e., it has a zero-length shape. `name` is the name of the
-       variable that is checked and is used for the error message if the assertion fails."""
+    variable that is checked and is used for the error message if the assertion fails."""
     assert_dim(x, 0, name)
 
 

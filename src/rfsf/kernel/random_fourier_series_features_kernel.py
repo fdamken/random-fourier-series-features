@@ -2,12 +2,20 @@ import numpy as np
 import torch
 
 from rfsf.kernel.degenerate_kernel import DegenerateKernel
-from rfsf.util.assertions import assert_axis_length, assert_positive, assert_shape, assert_non_negative
+from rfsf.util.assertions import assert_axis_length, assert_non_negative, assert_positive, assert_shape
 
 
 class RandomFourierSeriesFeaturesKernel(DegenerateKernel):
-    def __init__(self, input_dim: int, num_features: int, num_harmonics: int, length_scale: torch.Tensor = None, amplitudes_sqrt: torch.Tensor = None, phases: torch.Tensor = None,
-                 device: torch.device = None):
+    def __init__(
+        self,
+        input_dim: int,
+        num_features: int,
+        num_harmonics: int,
+        length_scale: torch.Tensor = None,
+        amplitudes_sqrt: torch.Tensor = None,
+        phases: torch.Tensor = None,
+        device: torch.device = None,
+    ):
         super().__init__(device=device)
 
         assert_positive(input_dim, "input_dim")

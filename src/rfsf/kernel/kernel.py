@@ -3,7 +3,7 @@ from typing import List, NoReturn
 
 import torch
 
-from rfsf.util.assertions import assert_dim, assert_same_axis_length, assert_device
+from rfsf.util.assertions import assert_device, assert_dim, assert_same_axis_length
 
 
 class Kernel(ABC):
