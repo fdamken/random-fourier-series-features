@@ -21,8 +21,8 @@ def test_compute(samples_p, samples_q, dim):
     rff(p, q)
 
 
-def test_convergence():
-    length_scale = 1.0
+@pytest.mark.parametrize("length_scale", [0.1, 1.0, 2.0])
+def test_convergence(length_scale):
     rbf = SkLearnKernelWrapper(RBF(length_scale=length_scale))
     x = torch.arange(-5.0, 5.0, 0.01).unsqueeze(dim=1)
     expected = rbf(x, x)

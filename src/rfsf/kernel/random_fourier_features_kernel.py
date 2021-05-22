@@ -41,4 +41,4 @@ class RandomFourierFeaturesKernel(DegenerateKernel):
     def forward_features(self, x: torch.Tensor) -> torch.Tensor:
         """Computes the random fourier features."""
         assert_axis_length(x, 1, self._input_dim, "x")
-        return np.sqrt(2 / self._num_features) * np.cos(self._length_scale * (x @ self._weights.T) + self._biases)
+        return np.sqrt(2 / self._num_features) * np.cos(x @ self._weights.T / self._length_scale + self._biases)
