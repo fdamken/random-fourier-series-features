@@ -36,14 +36,10 @@ class FourierSeriesInitializer(ABC):
         self._optimize_amplitudes = optimize_amplitudes
         self._optimize_phases = optimize_phases
 
+        self._cosine_coefficients = None
+        self._sine_coefficients = None
         self._amplitudes_sqrt: Optional[torch.Tensor] = None
         self._phases: Optional[torch.Tensor] = None
-
-        cosine_coefficients, sine_coefficients = self.compute_coefficients()
-        assert_shape(cosine_coefficients, (self._num_harmonics + 1,), "cosine_coefficients")
-        assert_shape(sine_coefficients, (self._num_harmonics + 1,), "sine_coefficients")
-        self._cosine_coefficients = cosine_coefficients
-        self._sine_coefficients = sine_coefficients
 
     @abstractmethod
     def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -56,14 +52,26 @@ class FourierSeriesInitializer(ABC):
         raise NotImplementedError()  # pragma: no cover
 
     @property
-    def sine_coefficients(self) -> torch.Tensor:
-        """Gets the `num_harmonics + 1` sine coefficients."""
-        return self._sine_coefficients
+    def cosine_coefficients(self) -> torch.Tensor:
+        """
+        Gets (and lazily computes) the cosine coefficients.
+
+        :return: cosine coefficients; shape `(num_harmonics + 1,)`
+        """
+        if self._amplitudes_sqrt is None:
+            self._cosine_coefficients, self._sine_coefficients = self._compute_coefficients()
+        return self._cosine_coefficients
 
     @property
-    def cosine_coefficients(self) -> torch.Tensor:
-        """Gets the `num_harmonics + 1` cosine coefficients."""
-        return self._cosine_coefficients
+    def sine_coefficients(self) -> torch.Tensor:
+        """
+        Gets (and lazily computes) the sine coefficients.
+
+        :return: sine coefficients; shape `(num_harmonics + 1,)`
+        """
+        if self._amplitudes_sqrt is None:
+            self._cosine_coefficients, self._sine_coefficients = self._compute_coefficients()
+        return self._sine_coefficients
 
     @property
     def amplitudes_sqrt(self) -> torch.Tensor:
@@ -103,15 +111,23 @@ class FourierSeriesInitializer(ABC):
         """Gets whether to optimize the phases."""
         return self._optimize_phases
 
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Computes the cosine/sine coefficients and checks their shapes.
+
+        :return: tuple `(cosine_coefficients, sine_coefficients)`; the cosine/sine coefficients; each has shape
+                 `(num_harmonics + 1,)`, where the first entry of the sine coefficients is zero for real fourier series
+        """
+        cosine_coefficients, sine_coefficients = self.compute_coefficients()
+        assert_shape(cosine_coefficients, (self._num_harmonics + 1,), "cosine_coefficients")
+        assert_shape(sine_coefficients, (self._num_harmonics + 1,), "sine_coefficients")
+        return cosine_coefficients, sine_coefficients
+
     def _compute_amplitudes_sqrt(self) -> torch.Tensor:
         """
         Computes the square-root of the amplitudes from the cosine/sine coefficients. The amplitudes are computed using
         :math:`A_k = \\sqrt{a_k^2 + b_k^2}`, where :math:`a_k` and :math:`b_k` are the cosine/sine coefficients,
         respectively.
-
-        .. note::
-            Method :py:meth:`.compute_coefficients` has to be executed beforehand, which is usually done in the
-            constructor.
 
         :return: square-root of the amplitudes; shape `(num_harmonics + 1,)`
         """
