@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 
+from rfsf.kernel.initialization.random_fourier_series_initializer import RandomFourierSeriesInitializer
 from rfsf.kernel.random_fourier_series_features_kernel import RandomFourierSeriesFeaturesKernel
 
 
@@ -20,9 +21,10 @@ def main():
 
     matrices = np.empty((num_num_harmonics, num_num_features, len(x), len(x)))
     for i, num_harmonics in enumerate(num_harmonics_list):
+        fs_initialization = RandomFourierSeriesInitializer(num_harmonics)
         for j, num_features in enumerate(num_features_list):
             print(f"Computing RFSF for {num_features=} and {num_harmonics=}.")
-            rfsf = RandomFourierSeriesFeaturesKernel(1, num_features, num_harmonics, length_scale=length_scale)
+            rfsf = RandomFourierSeriesFeaturesKernel(1, num_features, fs_initialization, length_scale=length_scale)
             with torch.no_grad():
                 rfsf_mat = rfsf(x, x).detach().cpu().numpy()
             matrices[i, j, :, :] = rfsf_mat

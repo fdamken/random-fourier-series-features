@@ -22,15 +22,15 @@ class RandomFourierFeaturesKernel(DegenerateKernel):
         :param num_features: number of features to use; the higher the number of features, the better the approximation
                              of the SE kernel
         :param length_scale: length scale to resemble; approximately equivalent to the length scale of the SE kernel
+        :param device: device to run on
         """
-
         super().__init__(device=device)
 
         assert_positive(input_dim, "input_dim")
         assert_positive(num_features, "num_features")
         if length_scale is None:
             length_scale = torch.tensor(1.0, requires_grad=True)
-        assert_positive(length_scale.item(), "length_scale")  # Implies checking that n is a scalar.
+        assert_positive(length_scale, "length_scale")  # Implies checking that n is a scalar.
 
         self._input_dim = input_dim
         self._num_features = num_features
@@ -44,6 +44,6 @@ class RandomFourierFeaturesKernel(DegenerateKernel):
         self.register_parameters(self._length_scale)
 
     def forward_features(self, x: torch.Tensor) -> torch.Tensor:
-        """Computes the random fourier features."""
+        """Computes the random Fourier features."""
         assert_axis_length(x, 1, self._input_dim, "x")
         return np.sqrt(2 / self._num_features) * torch.cos(x @ self._weights.T / self._length_scale + self._biases)

@@ -13,6 +13,11 @@ class Kernel(ABC):
     """
 
     def __init__(self, device: torch.device = None):
+        """
+        Constructor.
+
+        :param device: device to run on
+        """
         if device is None:
             device = torch.device("cpu")
         self._device = device

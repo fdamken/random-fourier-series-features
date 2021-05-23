@@ -52,25 +52,3 @@ def assert_positive(n: Union[int, float, np.ndarray, torch.Tensor], name: str) -
         assert_scalar(n, name)
         n = n.item()
     assert n > 0, f"{name} has to be positive"
-
-
-def assert_all_positive(x: Union[np.ndarray, torch.Tensor], name: str) -> NoReturn:
-    """Asserts that all entries of `x` are positive. `name` is the name of the variable that is checked and is used for
-    the error message if the assertion fails."""
-    assert (x > 0).all(), f"all entries of {name} have to be positive"
-
-
-def assert_non_negative(n: Union[int, float, np.ndarray, torch.Tensor], name: str) -> NoReturn:
-    """Asserts that `n` is non-negative. `name` is the name of the variable that is checked and is used for the error
-    message if the assertion fails. If `n` is an array/tensor, it has to be a scalar according to
-    :py:meth:`.is_scalar`."""
-    if isinstance(n, (np.ndarray, torch.Tensor)):
-        assert_scalar(n, name)
-        n = n.item()
-    assert n >= 0, f"{name} has to be non-negative"
-
-
-def assert_all_non_negative(x: Union[np.ndarray, torch.Tensor], name: str) -> NoReturn:
-    """Asserts that all entries of `x` are non-negative. `name` is the name of the variable that is checked and is used
-    for the error message if the assertion fails."""
-    assert (x >= 0).all(), f"all entries of {name} have to be non-negative"
