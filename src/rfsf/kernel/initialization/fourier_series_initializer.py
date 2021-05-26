@@ -19,12 +19,13 @@ class FourierSeriesInitializer(ABC):
         non-negativity by squaring them on demand.
     """
 
-    def __init__(self, num_harmonics: int, optimize_amplitudes: bool = True, optimize_phases: bool = True):
+    def __init__(self, num_harmonics: int, half_period: float, optimize_amplitudes: bool = True, optimize_phases: bool = True):
         """
         Constructor.
 
         :param num_harmonics: number of harmonics to use; generally, the more harmonics are used, the better the
                               initialization function can be approximated; has to be positive
+        :param half_period: half the assumed period after which the ReLU repeats
         :param optimize_amplitudes: whether to optimize the amplitudes later on; causes `required_grad` of the
                                     corresponding parameter in the RFSF kernel to be set to `True`
         :param optimize_phases: whether to optimize the phases later on; causes `required_grad` of the corresponding
@@ -33,6 +34,7 @@ class FourierSeriesInitializer(ABC):
         assert_positive(num_harmonics, "num_harmonics")
 
         self._num_harmonics = num_harmonics
+        self._half_period = half_period
         self._optimize_amplitudes = optimize_amplitudes
         self._optimize_phases = optimize_phases
 
@@ -40,6 +42,14 @@ class FourierSeriesInitializer(ABC):
         self._sine_coefficients = None
         self._amplitudes_sqrt: Optional[torch.Tensor] = None
         self._phases: Optional[torch.Tensor] = None
+
+    def __call__(self, x):
+        a = self.cosine_coefficients
+        b = self.sine_coefficients
+        n = torch.arange(1, self.num_harmonics + 1)
+        cos = np.cos(np.pi / self.half_period * n.unsqueeze(axis=0) * x.unsqueeze(axis=1))
+        sin = np.sin(np.pi / self.half_period * n.unsqueeze(axis=0) * x.unsqueeze(axis=1))
+        return a[0] / 2 + (a[1:].unsqueeze(axis=0) * cos + b[1:].unsqueeze(axis=0) * sin).sum(axis=1)
 
     @abstractmethod
     def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -100,6 +110,11 @@ class FourierSeriesInitializer(ABC):
     def num_harmonics(self) -> int:
         """Gets the number of harmonics."""
         return self._num_harmonics
+
+    @property
+    def half_period(self) -> float:
+        """Gets the half period."""
+        return self._half_period
 
     @property
     def optimize_amplitudes(self) -> bool:
