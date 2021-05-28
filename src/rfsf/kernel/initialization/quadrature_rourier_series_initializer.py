@@ -37,7 +37,7 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
         optimize_phases: bool = True,
         torch_dtype: Optional[torch.dtype] = None,
         quadrature_maxiter: int = 200,
-        quadrature_kwargs: dict = None
+        quadrature_kwargs: dict = None,
     ):
         """
         Constructor.
@@ -80,11 +80,7 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
         interval_lo = -self.half_period
         interval_up = +self.half_period
 
-        quadrature_kwargs = {
-            "a": interval_lo,
-            "b": interval_up,
-            "maxiter": self._quadrature_maxiter
-        }
+        quadrature_kwargs = {"a": interval_lo, "b": interval_up, "maxiter": self._quadrature_maxiter}
         quadrature_kwargs.update(self._quadrature_kwargs)
         cosine_coefficients = [(quadrature(func, **quadrature_kwargs))[0] / self.half_period]
         sine_coefficients = [0.0]
