@@ -2,11 +2,11 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 
-from rfsf.kernel.initialization.random_fourier_series_initializer import RandomFourierSeriesInitializer
+from rfsf.kernel.initialization.quadrature_rourier_series_initializer import QuadratureFourierSeriesInitializer
 from rfsf.kernel.random_fourier_series_features_kernel import RandomFourierSeriesFeaturesKernel
 
 
-def main():
+def main(func, name):
     np.random.seed(12345)
     torch.random.manual_seed(12345)
 
@@ -21,7 +21,7 @@ def main():
 
     matrices = np.empty((num_num_harmonics, num_num_features, len(x), len(x)))
     for i, num_harmonics in enumerate(num_harmonics_list):
-        fs_initialization = RandomFourierSeriesInitializer(num_harmonics)
+        fs_initialization = QuadratureFourierSeriesInitializer(func, num_harmonics, np.pi)
         for j, num_features in enumerate(num_features_list):
             print(f"Computing RFSF for {num_features=} and {num_harmonics=}.")
             rfsf = RandomFourierSeriesFeaturesKernel(1, num_features, fs_initialization, length_scale=length_scale)
@@ -46,4 +46,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    print("Calculating Erf Fourier series kernel.")
+    main(QuadratureFourierSeriesInitializer.erf, "Erf")
+
+    print("Calculating ReLU Fourier series kernel.")
+    main(QuadratureFourierSeriesInitializer.relu, "ReLU")
+
+    print("Calculating Tanh Fourier series kernel.")
+    main(QuadratureFourierSeriesInitializer.tanh, "Tanh")
