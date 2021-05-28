@@ -2,7 +2,7 @@ from typing import Callable, Optional, Tuple
 
 import numpy as np
 import scipy as sp
-import scipy.special
+import scipy.special  # pylint: disable=unused-import
 import torch
 from scipy.integrate import quadrature
 
@@ -18,14 +18,17 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
 
     @staticmethod
     def erf(x: np.ndarray) -> np.ndarray:
-        return sp.special.erf(x)
+        """Gaussian error function."""
+        return sp.special.erf(x)  # pylint: disable=no-member
 
     @staticmethod
     def relu(x: np.ndarray) -> np.ndarray:
+        """Rectified linear unit."""
         return np.maximum(np.zeros_like(x), x)
 
     @staticmethod
     def tanh(x: np.ndarray) -> np.ndarray:
+        """Hyperbolic tangent."""
         return np.tanh(x)
 
     def __init__(
