@@ -1,32 +1,31 @@
 import numpy as np
 import torch
+from gpytorch.kernels import RBFKernel, RFFKernel
 from matplotlib import pyplot as plt
-from sklearn.gaussian_process.kernels import RBF
-
-from rfsf.kernel.random_fourier_features_kernel import RandomFourierFeaturesKernel
-from rfsf.kernel.sklearn_kernel_wrapper import SkLearnKernelWrapper
 
 
 def main():
     np.random.seed(12345)
     torch.random.manual_seed(12345)
 
-    length_scale = torch.tensor(1.0)
-    rbf = SkLearnKernelWrapper(RBF(length_scale=length_scale.item()))
+    lengthscale = torch.tensor(1.0)
+    rbf = RBFKernel()
+    rbf.lengthscale = lengthscale
 
     x_min, x_max = -5.0, 5.0
     x = torch.arange(x_min, x_max, 0.01).unsqueeze(dim=1)
 
     rbf_mat = rbf(x, x).numpy()
 
-    num_num_features = 7
+    num_num_features = 6
     num_features_list = 10 ** np.arange(num_num_features, dtype=int)
 
     matrices = np.empty((num_num_features + 1, len(x), len(x)))
     matrices[0, :, :] = rbf_mat
     for i, num_features in enumerate(num_features_list):
         print(f"Computing RFF for {num_features=}.")
-        rfsf = RandomFourierFeaturesKernel(1, num_features, length_scale=length_scale)
+        rfsf = RFFKernel(num_features, 1)
+        rfsf.lengthscale = lengthscale
         with torch.no_grad():
             rfsf_mat = rfsf(x, x).detach().cpu().numpy()
         matrices[i + 1, :, :] = rfsf_mat

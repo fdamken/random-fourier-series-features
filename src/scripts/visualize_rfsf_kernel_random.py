@@ -10,7 +10,7 @@ def main():
     np.random.seed(12345)
     torch.random.manual_seed(12345)
 
-    length_scale = torch.tensor(1.0)
+    lengthscale = torch.tensor(1.0)
     x_min, x_max = -5.0, 5.0
     x = torch.arange(x_min, x_max, 0.01).unsqueeze(dim=1)
 
@@ -24,7 +24,8 @@ def main():
         fs_initialization = RandomFourierSeriesInitializer(num_harmonics, 0.0)
         for j, num_features in enumerate(num_features_list):
             print(f"Computing RFSF for {num_features=} and {num_harmonics=}.")
-            rfsf = RandomFourierSeriesFeaturesKernel(1, num_features, fs_initialization, length_scale=length_scale)
+            rfsf = RandomFourierSeriesFeaturesKernel(num_features, fs_initialization)
+            rfsf.lengthscale = lengthscale
             with torch.no_grad():
                 rfsf_mat = rfsf(x, x).detach().cpu().numpy()
             matrices[i, j, :, :] = rfsf_mat

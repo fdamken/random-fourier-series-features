@@ -1,12 +1,16 @@
+import math
+from typing import NoReturn
+
 import numpy as np
 import torch
+from gpytorch.kernels import Kernel
+from gpytorch.lazy import LazyTensor, LowRankRootLazyTensor, MatmulLazyTensor, RootLazyTensor
 
-from rfsf.kernel.degenerate_kernel import DegenerateKernel
 from rfsf.kernel.initialization.fourier_series_initializer import FourierSeriesInitializer
-from rfsf.util.assertions import assert_axis_length, assert_positive
+from rfsf.util.assertions import assert_positive
 
 
-class RandomFourierSeriesFeaturesKernel(DegenerateKernel):
+class RandomFourierSeriesFeaturesKernel(Kernel):
     """
     Implementation of Random Fourier Series Features (RFSFs).
 
@@ -14,66 +18,89 @@ class RandomFourierSeriesFeaturesKernel(DegenerateKernel):
         This class is part of ongoing research!
     """
 
-    def __init__(
-        self,
-        input_dim: int,
-        num_features: int,
-        fourier_series_init: FourierSeriesInitializer = None,
-        length_scale: torch.Tensor = None,
-        device: torch.device = None,
-    ):
+    has_lengthscale = True
+
+    def __init__(self, num_samples: int, fourier_series_init: FourierSeriesInitializer, **kwargs):
         """
         Constructor.
 
-        .. note::
-            This class works with the square-root of the amplitudes and squares them if needed to ensure that not non-
-            positive amplitudes come up when optimizing.
-
-        :param input_dim: dimensionality of the input space
-        :param num_features: number of features to use; the higher the number of features, the better the approximation
-                             of the SE kernel
+        :param num_samples: number of samples, aka. features, to use
         :param fourier_series_init: initializer used for the harmonics, i.e., the Fourier series; includes the
-                                              amplitudes and phases of the harmonics
-        :param length_scale: length scale to resemble; approximately equivalent to the length scale of the SE kernel
-        :param device: device to run on
+                                    amplitudes and phases of the harmonics
+        :param kwargs: other keyword arguments passed to :py:class:`gpytorch.kernels.Kernel`
         """
-        super().__init__(device=device)
+        super().__init__(**kwargs)
 
-        assert_positive(input_dim, "input_dim")
-        assert_positive(num_features, "num_features")
-        if length_scale is None:
-            length_scale = torch.tensor(1.0, requires_grad=True)
-        assert_positive(length_scale, "length_scale")  # Implies checking that n is a scalar.
+        assert_positive(num_samples, "num_samples")
 
-        self._input_dim = input_dim
-        self._num_features = num_features
-        self._num_harmonics = fourier_series_init.num_harmonics
-        self._length_scale = torch.nn.Parameter(length_scale, requires_grad=length_scale.requires_grad).to(device=self.device)
-        self._amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(device=self.device)
-        self._phases = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_phases).to(device=self.device)
+        self.num_samples = num_samples
+        self.num_harmonics = fourier_series_init.num_harmonics
+        self._amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(
+            device=self.raw_lengthscale.device)
+        self._phases = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_phases).to(device=self.raw_lengthscale.device)
 
-        weight_distribution = torch.distributions.MultivariateNormal(torch.zeros(input_dim), torch.eye(input_dim))
-        bias_distribution = torch.distributions.Uniform(0.0, 2 * np.pi)
-        self._weights = weight_distribution.sample((self._num_features,)).to(device=self.device)
-        self._biases = bias_distribution.sample((self._num_features,)).to(device=self.device)
+        self.register_parameter("amplitudes_sqrt", self._amplitudes_sqrt)
+        self.register_parameter("phases", self._phases)
 
-        self.register_parameters(self._length_scale, self._amplitudes_sqrt, self._phases)
+    def forward(self, x1: torch.Tensor, x2: torch.Tensor, diag: bool = False, last_dim_is_batch: bool = False, **params) -> LazyTensor:
+        """
+        Forwards the kernel computation.
 
-    def forward_features(self, x: torch.Tensor) -> torch.Tensor:
-        """Computes the random Fourier series features."""
+        .. note::
+            This code is copied from the RFF kernel included in GPyTorch.
 
-        assert_axis_length(x, 1, self._input_dim, "x")
+        .. seealso::
+            https://github.com/cornellius-gp/gpytorch/blob/master/gpytorch/kernels/rff_kernel.py
+        """
+        if last_dim_is_batch:
+            x1 = x1.transpose(-1, -2).unsqueeze(-1)
+            x2 = x2.transpose(-1, -2).unsqueeze(-1)
+        num_dims = x1.size(-1)
+        if not hasattr(self, "randn_weights") or not hasattr(self, "rand_phases"):
+            self._init_weights_and_phases(num_dims, self.num_samples)
+        x1_eq_x2 = torch.equal(x1, x2)
+        z1 = self._featurize(x1)
+        if x1_eq_x2:
+            z2 = z1
+        else:
+            z2 = self._featurize(x2)
+        D = float(self.num_samples)
+        if diag:
+            return (z1 * z2).sum(-1) / D
+        if x1_eq_x2:
+            # Exploit low rank structure, if there are fewer features than data points
+            if z1.size(-1) < z2.size(-2):
+                return LowRankRootLazyTensor(z1 / math.sqrt(D))
+            return RootLazyTensor(z1 / math.sqrt(D))
+        return MatmulLazyTensor(z1 / D, z2.transpose(-1, -2))
 
-        biases = self._biases.unsqueeze(dim=0).unsqueeze(dim=2)
-        phases = self._phases.unsqueeze(dim=0).unsqueeze(dim=1)
+    def _init_weights_and_phases(self, num_dims: int, num_samples: int) -> NoReturn:
+        """Initializes the random weights and phases and stores them as buffers `rand_weights` and `rand_phases`."""
+        rand_weights = torch.randn((num_dims, num_samples), dtype=self.raw_lengthscale.dtype, device=self.raw_lengthscale.device)
+        rand_phases = 2 * np.pi * torch.rand((num_samples,), dtype=self.raw_lengthscale.dtype, device=self.raw_lengthscale.device)
+        self.register_buffer("rand_weights", rand_weights)
+        self.register_buffer("rand_phases", rand_phases)
 
-        normalization = np.sqrt(2 / self._num_features)
-        weighted_inputs = (x @ self._weights.T).unsqueeze(dim=2)
-        harmonic_multipliers = (torch.arange(self._num_harmonics + 1, device=self.device)).unsqueeze(dim=0).unsqueeze(dim=1)
-        harmonics_activations = harmonic_multipliers * weighted_inputs + biases + phases
-        harmonics = self._amplitudes * torch.cos(harmonics_activations)
+    def _featurize(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Calculates the RFSF features that are then used for computing the kernel.
+
+        :param x: input data; shape `(..., n, d)`
+        :return: feature vector; shape `(..., n, D)`
+        """
+        rand_weights = self.rand_weights
+        rand_phases = self.rand_phases
+        amplitudes = self._amplitudes
+        phases = self._phases
+
+        n = torch.arange(self.num_harmonics + 1, dtype=x.dtype, device=self.raw_lengthscale.device)
+        weighted_inputs = x.matmul(rand_weights / self.lengthscale.transpose(-1, -2)).unsqueeze(dim=-1)
+        harmonized_inputs = weighted_inputs @ n.unsqueeze(dim=0)
+        harmonics_activations = harmonized_inputs + phases + rand_phases.unsqueeze(dim=-1)
+        harmonics = amplitudes * torch.cos(harmonics_activations)
+
         # TODO: Is it helpful to normalize over the amplitudes?
-        return normalization * harmonics.sum(dim=2)  # / self._amplitudes.sum()
+        return 2 * harmonics.sum(dim=-1)
 
     @property
     def _amplitudes(self) -> torch.Tensor:
