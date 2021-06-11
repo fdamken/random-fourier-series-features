@@ -1,44 +1,29 @@
-from matplotlib import pyplot as plt
-from PIL import Image
-from tqdm import tqdm
+from typing import Tuple
+
+from gpytorch.models import GP
+from matplotlib.figure import Figure
 
 from ingredients import dataset
-from rfsf.util.tensor_util import unpickle_str
-from scripts.plotting.common import plot_process
-from scripts.plotting.util import savefig
+from scripts.plotting.common import animate_over_model_states, plot_process
 from scripts.util.sacred_util import load_experiment
 
 
 ex, load_config, load_metrics, load_run, load_model = load_experiment()
 
 
+# noinspection PyUnusedLocal
+@ex.config
+def default_config():
+    __y_lim = (-2, 2)
+    __frame_duration = 50
+
+
 @ex.main
-def main(__figures_dir: str):
-    data = dataset.load_data()
-    model_states = load_metrics()["model_state"]
+def main(__figures_dir: str, __y_lim: Tuple[float, float], __frame_duration: int):
+    def plot_single(model: GP, title_suffix: str) -> Figure:
+        return plot_process(model, 0, dataset.get_title(), y_lim=__y_lim, title_suffix=title_suffix)
 
-    model = load_model()
-    steps = model_states["steps"] + ["Final"]
-    state_dicts = model_states["values"] + [load_run()["result"]["model_state"]]
-
-    print(f"Plotting GP for {len(steps)} steps.")
-    filenames = []
-    for step, state_dict in tqdm(zip(steps, state_dicts)):
-        model.load_state_dict(unpickle_str(state_dict))
-        model.eval()
-
-        if type(step) == int:
-            filename = f"{step:010d}"
-        elif type(step) == str:
-            filename = f"{step.lower()}"
-        else:
-            assert False, f"unexpected step type {type(step)}"
-        plt.close(savefig(plot_process(model, data, 0, f"{dataset.get_title()}, Iter. {step}", y_lim=(-2, 2)), __figures_dir, filename, formats=["png"]))
-        filenames.append(filename)
-
-    print("Plotting finished. Generating GIF.")
-    frames = [Image.open(f"{__figures_dir}/{filename}.png") for filename in tqdm(filenames)]
-    frames[0].save(f"{__figures_dir}/gp.gif", save_all=True, append_images=frames[1:], duration=50, loop=0)
+    animate_over_model_states(load_model(), load_metrics(), load_run(), __figures_dir, "gp", plot_single, frame_duration=__frame_duration)
 
 
 if __name__ == "__main__":

@@ -55,6 +55,19 @@ def rfsf_relu():
     )
 
 
+# noinspection PyUnusedLocal
+@ex.named_config
+def rfsf_relu_small_period():
+    model_class = RFSFReLuGP
+    model_kwargs = dict(
+        num_samples=10_000,
+        num_harmonics=32,
+        half_period=0.4,
+        optimize_amplitudes=True,
+        optimize_phases=True,
+    )
+
+
 @ex.automain
 def main(
     likelihood_class: ClassVar[Likelihood],
