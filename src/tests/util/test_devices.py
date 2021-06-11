@@ -19,9 +19,9 @@ def test_cuda():
 
 
 def test_cuda_not_available(make_cuda_unavailable):
-    with pytest.raises(AssertionError) as exc_info:
-        devices.cuda()
-    assert exc_info.value.args == ("CUDA is not available",)
+    expected = torch.tensor(0.0).to(device="cpu").device
+    with pytest.warns(UserWarning, match="CUDA is not available, using CPU!"):
+        assert devices.cuda() == expected
 
 
 def test_cpu():

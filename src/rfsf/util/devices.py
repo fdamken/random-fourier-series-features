@@ -6,7 +6,7 @@ import torch
 def cuda() -> torch.device:
     """Gets the torch CUDA device that is currently active."""
     if not torch.cuda.is_available():
-        warnings.warn("CUDA is not available, using CPU!")
+        warnings.warn("CUDA is not available, using CPU!", UserWarning)
         return torch.device("cpu")
     return torch.device("cuda", index=torch.cuda.current_device())
 
