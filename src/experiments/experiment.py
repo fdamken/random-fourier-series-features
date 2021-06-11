@@ -45,9 +45,10 @@ def scaled_rbf():
 # noinspection PyUnusedLocal
 @ex.named_config
 def rfsf_relu():
+    max_iter = 500
     model_class = RFSFReLuGP
     model_kwargs = dict(
-        num_samples=10_000,
+        num_samples=1000,
         num_harmonics=32,
         half_period=1.0,
         optimize_amplitudes=True,
@@ -79,9 +80,7 @@ def main(
     log_model_state_every_n_iterations: int,
     _run: Run,
 ):
-    (train_inputs, train_targets), _ = dataset.load_data()
-    train_inputs = train_inputs.to(devices.cuda())
-    train_targets = train_targets.to(devices.cuda())
+    (train_inputs, train_targets), _ = dataset.load_data(device=devices.cuda())
 
     likelihood = likelihood_class(**likelihood_kwargs)
     model = model_class(train_inputs, train_targets, likelihood, **model_kwargs)

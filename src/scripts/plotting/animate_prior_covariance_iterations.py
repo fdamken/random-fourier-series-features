@@ -13,16 +13,17 @@ ex, load_config, load_metrics, load_run, load_model = load_experiment()
 @ex.config
 def default_config():
     __frame_duration = 50
+    __normalize = False
 
 
 @ex.main
-def main(__figures_dir: str, __frame_duration: int):
-    norm = AccumulativeNormalization()
+def main(__figures_dir: str, __frame_duration: int, __normalize: bool):
+    norm = AccumulativeNormalization() if __normalize else None
 
     def plot_single(model: GP, title_suffix: str) -> Figure:
         return plot_covariance(model, title_suffix=title_suffix, norm=norm)
 
-    animate_over_model_states(load_model(), load_metrics(), load_run(), __figures_dir, "prior-covariance", plot_single, frame_duration=__frame_duration, two_pass=True)
+    animate_over_model_states(load_model(), load_metrics(), load_run(), __figures_dir, "prior-covariance", plot_single, frame_duration=__frame_duration, two_pass=__normalize)
 
 
 if __name__ == "__main__":

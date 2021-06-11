@@ -26,21 +26,16 @@ def get_title(name: str) -> str:
 
 @lru_cache
 @dataset_ingredient.capture
-def load_data(name: str, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
     if name == "sine":
         data = _load_dataset_sine()
     else:
         assert False, f"unknown dataset '{name}'"
-    if device is not None:
-        for dat in data:
-            for da in dat:
-                da.to(device)
-    return data
+    return data if device is None else tuple(tuple(da.to(device) for da in dat) for dat in data)
 
 
 def _load_dataset_sine() -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
-    interval_lo = -0.5
-    interval_up = +0.5
+    interval_lo, interval_up = -0.5, 0.5
     interval_width = interval_up - interval_lo
     train_resolution = 0.05
     test_resolution = 0.01
