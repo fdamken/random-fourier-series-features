@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 
-from rfsf.kernel.initialization.quadrature_rourier_series_initializer import QuadratureFourierSeriesInitializer
+from rfsf.kernel.initialization.quadrature_fourier_series_initializer import QuadratureFourierSeriesInitializer
 from rfsf.util.tensor_util import periodic
 
 

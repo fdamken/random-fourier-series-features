@@ -10,7 +10,7 @@ from rfsf.kernel.initialization.fourier_series_initializer import FourierSeriesI
 from rfsf.util.assertions import assert_positive
 
 
-class RandomFourierSeriesFeaturesKernel(Kernel):
+class RFSFKernel(Kernel):
     """
     Implementation of Random Fourier Series Features (RFSFs).
 
@@ -33,14 +33,12 @@ class RandomFourierSeriesFeaturesKernel(Kernel):
 
         assert_positive(num_samples, "num_samples")
 
+        device = self.raw_lengthscale.device
+
         self.num_samples = num_samples
         self.num_harmonics = fourier_series_init.num_harmonics
-        self._amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(
-            device=self.raw_lengthscale.device)
-        self._phases = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_phases).to(device=self.raw_lengthscale.device)
-
-        self.register_parameter("amplitudes_sqrt", self._amplitudes_sqrt)
-        self.register_parameter("phases", self._phases)
+        self.amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(device=device)
+        self.phases = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_phases).to(device=device)
 
     def forward(self, x1: torch.Tensor, x2: torch.Tensor, diag: bool = False, last_dim_is_batch: bool = False, **params) -> LazyTensor:
         """
@@ -91,7 +89,7 @@ class RandomFourierSeriesFeaturesKernel(Kernel):
         rand_weights = self.rand_weights
         rand_phases = self.rand_phases
         amplitudes = self._amplitudes
-        phases = self._phases
+        phases = self.phases
 
         n = torch.arange(self.num_harmonics + 1, dtype=x.dtype, device=self.raw_lengthscale.device)
         weighted_inputs = x.matmul(rand_weights / self.lengthscale.transpose(-1, -2)).unsqueeze(dim=-1)
@@ -105,4 +103,4 @@ class RandomFourierSeriesFeaturesKernel(Kernel):
     @property
     def _amplitudes(self) -> torch.Tensor:
         """Computes the amplitudes from the sqrt-amplitudes, i.e., squares them."""
-        return self._amplitudes_sqrt ** 2
+        return self.amplitudes_sqrt ** 2

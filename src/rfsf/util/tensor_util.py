@@ -1,8 +1,12 @@
-from typing import Callable, NoReturn, Union
+import codecs
+import pickle
+from typing import Any, Callable, NoReturn, TypeVar, Union
 
 import numpy as np
 import torch
 
+
+T = TypeVar("T", dict, list, np.ndarray, torch.Tensor)
 
 # Type alias to accept both NumPy arrays and Torch tensors.
 NdTensor = Union[np.ndarray, torch.Tensor]
@@ -16,6 +20,40 @@ def is_numpy(val: NdTensor) -> bool:
 def is_torch(val: NdTensor) -> bool:
     """Checks if the given :py:class:`NdTensor` is a Torch tensor."""
     return isinstance(val, torch.Tensor)
+
+
+def to_numpy(val: NdTensor, *, force_detach: bool = False, copy: bool = False) -> np.ndarray:
+    """
+    Converts the given tensor (which can also be a NumPy array) into a NumPy array and copies it to the CPU. If it
+    already is a NumPy array, it is not converted (this method is idempotent). If the Torch tensor `requires_grad`, it
+    is detached first. Additionally, if `force_detach` or `copy` is `True`, it is also detached. If `copy` is `True`,
+    the converted NumPy array is copied using the :py:meth:`numpy.ndarray.copy` method if the
+    :py:attr:`numpy.ndarray.base` is not `None`.
+
+    :param val: tensor to convert
+    :param force_detach: whether to always detach the tensor before copying it to the CPU, ignoring whether it
+                         `requires_grad`
+    :param copy: whether to copy the NumPy array after conversion (implies `force_detach`); only applied if the `base`
+                 of the array is not `None`
+    :return: the numpy array with same shape as `val`; the underlying data type is handled automatically by PyTorch's
+             :py:meth:`torch.Tensor.numpy` method
+    """
+    force_detach = force_detach or copy
+    if not is_numpy(val):
+        if val.requires_grad or force_detach or copy:
+            val = val.detach()
+        val = val.cpu().numpy()
+    if copy and val.base is not None:
+        val = val.copy()
+    return val
+
+
+def pickle_str(obj: Any) -> str:
+    return codecs.encode(pickle.dumps(obj), "base64").decode()
+
+
+def unpickle_str(obj: str) -> Any:
+    return pickle.loads(codecs.decode(obj.encode(), "base64"))
 
 
 def periodic(half_period: float) -> Callable[[Callable[[NdTensor], NdTensor]], NoReturn]:

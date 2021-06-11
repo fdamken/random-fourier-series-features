@@ -34,6 +34,7 @@ pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==8.2.0
 pluggy==0.13.1
+progressbar==2.5
 prompt-toolkit==3.0.18
 ptyprocess==0.7.0
 py==1.10.0
@@ -52,6 +53,7 @@ smmap==4.0.0
 threadpoolctl==2.1.0
 toml==0.10.2
 torch==1.8.1+cu111
+tqdm==4.61.0
 traitlets==5.0.5
 typing-extensions==3.10.0.0
 wcwidth==0.2.5

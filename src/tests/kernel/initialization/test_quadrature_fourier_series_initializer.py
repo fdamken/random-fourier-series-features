@@ -5,7 +5,7 @@ import pytest
 import torch
 from scipy.integrate import AccuracyWarning
 
-from rfsf.kernel.initialization.quadrature_rourier_series_initializer import QuadratureFourierSeriesInitializer
+from rfsf.kernel.initialization.quadrature_fourier_series_initializer import QuadratureFourierSeriesInitializer
 from rfsf.kernel.initialization.relu_fourier_series_initializer import ReLUFourierSeriesInitializer
 
 

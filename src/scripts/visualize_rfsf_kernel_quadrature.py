@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 
-from rfsf.kernel.initialization.quadrature_rourier_series_initializer import QuadratureFourierSeriesInitializer
-from rfsf.kernel.random_fourier_series_features_kernel import RandomFourierSeriesFeaturesKernel
+from rfsf.kernel.initialization.quadrature_fourier_series_initializer import QuadratureFourierSeriesInitializer
+from rfsf.kernel.rfsf_kernel import RFSFKernel
 
 
 def main(func, name):
@@ -24,7 +24,7 @@ def main(func, name):
         fs_initialization = QuadratureFourierSeriesInitializer(func, num_harmonics, np.pi)
         for j, num_features in enumerate(num_features_list):
             print(f"Computing RFSF for {num_features=} and {num_harmonics=}.")
-            rfsf = RandomFourierSeriesFeaturesKernel(num_features, fs_initialization)
+            rfsf = RFSFKernel(num_features, fs_initialization)
             rfsf.lengthscale = lengthscale
             with torch.no_grad():
                 rfsf_mat = rfsf(x, x).detach().cpu().numpy()
