@@ -3,13 +3,13 @@ from typing import ClassVar
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import ETA, Bar, Percentage, ProgressBar
+from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
 from torch.optim import Adam
 
-from experiments.models.rfsf_relu_gp import RFSFReLuGP
+from experiments.models.rfsf_relu_gp import RFSFReLUGP
 from experiments.models.scaled_rbf_gp import ScaledRBFGP
 from experiments.util.sacred_util import add_pickle_artifact
 from ingredients import dataset
@@ -45,25 +45,11 @@ def scaled_rbf():
 # noinspection PyUnusedLocal
 @ex.named_config
 def rfsf_relu():
-    max_iter = 500
-    model_class = RFSFReLuGP
+    model_class = RFSFReLUGP
     model_kwargs = dict(
         num_samples=1000,
-        num_harmonics=32,
+        num_harmonics=8,
         half_period=1.0,
-        optimize_amplitudes=True,
-        optimize_phases=True,
-    )
-
-
-# noinspection PyUnusedLocal
-@ex.named_config
-def rfsf_relu_small_period():
-    model_class = RFSFReLuGP
-    model_kwargs = dict(
-        num_samples=10_000,
-        num_harmonics=32,
-        half_period=0.4,
         optimize_amplitudes=True,
         optimize_phases=True,
     )

@@ -8,7 +8,7 @@ from rfsf.kernel.initialization.relu_fourier_series_initializer import ReLUFouri
 from rfsf.kernel.rfsf_kernel import RFSFKernel
 
 
-class RFSFReLuGP(ExactGP):
+class RFSFReLUGP(ExactGP):
     def __init__(
         self,
         train_inputs: torch.Tensor,

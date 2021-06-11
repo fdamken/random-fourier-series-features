@@ -35,6 +35,7 @@ class RFSFKernel(Kernel):
 
         device = self.raw_lengthscale.device
 
+        self.fourier_series_init = fourier_series_init
         self.num_samples = num_samples
         self.num_harmonics = fourier_series_init.num_harmonics
         self.amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(device=device)
@@ -79,7 +80,7 @@ class RFSFKernel(Kernel):
         self.register_buffer("rand_weights", rand_weights)
         self.register_buffer("rand_phases", rand_phases)
 
-    def _featurize(self, x: torch.Tensor) -> torch.Tensor:
+    def _featurize(self, x: torch.Tensor, *, identity_randoms: bool = False) -> torch.Tensor:
         """
         Calculates the RFSF features that are then used for computing the kernel.
 
@@ -90,6 +91,10 @@ class RFSFKernel(Kernel):
         rand_phases = self.rand_phases
         amplitudes = self._amplitudes
         phases = self.phases
+
+        if identity_randoms:
+            rand_weights = torch.ones_like(rand_weights)
+            rand_phases = torch.zeros_like(rand_phases)
 
         n = torch.arange(self.num_harmonics + 1, dtype=x.dtype, device=self.raw_lengthscale.device)
         weighted_inputs = x.matmul(rand_weights / self.lengthscale.transpose(-1, -2)).unsqueeze(dim=-1)
