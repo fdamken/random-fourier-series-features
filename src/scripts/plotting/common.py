@@ -2,11 +2,12 @@ from typing import Callable, Optional, Tuple
 
 import gpytorch
 import torch
-from PIL import Image
 from gpytorch.models import GP
-from matplotlib import colors, cycler, pyplot as plt
+from matplotlib import colors, cycler
+from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
@@ -83,8 +84,14 @@ def plot_process(
     return fig
 
 
-def plot_features(featurize: Callable[[torch.Tensor], torch.Tensor], max_num_features, *, title_suffix: str = "", y_lim: Optional[Tuple[float, float]] = None,
-                  fig_ax: Optional[Tuple[Figure, Axes]] = None) -> Figure:
+def plot_features(
+    featurize: Callable[[torch.Tensor], torch.Tensor],
+    max_num_features,
+    *,
+    title_suffix: str = "",
+    y_lim: Optional[Tuple[float, float]] = None,
+    fig_ax: Optional[Tuple[Figure, Axes]] = None,
+) -> Figure:
     _, (test_inputs, _) = dataset.load_data()
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
     features = to_numpy(featurize(test_inputs.unsqueeze(-1)))

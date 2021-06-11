@@ -3,7 +3,7 @@ from typing import ClassVar
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import Bar, ETA, Percentage, ProgressBar
+from progressbar import ETA, Bar, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
@@ -47,8 +47,8 @@ def scaled_rbf():
 def rfsf_relu():
     model_class = RFSFReLUGP
     model_kwargs = dict(
-        num_samples=1000,
-        num_harmonics=8,
+        num_samples=5000,
+        num_harmonics=16,
         half_period=1.0,
         optimize_amplitudes=True,
         optimize_phases=True,
