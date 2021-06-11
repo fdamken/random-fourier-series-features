@@ -43,13 +43,23 @@ class FourierSeriesInitializer(ABC):
         self._amplitudes_sqrt: Optional[torch.Tensor] = None
         self._phases: Optional[torch.Tensor] = None
 
-    def __call__(self, x):
-        a = self.cosine_coefficients
-        b = self.sine_coefficients
-        n = torch.arange(1, self.num_harmonics + 1)
-        cos = np.cos(np.pi / self.half_period * n.unsqueeze(axis=0) * x.unsqueeze(axis=1))
-        sin = np.sin(np.pi / self.half_period * n.unsqueeze(axis=0) * x.unsqueeze(axis=1))
-        return a[0] / 2 + (a[1:].unsqueeze(axis=0) * cos + b[1:].unsqueeze(axis=0) * sin).sum(axis=1)
+    def __call__(self, x: torch.Tensor, *, use_sine_cosine_form: bool = True) -> torch.Tensor:
+        x = x.unsqueeze(axis=1)
+        if use_sine_cosine_form:
+            a = self.cosine_coefficients
+            b = self.sine_coefficients
+            n = torch.arange(1, self.num_harmonics + 1).unsqueeze(axis=0)
+            cos = torch.cos(np.pi / self.half_period * n * x)
+            sin = torch.sin(np.pi / self.half_period * n * x)
+            result = a[0] / 2 + (a[1:] * cos + b[1:].unsqueeze(axis=0) * sin).sum(axis=1)
+        else:
+            amplitudes = self.amplitudes_sqrt.unsqueeze(axis=0) ** 2
+            phases = self.phases.unsqueeze(axis=0)
+            n = torch.arange(0, self.num_harmonics + 1).unsqueeze(axis=0)
+            harmonics_activations = np.pi / self.half_period * n * x - phases
+            harmonics = amplitudes * torch.cos(harmonics_activations)
+            result = harmonics.sum(axis=1)
+        return result
 
     @abstractmethod
     def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:

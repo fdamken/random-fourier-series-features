@@ -26,7 +26,10 @@ def test_non_negative_sine_coefficients():
 # noinspection PyTypeChecker
 def test_non_negative_sine_call():
     init = NonNegativeSineInitializer()
-    x = torch.arange(-10, 10, 0.01)
+    x = torch.arange(-10, 10, 0.1)
     expected = 9 * torch.sin(x) + 2
-    actual = init(x)
-    assert torch.allclose(actual, expected)
+    actual_sine_cosine = init(x, use_sine_cosine_form=True)
+    actual_amplitude_phase = init(x, use_sine_cosine_form=False)
+    assert torch.allclose(actual_sine_cosine, expected)
+    assert torch.allclose(actual_amplitude_phase, expected, atol=1e-5)
+    assert torch.allclose(actual_amplitude_phase, actual_sine_cosine, atol=1e-5)

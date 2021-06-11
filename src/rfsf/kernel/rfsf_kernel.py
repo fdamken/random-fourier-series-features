@@ -35,11 +35,11 @@ class RFSFKernel(Kernel):
 
         device = self.raw_lengthscale.device
 
-        self.fourier_series_init = fourier_series_init
         self.num_samples = num_samples
         self.num_harmonics = fourier_series_init.num_harmonics
+        self.half_period = fourier_series_init.half_period
         self.amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(device=device)
-        self.phases = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_phases).to(device=device)
+        self.phases = torch.nn.Parameter(data=fourier_series_init.phases, requires_grad=fourier_series_init.optimize_phases).to(device=device)
 
     def forward(self, x1: torch.Tensor, x2: torch.Tensor, diag: bool = False, last_dim_is_batch: bool = False, **params) -> LazyTensor:
         """
@@ -96,14 +96,14 @@ class RFSFKernel(Kernel):
             rand_weights = torch.ones_like(rand_weights)
             rand_phases = torch.zeros_like(rand_phases)
 
-        n = torch.arange(self.num_harmonics + 1, dtype=x.dtype, device=self.raw_lengthscale.device)
+        n = torch.arange(0, self.num_harmonics + 1, dtype=x.dtype, device=self.raw_lengthscale.device)
         weighted_inputs = x.matmul(rand_weights / self.lengthscale.transpose(-1, -2)).unsqueeze(dim=-1)
-        harmonized_inputs = weighted_inputs @ n.unsqueeze(dim=0)
-        harmonics_activations = harmonized_inputs + phases + rand_phases.unsqueeze(dim=-1)
+        harmonized_inputs = np.pi / self.half_period * weighted_inputs @ n.unsqueeze(dim=0)
+        harmonics_activations = harmonized_inputs - phases + rand_phases.unsqueeze(dim=-1)
         harmonics = amplitudes * torch.cos(harmonics_activations)
 
         # TODO: Is it helpful to normalize over the amplitudes?
-        return 2 * harmonics.sum(dim=-1)
+        return harmonics.sum(dim=-1)
 
     @property
     def _amplitudes(self) -> torch.Tensor:
