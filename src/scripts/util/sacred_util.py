@@ -72,8 +72,7 @@ def load_experiment():
     ex.add_config({"__figures_dir": figures_dir})
     config = load_config()
     ex.add_config(config)
-    # TOOD: Maybe this is needed?!
-    # dataset_ingredient.add_config(config["dataset"])
+    dataset_ingredient.add_config(config["dataset"])
     return ex, load_config, load_metrics, load_run, load_model
 
 
