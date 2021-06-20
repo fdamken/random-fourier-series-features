@@ -98,7 +98,7 @@ def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[Dict[str, 
     for name, params in model.named_parameters():
         if params.requires_grad:
             parameter_group_names.append(name)
-            opt_parameters.append({"params": params})
+            opt_parameters.append(params)
     return parameter_group_names, opt_parameters
 
 

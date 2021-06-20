@@ -12,8 +12,8 @@ ex, load_config, load_metrics, load_run, load_model = load_experiment()
 # noinspection PyUnusedLocal
 @ex.config
 def default_config():
-    __frame_duration = 50
     __normalize = False
+    __frame_duration = 50
 
 
 @ex.main

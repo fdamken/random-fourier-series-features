@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import Bar, ETA, Percentage, ProgressBar
+from progressbar import ETA, Bar, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import Adam, Optimizer
+from torch.optim import LBFGS, Adam, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -51,19 +51,21 @@ def default_config():
 # noinspection PyUnusedLocal
 @ex.named_config
 def axial_iteration_opt():
-    optimizer_alternate_parameters = [
-        ["all", "!cov_module.phases"],
-        ["all", "!cov_module.amplitudes_sqrt"]
-    ]
+    optimizer_alternate_parameters = [["all", "!cov_module.phases"], ["all", "!cov_module.amplitudes_sqrt"]]
 
 
 # noinspection PyUnusedLocal
 @ex.named_config
 def axial_iteration_lr():
     lr_scheduler_class = AxialIterationLR
-    lr_scheduler_kwargs = {
-        "axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"]
-    }
+    lr_scheduler_kwargs = {"axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"]}
+
+
+# noinspection PyUnusedLocal
+@ex.named_config
+def lbfgs():
+    optimizer_class = LBFGS
+    max_iter = 1000
 
 
 # noinspection PyUnusedLocal
@@ -154,7 +156,7 @@ def main(
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
     parameter_group_names, opt_parameters = split_parameter_groups(model)
     if len(optimizer_alternate_parameters) > 1:
-        assert lr_scheduler_class is ConstantLR, "when using multiple optimizers, no learning rate schedule can be used"
+        assert lr_scheduler_class is ConstantLR, "learning rate schedulers are not supported when using multiple optimizers"
         covered_parameters = set()
         optimizers, optimizers_parameters = [], []
         for opt_parameter_selector in optimizer_alternate_parameters:
@@ -166,12 +168,15 @@ def main(
         assert set(parameter_group_names) == covered_parameters, "optimizer specification does not cover for all existing parameters"
         scheduler = MockLR()
     else:
-        optimizer = optimizer_class(opt_parameters, **optimizer_kwargs)
         if lr_scheduler_class is AxialIterationLR:
+            assert optimizer_class is not LBFGS, "L-BFGS optimization is not supported when using axial iteration learning rates; try multiple optimizers instead"
+            optimizer = optimizer_class([{"params": params} for params in opt_parameters], **optimizer_kwargs)
             new_lr_scheduler_kwargs = {"parameter_group_names": parameter_group_names}
             new_lr_scheduler_kwargs.update(lr_scheduler_kwargs)
             lr_scheduler_kwargs = new_lr_scheduler_kwargs
             _log.info(f"Using axial iteration optimization with the keyword arguments {lr_scheduler_kwargs}.")
+        else:
+            optimizer = optimizer_class(opt_parameters, **optimizer_kwargs)
         scheduler = lr_scheduler_class(optimizer, **lr_scheduler_kwargs)
         optimizers = [optimizer]
         optimizers_parameters = [parameter_group_names]
@@ -181,11 +186,19 @@ def main(
     )
     for step in range(max_iter):
         optimizer = optimizers[step % len(optimizers)]
-        optimizer.zero_grad()
-        out = model(train_inputs)
-        loss = -mll(out, train_targets)
-        loss.backward()
-        optimizer.step()
+
+        def evaluate():
+            optimizer.zero_grad()
+            out = model(train_inputs)
+            local_loss = -mll(out, train_targets)
+            local_loss.backward()
+            return local_loss
+
+        if isinstance(optimizer, LBFGS):
+            loss = optimizer.step(evaluate)
+        else:
+            loss = evaluate()
+            optimizer.step()
         scheduler.step()
 
         loss_val = loss.item()
