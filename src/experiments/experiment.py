@@ -1,10 +1,11 @@
+from logging import Logger
 from typing import ClassVar
 
 import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import ETA, Bar, Percentage, ProgressBar
+from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
@@ -39,9 +40,6 @@ def default_config():
     likelihood_kwargs = {}
     model_class = ExactGP  # Has to be overwritten by named configs.
     model_kwargs = {}
-    # This only affects learning when using an RFSFKernel. The maximum batch size depends on the VRAM of the GPU. On a
-    # GPU with 10GiB VRAM, the maximum batch size is rougly 500.
-    batch_size = 8
 
 
 # noinspection PyUnusedLocal
@@ -85,8 +83,8 @@ def main(
     max_iter: int,
     learning_rate: float,
     log_model_state_every_n_iterations: int,
-    batch_size: int,
     _run: Run,
+    _log: Logger,
 ):
     (train_inputs, train_targets), _ = dataset.load_data(device=devices.cuda())
 
@@ -99,47 +97,39 @@ def main(
     likelihood.train()
     model.train()
 
-    loss_val = None
-    noise = None
-
-    print(
+    _log.info(
         f"Training a GP with {sum(param.numel() for param in model.parameters() if param.requires_grad)} parameters.\n"
         f"  - Learnable Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if param.requires_grad)}\n"
         f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}"
     )
 
-    loss_observable = lambda: loss_val
-    noise_observable = lambda: noise
-    bar_widgets = [
-        "Optimization: ",
-        Percentage(),
-        " ",
-        Bar(),
-        " ",
-        ETA(),
-        ";  Loss: ",
-        NumberTrendWidget("%6.3f", loss_observable),
-        ";  Noise: ",
-        NumberTrendWidget("%6.3f", noise_observable),
-    ]
-    bar = ProgressBar(widgets=bar_widgets, maxval=max_iter, term_width=200).start()
+    loss_val = None
+    noise = None
+
+    bar = ProgressBar(
+        widgets=[
+            "Optimization: ",
+            Percentage(),
+            " ",
+            Bar(),
+            " ",
+            ETA(),
+            ";  Loss: ",
+            NumberTrendWidget("6.3f", lambda: loss_val),
+            ";  Noise: ",
+            NumberTrendWidget("6.3f", lambda: noise),
+        ],
+        maxval=max_iter,
+        term_width=200,
+    ).start()
 
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
     optimizer = Adam(model.parameters(), lr=learning_rate)
     scheduler = ExponentialLR(optimizer, 0.999)
     for step in range(max_iter):
         optimizer.zero_grad()
-        # noinspection PyTypeChecker
-        loss: torch.Tensor = 0.0
-        # if hasattr(model, "cov_module") and isinstance(model.cov_module, RFSFKernel):
-        #     for _ in range(batch_size):
-        #         model.cov_module.clear_weights_and_phases()
-        #         out = model(train_inputs)
-        #         loss += -mll(out, train_targets)
-        #     loss /= batch_size
-        # else:
         out = model(train_inputs)
-        loss += -mll(out, train_targets)
+        loss = -mll(out, train_targets)
         loss.backward()
         optimizer.step()
         scheduler.step()

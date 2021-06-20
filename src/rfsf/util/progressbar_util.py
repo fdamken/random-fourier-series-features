@@ -39,7 +39,7 @@ class NumberTrendWidget(progressbar.Widget):
         self._observable = observable
         self._rtol = rtol
         self._atol = atol
-        self._placeholder = " " * (len(self._format % 0.0) + 2)
+        self._placeholder = " " * (len(format(0.0, self._format)) + 2)
         self._previous = None
 
     def update(self, _):
