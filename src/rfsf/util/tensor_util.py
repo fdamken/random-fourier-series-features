@@ -1,9 +1,10 @@
 import codecs
 import pickle
-from typing import Any, Callable, NoReturn, TypeVar, Union
+from typing import Any, Callable, Dict, List, NoReturn, Tuple, TypeVar, Union
 
 import numpy as np
 import torch
+from torch import nn
 
 
 T = TypeVar("T", dict, list, np.ndarray, torch.Tensor)  # pylint: disable=invalid-name
@@ -90,3 +91,12 @@ def periodic(half_period: float) -> Callable[[Callable[[NdTensor], NdTensor]], N
         return wrapped
 
     return decorator
+
+
+def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[Dict[str, Any]]]:
+    parameter_group_names, opt_parameters = [], []
+    for name, params in model.named_parameters():
+        if params.requires_grad:
+            parameter_group_names.append(name)
+            opt_parameters.append({"params": params})
+    return parameter_group_names, opt_parameters

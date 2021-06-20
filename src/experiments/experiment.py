@@ -1,5 +1,5 @@
 from logging import Logger
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import torch
 from gpytorch import ExactMarginalLogLikelihood
@@ -10,7 +10,6 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
 from torch.optim import Adam
-from torch.optim.lr_scheduler import ExponentialLR
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -20,8 +19,10 @@ from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
 from rfsf.util import devices
+from rfsf.util.axial_iteration_lr import AxialIterationLR
+from rfsf.util.constant_lr import ConstantLR
 from rfsf.util.progressbar_util import NumberTrendWidget
-from rfsf.util.tensor_util import pickle_str
+from rfsf.util.tensor_util import pickle_str, split_parameter_groups
 
 
 ex = Experiment(ingredients=[dataset_ingredient])
@@ -33,13 +34,24 @@ ex.observers.append(WandbObserver(project="random-fourier-series-features"))
 @ex.config
 def default_config():
     seed = 42
-    learning_rate = 0.1
-    max_iter = 20000
-    log_model_state_every_n_iterations = 100
     likelihood_class = GaussianLikelihood
     likelihood_kwargs = {}
     model_class = ExactGP  # Has to be overwritten by named configs.
     model_kwargs = {}
+    lr_scheduler_class = ConstantLR
+    lr_scheduler_kwargs = {}
+    learning_rate = 0.001
+    max_iter = 20000
+    log_model_state_every_n_iterations = 100
+
+
+# noinspection PyUnusedLocal
+@ex.named_config
+def axial_iteration():
+    lr_scheduler_class = AxialIterationLR
+    lr_scheduler_kwargs = {
+        "axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"]
+    }
 
 
 # noinspection PyUnusedLocal
@@ -69,7 +81,7 @@ def rfsf_relu():
         num_samples=5000,
         num_harmonics=16,
         half_period=1.0,
-        optimize_amplitudes=False,
+        optimize_amplitudes=True,
         optimize_phases=True,
     )
 
@@ -80,8 +92,10 @@ def main(
     likelihood_kwargs: dict,
     model_class: ClassVar[ExactGP],
     model_kwargs: dict,
+    lr_scheduler_class: ClassVar[Any],
+    lr_scheduler_kwargs: dict,
+    learning_rate,
     max_iter: int,
-    learning_rate: float,
     log_model_state_every_n_iterations: int,
     _run: Run,
     _log: Logger,
@@ -124,8 +138,14 @@ def main(
     ).start()
 
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
-    optimizer = Adam(model.parameters(), lr=learning_rate)
-    scheduler = ExponentialLR(optimizer, 0.999)
+    parameter_group_names, opt_parameters = split_parameter_groups(model)
+    optimizer = Adam(opt_parameters, lr=learning_rate)
+    if lr_scheduler_class is AxialIterationLR:
+        new_lr_scheduler_kwargs = {"parameter_group_names": parameter_group_names}
+        new_lr_scheduler_kwargs.update(lr_scheduler_kwargs)
+        lr_scheduler_kwargs = new_lr_scheduler_kwargs
+        _log.info(f"Using axial iteration optimization with the keyword arguments {lr_scheduler_kwargs}.")
+    scheduler = lr_scheduler_class(optimizer, **lr_scheduler_kwargs)
     for step in range(max_iter):
         optimizer.zero_grad()
         out = model(train_inputs)
@@ -136,13 +156,14 @@ def main(
 
         loss_val = loss.item()
         noise = model.likelihood.noise.item()
-        learning_rate = scheduler.get_last_lr()[0]
+        learning_rates = scheduler.get_last_lr()
         parameters = [p for p in model.parameters() if p.grad is not None]
         grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
 
         _run.log_scalar("loss", loss_val, step=step)
         _run.log_scalar("noise", noise, step=step)
-        _run.log_scalar("learning_rate", learning_rate, step=step)
+        for param_name, lr in zip(parameter_group_names, learning_rates):
+            _run.log_scalar(f"learning_rate/{param_name}", lr, step=step)
         _run.log_scalar("grad_norm", grad_norm.item(), step=step)
         if step % log_model_state_every_n_iterations == 0:
             _run.log_scalar("model_state", pickle_str(model.state_dict()), step=step)
