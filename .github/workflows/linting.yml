@@ -2,9 +2,9 @@ name: Linting
 on:
   workflow_dispatch:
   push:
-    paths: ["src/**"]
+    paths: [ "src/**" ]
   pull_request:
-    paths: ["src/**"]
+    paths: [ "src/**" ]
 jobs:
   black:
     name: Checking Formatting with Black
@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Install Dependencies
-        run: "pip install black==21.5b1"
+        run: "pip install black==21.6b0"
       - name: Run Black
         run: "black --check src"
   isort:
@@ -47,4 +47,4 @@ jobs:
       - name: Install Dependencies
         run: "pip install -f https://download.pytorch.org/whl/torch_stable.html -r requirements.txt"
       - name: Run PyLint
-        run: "pylint src/rfsf"
+        run: "pylint src"
