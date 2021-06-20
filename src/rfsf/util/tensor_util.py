@@ -100,3 +100,23 @@ def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[Dict[str, 
             parameter_group_names.append(name)
             opt_parameters.append({"params": params})
     return parameter_group_names, opt_parameters
+
+
+def apply_parameter_name_selector(names: List[str], selector: List[str]):
+    result = []
+    negations = []
+    for filt in selector:
+        if filt == "all":
+            result += names
+        elif filt.startswith("!"):
+            negations.append(filt[1:])
+        elif filt in names:
+            result.append(filt)
+        else:
+            assert False, f"unknown name {filt!r}"
+    for filt in negations:
+        if filt in names:
+            result.remove(filt)
+        else:
+            assert False, f"unknown name {filt!r}"
+    return result

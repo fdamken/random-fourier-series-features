@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import torch
 
-from rfsf.util.tensor_util import is_numpy, is_torch, periodic
+from rfsf.util.tensor_util import apply_parameter_name_selector, is_numpy, is_torch, periodic
 
 
 def test_is_numpy():
@@ -26,3 +26,16 @@ def test_periodic(trig):
     x = np.arange(-10, 10, 0.01)
     expected = trig(x)
     assert np.allclose(func(x), expected)
+
+
+@pytest.mark.parametrize(
+    ["selector", "expected"],
+    [
+        (["all"], ["a", "b", "c"]),
+        (["all", "!a"], ["b", "c"]),
+        (["!a", "all"], ["b", "c"]),
+        (["a", "b"], ["a", "b"]),
+    ]
+)
+def test_apply_parameter_name_selector(selector, expected):
+    assert apply_parameter_name_selector(["a", "b", "c"], selector) == expected

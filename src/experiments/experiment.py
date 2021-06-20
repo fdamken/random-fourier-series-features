@@ -1,5 +1,5 @@
 from logging import Logger
-from typing import Any, ClassVar
+from typing import Any, ClassVar, List
 
 import torch
 from gpytorch import ExactMarginalLogLikelihood
@@ -9,7 +9,7 @@ from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import Adam
+from torch.optim import Adam, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -21,8 +21,9 @@ from ingredients.dataset import dataset_ingredient
 from rfsf.util import devices
 from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR
+from rfsf.util.mock_lr import MockLR
 from rfsf.util.progressbar_util import NumberTrendWidget
-from rfsf.util.tensor_util import pickle_str, split_parameter_groups
+from rfsf.util.tensor_util import apply_parameter_name_selector, pickle_str, split_parameter_groups
 
 
 ex = Experiment(ingredients=[dataset_ingredient])
@@ -38,16 +39,27 @@ def default_config():
     likelihood_kwargs = {}
     model_class = ExactGP  # Has to be overwritten by named configs.
     model_kwargs = {}
+    optimizer_class = Adam
+    optimizer_kwargs = {"lr": 0.001}
+    optimizer_alternate_parameters = [["all"]]
     lr_scheduler_class = ConstantLR
     lr_scheduler_kwargs = {}
-    learning_rate = 0.001
     max_iter = 20000
     log_model_state_every_n_iterations = 100
 
 
 # noinspection PyUnusedLocal
 @ex.named_config
-def axial_iteration():
+def axial_iteration_opt():
+    optimizer_alternate_parameters = [
+        ["all", "!cov_module.phases"],
+        ["all", "!cov_module.amplitudes_sqrt"]
+    ]
+
+
+# noinspection PyUnusedLocal
+@ex.named_config
+def axial_iteration_lr():
     lr_scheduler_class = AxialIterationLR
     lr_scheduler_kwargs = {
         "axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"]
@@ -92,9 +104,11 @@ def main(
     likelihood_kwargs: dict,
     model_class: ClassVar[ExactGP],
     model_kwargs: dict,
+    optimizer_class: ClassVar[Optimizer],
+    optimizer_kwargs: dict,
+    optimizer_alternate_parameters: List[List[str]],
     lr_scheduler_class: ClassVar[Any],
     lr_scheduler_kwargs: dict,
-    learning_rate,
     max_iter: int,
     log_model_state_every_n_iterations: int,
     _run: Run,
@@ -113,8 +127,8 @@ def main(
 
     _log.info(
         f"Training a GP with {sum(param.numel() for param in model.parameters() if param.requires_grad)} parameters.\n"
-        f"  - Learnable Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if param.requires_grad)}\n"
-        f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}"
+        + f"  - Learnable Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if param.requires_grad)}\n"
+        + f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}"
     )
 
     loss_val = None
@@ -139,14 +153,34 @@ def main(
 
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
     parameter_group_names, opt_parameters = split_parameter_groups(model)
-    optimizer = Adam(opt_parameters, lr=learning_rate)
-    if lr_scheduler_class is AxialIterationLR:
-        new_lr_scheduler_kwargs = {"parameter_group_names": parameter_group_names}
-        new_lr_scheduler_kwargs.update(lr_scheduler_kwargs)
-        lr_scheduler_kwargs = new_lr_scheduler_kwargs
-        _log.info(f"Using axial iteration optimization with the keyword arguments {lr_scheduler_kwargs}.")
-    scheduler = lr_scheduler_class(optimizer, **lr_scheduler_kwargs)
+    if len(optimizer_alternate_parameters) > 1:
+        assert lr_scheduler_class is ConstantLR, "when using multiple optimizers, no learning rate schedule can be used"
+        covered_parameters = set()
+        optimizers, optimizers_parameters = [], []
+        for opt_parameter_selector in optimizer_alternate_parameters:
+            selected_parameter_names = apply_parameter_name_selector(parameter_group_names, opt_parameter_selector)
+            selected_opt_parameters = [opt_parameters[parameter_group_names.index(name)] for name in selected_parameter_names]
+            optimizers.append(optimizer_class(selected_opt_parameters, **optimizer_kwargs))
+            optimizers_parameters.append(selected_parameter_names)
+            covered_parameters = covered_parameters.union(set(selected_parameter_names))
+        assert set(parameter_group_names) == covered_parameters, "optimizer specification does not cover for all existing parameters"
+        scheduler = MockLR()
+    else:
+        optimizer = optimizer_class(opt_parameters, **optimizer_kwargs)
+        if lr_scheduler_class is AxialIterationLR:
+            new_lr_scheduler_kwargs = {"parameter_group_names": parameter_group_names}
+            new_lr_scheduler_kwargs.update(lr_scheduler_kwargs)
+            lr_scheduler_kwargs = new_lr_scheduler_kwargs
+            _log.info(f"Using axial iteration optimization with the keyword arguments {lr_scheduler_kwargs}.")
+        scheduler = lr_scheduler_class(optimizer, **lr_scheduler_kwargs)
+        optimizers = [optimizer]
+        optimizers_parameters = [parameter_group_names]
+    _log.info(
+        f"Using {len(optimizers_parameters)} optimizer{'s' if len(optimizers_parameters) > 1 else ''} with the following parameters:\n"
+        + "\n".join(f"  - {optimizer_parameters}" for optimizer_parameters in optimizers_parameters)
+    )
     for step in range(max_iter):
+        optimizer = optimizers[step % len(optimizers)]
         optimizer.zero_grad()
         out = model(train_inputs)
         loss = -mll(out, train_targets)
