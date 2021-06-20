@@ -91,4 +91,4 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
             cosine_coefficients.append(quadrature(func_cosine_coefficients(n), **quadrature_kwargs)[0] / self.half_period)
             sine_coefficients.append(quadrature(func_sine_coefficients(n), **quadrature_kwargs)[0] / self.half_period)
 
-        return torch.tensor(cosine_coefficients, dtype=self._torch_dtype), torch.tensor(sine_coefficients, dtype=self._torch_dtype)
+        return torch.from_numpy(np.asarray(cosine_coefficients)).to(self._torch_dtype), torch.from_numpy(np.asarray(sine_coefficients)).to(self._torch_dtype)

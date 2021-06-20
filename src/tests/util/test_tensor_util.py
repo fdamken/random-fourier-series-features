@@ -35,7 +35,7 @@ def test_periodic(trig):
         (["all", "!a"], ["b", "c"]),
         (["!a", "all"], ["b", "c"]),
         (["a", "b"], ["a", "b"]),
-    ]
+    ],
 )
 def test_apply_parameter_name_selector(selector, expected):
     assert apply_parameter_name_selector(["a", "b", "c"], selector) == expected
