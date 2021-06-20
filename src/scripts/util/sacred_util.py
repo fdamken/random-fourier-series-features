@@ -69,7 +69,7 @@ def load_experiment():
 
     run_ingredient, load_config, load_metrics, load_run, load_model = make_run_ingredient(experiment_dir)
     ex = Experiment(ingredients=[dataset_ingredient, run_ingredient])
-    ex.add_config({"__figures_dir": figures_dir})
+    ex.add_config({"__experiment_dir": experiment_dir, "__figures_dir": figures_dir})
     config = load_config()
     ex.add_config(config)
     dataset_ingredient.add_config(config["dataset"])

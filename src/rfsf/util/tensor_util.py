@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 
-T = TypeVar("T", dict, list, np.ndarray, torch.Tensor)
+T = TypeVar("T", dict, list, np.ndarray, torch.Tensor)  # pylint: disable=invalid-name
 
 # Type alias to accept both NumPy arrays and Torch tensors.
 NdTensor = Union[np.ndarray, torch.Tensor]
@@ -49,10 +49,23 @@ def to_numpy(val: NdTensor, *, force_detach: bool = False, copy: bool = False) -
 
 
 def pickle_str(obj: Any) -> str:
+    """
+    Pickles the given object using :py:meth:`pickle.dumps` and base64-encodes the result. Can be unpickled using
+    :py:meth:`.unpickle_str`.
+
+    :param obj: object to pickle
+    :return: base64-representation of the pickled object
+    """
     return codecs.encode(pickle.dumps(obj), "base64").decode()
 
 
 def unpickle_str(obj: str) -> Any:
+    """
+    Unpickles the given base64-representation of a pickle object as produced by :py:meth:`.pickle_str`.
+
+    :param obj: base64-representation of the pickled object
+    :return: unpickled object
+    """
     return pickle.loads(codecs.decode(obj.encode(), "base64"))
 
 

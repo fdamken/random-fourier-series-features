@@ -11,6 +11,7 @@ from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
+from rfsf.util import devices
 from rfsf.util.tensor_util import to_numpy, unpickle_str
 from scripts.plotting.util import savefig
 
@@ -65,7 +66,8 @@ def plot_process(
     y_lim: Optional[Tuple[float, float]] = None,
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
-    (train_x, train_y), (test_x, test_y) = dataset.load_data()
+    (train_x, train_y), (test_x, test_y) = dataset.load_data(device=devices.cuda())
+    model.to(devices.cuda())
     model.eval()
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         observed_pred = model(test_x)
@@ -93,6 +95,7 @@ def plot_features(
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
     _, (test_inputs, _) = dataset.load_data()
+    test_inputs = torch.arange(2 * test_inputs.min(), 2 * test_inputs.max(), 0.01)
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
     features = to_numpy(featurize(test_inputs.unsqueeze(-1)))
     ax.plot(test_inputs, features[:, :max_num_features])

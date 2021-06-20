@@ -1,6 +1,6 @@
 from ingredients import dataset
 from scripts.plotting.common import plot_process
-from scripts.plotting.util import savefig
+from scripts.plotting.util import savefig, show_debug_info
 from scripts.util.sacred_util import load_experiment
 
 
@@ -14,8 +14,16 @@ def default_config():
 
 
 @ex.main
-def main(__figures_dir: str, __num_samples: int):
-    savefig(plot_process(load_model(), __num_samples, dataset.get_title()), __figures_dir, "gp").show()
+def main(__figures_dir: str, __experiment_dir: str, __num_samples: int):
+    savefig(
+        show_debug_info(
+            plot_process(load_model(), __num_samples, dataset.get_title()),
+            load_run(),
+            __experiment_dir,
+        ),
+        __figures_dir,
+        "gp",
+    ).show()
 
 
 if __name__ == "__main__":

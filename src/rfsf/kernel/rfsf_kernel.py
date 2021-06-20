@@ -1,5 +1,5 @@
 import math
-from typing import NoReturn
+from typing import NoReturn, Optional, Tuple
 
 import numpy as np
 import torch
@@ -17,6 +17,9 @@ class RFSFKernel(Kernel):
     .. warning::
         This class is part of ongoing research!
     """
+
+    BUFFER_RAND_WEIGHTS = "rand_weights"
+    BUFFER_RAND_BIASES = "rand_biases"
 
     has_lengthscale = True
 
@@ -54,9 +57,6 @@ class RFSFKernel(Kernel):
         if last_dim_is_batch:
             x1 = x1.transpose(-1, -2).unsqueeze(-1)
             x2 = x2.transpose(-1, -2).unsqueeze(-1)
-        num_dims = x1.size(-1)
-        if not hasattr(self, "randn_weights") or not hasattr(self, "rand_phases"):
-            self._init_weights_and_phases(num_dims, self.num_samples)
         x1_eq_x2 = torch.equal(x1, x2)
         z1 = self._featurize(x1)
         if x1_eq_x2:
@@ -73,12 +73,48 @@ class RFSFKernel(Kernel):
             return RootLazyTensor(z1 / math.sqrt(D))
         return MatmulLazyTensor(z1 / D, z2.transpose(-1, -2))
 
-    def _init_weights_and_phases(self, num_dims: int, num_samples: int) -> NoReturn:
-        """Initializes the random weights and phases and stores them as buffers `rand_weights` and `rand_phases`."""
-        rand_weights = torch.randn((num_dims, num_samples), dtype=self.raw_lengthscale.dtype, device=self.raw_lengthscale.device)
-        rand_phases = 2 * np.pi * torch.rand((num_samples,), dtype=self.raw_lengthscale.dtype, device=self.raw_lengthscale.device)
-        self.register_buffer("rand_weights", rand_weights)
-        self.register_buffer("rand_phases", rand_phases)
+    def clear_weights_and_phases(self) -> NoReturn:
+        """
+        Clears the random weights and phases buffers (i.e., sets them to `None`) such that the weights and phases will
+        be sampled again by :py:meth:`.get_weights_and_phases` (and indirectly by :py:meth:`.forward`).
+        """
+        self.register_buffer(RFSFKernel.BUFFER_RAND_WEIGHTS, None)
+        self.register_buffer(RFSFKernel.BUFFER_RAND_BIASES, None)
+
+    def get_weights_and_phases(self, num_dims: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Initializes the random weights and phases and stores them as buffers `rand_weights` and `rand_phases` if they do
+        not exist yet. If they exist, this method does nothing. To clear and re-initialize the buffers, call
+        :py:meth:`.clear_weights_and_phases`.
+
+        :param num_dims: input dimensionality, `d`; not necessary if weights and phases are alread stored
+        :return: stored or newly generated random weights; shape `(d, D)`
+        :return: stored or newly generated random phases; shape `(D,)`
+        """
+        if hasattr(self, RFSFKernel.BUFFER_RAND_WEIGHTS) and hasattr(self, RFSFKernel.BUFFER_RAND_BIASES):
+            rand_weights, rand_phases = getattr(self, RFSFKernel.BUFFER_RAND_WEIGHTS), getattr(self, RFSFKernel.BUFFER_RAND_BIASES)
+        else:
+            rand_weights, rand_phases = None, None
+        if rand_weights is None or rand_phases is None:
+            assert num_dims is not None, "num_dims must not be None if buffers are empty"
+            rand_weights = torch.randn((num_dims, self.num_samples), dtype=self.raw_lengthscale.dtype, device=self.raw_lengthscale.device)
+            rand_phases = 2 * np.pi * torch.rand((self.num_samples,), dtype=self.raw_lengthscale.dtype, device=self.raw_lengthscale.device)
+            rand_weights, rand_phases = self.set_weights_and_phases(rand_weights, rand_phases)
+        return rand_weights, rand_phases
+
+    def set_weights_and_phases(self, rand_weights: torch.Tensor, rand_phases: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Sets the random weights and phases buffers to the given weights and phases. This can be used for getting a
+        deterministic kernel output, e.g., when animating the mean over multiple iterations.
+
+        :param rand_weights: random weights to set; shape `(d, D)`
+        :param rand_phases: random phases to set; shape `(D,)`
+        :return: random weights; shape `(d, D)`
+        :return: random phases; shape `(D,)`
+        """
+        self.register_buffer(RFSFKernel.BUFFER_RAND_WEIGHTS, rand_weights)
+        self.register_buffer(RFSFKernel.BUFFER_RAND_BIASES, rand_phases)
+        return rand_weights, rand_phases
 
     def _featurize(self, x: torch.Tensor, *, identity_randoms: bool = False) -> torch.Tensor:
         """
@@ -87,8 +123,8 @@ class RFSFKernel(Kernel):
         :param x: input data; shape `(..., n, d)`
         :return: feature vector; shape `(..., n, D)`
         """
-        rand_weights = self.rand_weights
-        rand_phases = self.rand_phases
+
+        rand_weights, rand_phases = self.get_weights_and_phases(x.size(-1))
         amplitudes = self._amplitudes
         phases = self.phases
 

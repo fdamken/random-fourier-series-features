@@ -2,7 +2,7 @@ from gpytorch.models import GP
 from matplotlib.figure import Figure
 
 from scripts.plotting.common import animate_over_model_states, plot_covariance
-from scripts.plotting.util import AccumulativeNormalization
+from scripts.plotting.util import AccumulativeNormalization, show_debug_info
 from scripts.util.sacred_util import load_experiment
 
 
@@ -17,11 +17,15 @@ def default_config():
 
 
 @ex.main
-def main(__figures_dir: str, __frame_duration: int, __normalize: bool):
+def main(__figures_dir: str, __experiment_dir: str, __frame_duration: int, __normalize: bool):
     norm = AccumulativeNormalization() if __normalize else None
 
     def plot_single(model: GP, title_suffix: str) -> Figure:
-        return plot_covariance(model, title_suffix=title_suffix, norm=norm)
+        return show_debug_info(
+            plot_covariance(model, title_suffix=title_suffix, norm=norm),
+            load_run(),
+            __experiment_dir,
+        )
 
     animate_over_model_states(load_model(), load_metrics(), load_run(), __figures_dir, "prior-covariance", plot_single, frame_duration=__frame_duration, two_pass=__normalize)
 
