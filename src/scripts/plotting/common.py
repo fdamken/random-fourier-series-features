@@ -11,6 +11,7 @@ from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
+from rfsf.preprocessing.pre_processor import PreProcessor
 from rfsf.util import devices
 from rfsf.util.tensor_util import to_numpy, unpickle_str
 from scripts.plotting.util import savefig
@@ -20,7 +21,16 @@ sample_color_cycler = cycler(color=["tab:blue", "tab:orange", "tab:green", "tab:
 
 
 def animate_over_model_states(
-    model: GP, metrics: dict, run: dict, figures_dir: str, filename: str, plot_single: Callable[[GP, str], Figure], *, two_pass: bool = False, frame_duration: int = 50
+    pre_processor: PreProcessor,
+    model: GP,
+    metrics: dict,
+    run: dict,
+    figures_dir: str,
+    filename: str,
+    plot_single: Callable[[PreProcessor, GP, str], Figure],
+    *,
+    two_pass: bool = False,
+    frame_duration: int = 50,
 ):
     model_states = metrics["model_state"]
 
@@ -44,7 +54,7 @@ def animate_over_model_states(
                 frame_filename = f"{step.lower()}"
             else:
                 assert False, f"unexpected step type {type(step)}"
-            fig = plot_single(model, f"; Iter. {step}")
+            fig = plot_single(pre_processor, model, f"; Iter. {step}")
             if save_fig:
                 savefig(fig, figures_dir, frame_filename, formats=["png"])
                 filenames.append(frame_filename)
@@ -56,6 +66,7 @@ def animate_over_model_states(
 
 
 def plot_process(
+    pre_processor: PreProcessor,
     model: GP,
     num_samples: int,
     title: str,
@@ -67,17 +78,19 @@ def plot_process(
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
     (train_x, train_y), (test_x, test_y) = dataset.load_data(device=devices.cuda())
+    pre_processor.to(devices.cuda())
     model.to(devices.cuda())
     model.eval()
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
-        observed_pred = model(test_x)
+        test_x_transformed = pre_processor.transform_inputs(test_x)
+        observed_pred = model(test_x_transformed)
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
-    lower, upper = observed_pred.confidence_region()
+    # lower, upper = observed_pred.confidence_region()  # TODO: Inversely transform the confidence region somehow.
     ax.scatter(to_numpy(train_x), to_numpy(train_y), color="black", marker="*", s=100, label="Observed Data", zorder=3)
     ax.plot(to_numpy(test_x), to_numpy(test_y), color="black", label="True Func.", zorder=0)
     for _, c in zip(range(num_samples), sample_color_cycler):
-        ax.plot(to_numpy(test_x), to_numpy(observed_pred.sample()), color=c["color"], alpha=0.5, zorder=2)
-    ax.fill_between(to_numpy(test_x), to_numpy(lower), to_numpy(upper), color="tab:blue", alpha=0.2, label=r"Mean $\pm$ Confidence", zorder=1)
+        ax.plot(to_numpy(test_x), to_numpy(pre_processor.inverse_transform_targets(observed_pred.sample())), color=c["color"], alpha=0.5, zorder=2)
+    # ax.fill_between(to_numpy(test_x), to_numpy(lower), to_numpy(upper), color="tab:blue", alpha=0.2, label=r"Mean $\pm$ Confidence", zorder=1)
     if y_lim is not None:
         ax.set_ylim(y_lim)
     ax.set_title(title + title_suffix)
@@ -108,19 +121,27 @@ def plot_features(
 
 
 def plot_covariance(
-    model: GP, *, title_suffix: str = "", posterior: bool = False, show_cbar: bool = True, norm: Optional[colors.Normalize] = None, fig_ax: Optional[Tuple[Figure, Axes]] = None
+    pre_processor: PreProcessor,
+    model: GP,
+    *,
+    title_suffix: str = "",
+    posterior: bool = False,
+    show_cbar: bool = True,
+    norm: Optional[colors.Normalize] = None,
+    fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
     inputs = torch.arange(-5, +5, 0.01)
+    inputs_transformed = pre_processor.transform_inputs(inputs)
     targets = inputs
     if posterior:
         model.eval()
     else:
         # Hack the test data as training data into the model to compute the kernel and not the posterior covariance.
-        model.set_train_data(inputs, targets, strict=False)
+        model.set_train_data(inputs_transformed, pre_processor.transform_targets(targets), strict=False)
         model.train()
     x_min, x_max = inputs.min(), inputs.max()
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
-    mappable = ax.imshow(to_numpy(model(inputs).covariance_matrix), extent=[x_min, x_max, x_min, x_max], norm=norm)
+    mappable = ax.imshow(to_numpy(model(inputs_transformed).covariance_matrix), extent=[x_min, x_max, x_min, x_max], norm=norm)
     if show_cbar:
         fig.colorbar(mappable)
     ax.set_aspect(1.0)

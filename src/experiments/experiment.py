@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import Bar, ETA, Percentage, ProgressBar
+from progressbar import ETA, Bar, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import Adam, LBFGS, Optimizer
+from torch.optim import LBFGS, Adam, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -18,6 +18,8 @@ from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
+from rfsf.preprocessing.pca_whitening import Standardization
+from rfsf.preprocessing.pre_processor import PreProcessor
 from rfsf.util import devices
 from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR
@@ -37,6 +39,8 @@ def default_config():
     seed = 42
     likelihood_class = GaussianLikelihood
     likelihood_kwargs = {}
+    pre_processor_class = Standardization
+    pre_processor_kwargs = {}
     model_class = ExactGP  # Has to be overwritten by named configs.
     model_kwargs = {}
     optimizer_class = Adam
@@ -109,6 +113,8 @@ def rfsf_relu():
 def main(
     likelihood_class: ClassVar[Likelihood],
     likelihood_kwargs: dict,
+    pre_processor_class: ClassVar[PreProcessor],
+    pre_processor_kwargs: dict,
     model_class: ClassVar[ExactGP],
     model_kwargs: dict,
     optimizer_class: ClassVar[Optimizer],
@@ -124,6 +130,14 @@ def main(
     _log: Logger,
 ):
     (train_inputs, train_targets), _ = dataset.load_data(device=devices.cuda())
+
+    pre_processor: PreProcessor = pre_processor_class(**pre_processor_kwargs)
+    pre_processor.fit(train_inputs, train_targets)
+    train_inputs = pre_processor.transform_inputs(train_inputs)
+    train_targets = pre_processor.transform_targets(train_targets)
+
+    # Add the pre-processor as an artifact directly after fitting it such that the buffers are initialized.
+    add_pickle_artifact(_run, pre_processor, "pre_processor", device=devices.cuda())
 
     likelihood: Likelihood = likelihood_class(**likelihood_kwargs)
     model: ExactGP = model_class(train_inputs, train_targets, likelihood, **model_kwargs)

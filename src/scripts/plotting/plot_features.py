@@ -5,7 +5,7 @@ from scripts.plotting.util import savefig, show_debug_info
 from scripts.util.sacred_util import load_experiment
 
 
-ex, load_config, load_metrics, load_run, load_model = load_experiment()
+ex, load_config, load_metrics, load_run, load_model, load_pre_processor = load_experiment()
 
 
 # noinspection PyUnusedLocal

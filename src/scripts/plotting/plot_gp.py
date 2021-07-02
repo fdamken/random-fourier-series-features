@@ -4,7 +4,7 @@ from scripts.plotting.util import savefig, show_debug_info
 from scripts.util.sacred_util import load_experiment
 
 
-ex, load_config, load_metrics, load_run, load_model = load_experiment()
+ex, load_config, load_metrics, load_run, load_model, load_pre_processor = load_experiment()
 
 
 # noinspection PyUnusedLocal
@@ -17,7 +17,7 @@ def default_config():
 def main(__figures_dir: str, __experiment_dir: str, __num_samples: int):
     savefig(
         show_debug_info(
-            plot_process(load_model(), __num_samples, dataset.get_title()),
+            plot_process(load_pre_processor(), load_model(), __num_samples, dataset.get_title()),
             load_run(),
             __experiment_dir,
         ),

@@ -10,6 +10,7 @@ from sacred import Experiment, Ingredient
 from torch import nn
 
 from ingredients.dataset import dataset_ingredient
+from rfsf.preprocessing.pre_processor import PreProcessor
 from rfsf.util.tensor_util import unpickle_str
 
 
@@ -37,7 +38,11 @@ def make_run_ingredient(base_dir: str):
         model.load_state_dict(unpickle_str(load_run()["result"]["model_state"]))
         return model
 
-    return run_ingredient, load_config, load_metrics, load_run, load_model
+    @lru_cache
+    def load_pre_processor() -> PreProcessor:
+        return _load_pickle(f"{base_dir}/pre_processor.pkl")
+
+    return run_ingredient, load_config, load_metrics, load_run, load_model, load_pre_processor
 
 
 def load_experiment():
@@ -67,13 +72,13 @@ def load_experiment():
     else:
         os.makedirs(figures_dir)
 
-    run_ingredient, load_config, load_metrics, load_run, load_model = make_run_ingredient(experiment_dir)
+    run_ingredient, load_config, load_metrics, load_run, load_model, load_pre_processor = make_run_ingredient(experiment_dir)
     ex = Experiment(ingredients=[dataset_ingredient, run_ingredient])
     ex.add_config({"__experiment_dir": experiment_dir, "__figures_dir": figures_dir})
     config = load_config()
     ex.add_config(config)
     dataset_ingredient.add_config(config["dataset"])
-    return ex, load_config, load_metrics, load_run, load_model
+    return ex, load_config, load_metrics, load_run, load_model, load_pre_processor
 
 
 def _load_jsonpickle(path: str) -> dict:
