@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import ETA, Bar, Percentage, ProgressBar
+from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import LBFGS, Adam, Optimizer
+from torch.optim import Adam, LBFGS, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -58,7 +58,10 @@ def axial_iteration_opt():
 @ex.named_config
 def axial_iteration_lr():
     lr_scheduler_class = AxialIterationLR
-    lr_scheduler_kwargs = {"axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"]}
+    lr_scheduler_kwargs = {
+        "axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"],
+        "epoch_inverse_scale": 1000,
+    }
 
 
 # noinspection PyUnusedLocal
@@ -187,6 +190,8 @@ def main(
     for step in range(max_iter):
         optimizer = optimizers[step % len(optimizers)]
 
+        learning_rates = scheduler.get_last_lr()
+
         def evaluate():
             optimizer.zero_grad()
             out = model(train_inputs)
@@ -203,14 +208,16 @@ def main(
 
         loss_val = loss.item()
         noise = model.likelihood.noise.item()
-        learning_rates = scheduler.get_last_lr()
         parameters = [p for p in model.parameters() if p.grad is not None]
         grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
 
         _run.log_scalar("loss", loss_val, step=step)
         _run.log_scalar("noise", noise, step=step)
-        for param_name, lr in zip(parameter_group_names, learning_rates):
-            _run.log_scalar(f"learning_rate/{param_name}", lr, step=step)
+        if len(learning_rates) == 1:
+            _run.log_scalar("learning_rate", learning_rates[0], step=step)
+        else:
+            for param_name, lr in zip(parameter_group_names, learning_rates):
+                _run.log_scalar(f"learning_rate/{param_name}", lr, step=step)
         _run.log_scalar("grad_norm", grad_norm.item(), step=step)
         if step % log_model_state_every_n_iterations == 0:
             _run.log_scalar("model_state", pickle_str(model.state_dict()), step=step)
@@ -219,7 +226,7 @@ def main(
             # initialized and loading would fail.
             add_pickle_artifact(_run, model, "model", device=devices.cuda())
 
-        bar.update(step + 1)
+        bar.update(step)
     bar.finish()
 
     return {"model_state": pickle_str(model.state_dict())}
