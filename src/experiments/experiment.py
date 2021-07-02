@@ -23,7 +23,7 @@ from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR
 from rfsf.util.mock_lr import MockLR
 from rfsf.util.progressbar_util import NumberTrendWidget
-from rfsf.util.tensor_util import apply_parameter_name_selector, pickle_str, split_parameter_groups
+from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, pickle_str, split_parameter_groups
 
 
 ex = Experiment(ingredients=[dataset_ingredient])
@@ -40,12 +40,14 @@ def default_config():
     model_class = ExactGP  # Has to be overwritten by named configs.
     model_kwargs = {}
     optimizer_class = Adam
-    optimizer_kwargs = {"lr": 0.001}
+    optimizer_kwargs = {"lr": 0.01}
     optimizer_alternate_parameters = [["all"]]
     lr_scheduler_class = ConstantLR
     lr_scheduler_kwargs = {}
     max_iter = 20000
     log_model_state_every_n_iterations = 100
+    log_parameter_values = True
+    log_parameter_grad_values = True
 
 
 # noinspection PyUnusedLocal
@@ -96,7 +98,7 @@ def rfsf_relu():
     model_class = RFSFReLUGP
     model_kwargs = dict(
         num_samples=5000,
-        num_harmonics=16,
+        num_harmonics=8,
         half_period=1.0,
         optimize_amplitudes=True,
         optimize_phases=True,
@@ -116,6 +118,8 @@ def main(
     lr_scheduler_kwargs: dict,
     max_iter: int,
     log_model_state_every_n_iterations: int,
+    log_parameter_values: bool,
+    log_parameter_grad_values: bool,
     _run: Run,
     _log: Logger,
 ):
@@ -132,8 +136,8 @@ def main(
 
     _log.info(
         f"Training a GP with {sum(param.numel() for param in model.parameters() if param.requires_grad)} parameters.\n"
-        + f"  - Learnable Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if param.requires_grad)}\n"
-        + f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}"
+        + f"  - Learnable Parameters: {', '.join(f'{name} [{param.numel()} params, shape {tuple(param.shape)}]' for name, param in model.named_parameters() if param.requires_grad)}\n"
+        + f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}",
     )
 
     loss_val = None
@@ -218,6 +222,18 @@ def main(
         else:
             for param_name, lr in zip(parameter_group_names, learning_rates):
                 _run.log_scalar(f"learning_rate/{param_name}", lr, step=step)
+        if log_parameter_values or log_parameter_grad_values:
+            for param_name, param in model.named_parameters():
+                if param.numel() == 1:
+                    _run.log_scalar(f"parameters/{param_name}", param.item(), step=step)
+                    if log_parameter_grad_values and param.requires_grad:
+                        _run.log_scalar(f"parameters_grad/{param_name}", param.grad.item(), step=step)
+                elif param.numel() > 1:
+                    for index in gen_index_iterator(param):
+                        metric_suffix = f"{param_name}[{', '.join([str(i) for i in index])}]"
+                        _run.log_scalar(f"parameters/{metric_suffix}", param[index].item(), step=step)
+                        if log_parameter_grad_values and param.requires_grad:
+                            _run.log_scalar(f"parameters_grad/{metric_suffix}", param.grad[index].item(), step=step)
         _run.log_scalar("grad_norm", grad_norm.item(), step=step)
         if step % log_model_state_every_n_iterations == 0:
             _run.log_scalar("model_state", pickle_str(model.state_dict()), step=step)

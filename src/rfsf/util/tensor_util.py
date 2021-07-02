@@ -1,6 +1,7 @@
 import codecs
 import pickle
-from typing import Any, Callable, Dict, List, NoReturn, Tuple, TypeVar, Union
+from itertools import product
+from typing import Any, Callable, Dict, Iterator, List, NoReturn, Tuple, TypeVar, Union
 
 import numpy as np
 import torch
@@ -120,3 +121,9 @@ def apply_parameter_name_selector(names: List[str], selector: List[str]):
         else:
             assert False, f"unknown name {filt!r}"
     return result
+
+
+def gen_index_iterator(val: NdTensor) -> Iterator[tuple]:
+    assert len(val.shape) > 0, "val has to have at least one dimension"
+    indices = [range(dim_length) for dim_length in val.shape]
+    return product(*indices)
