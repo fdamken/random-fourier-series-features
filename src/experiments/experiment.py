@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import Bar, ETA, Percentage, ProgressBar
+from progressbar import ETA, Bar, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import Adam, LBFGS, Optimizer
+from torch.optim import LBFGS, Adam, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
