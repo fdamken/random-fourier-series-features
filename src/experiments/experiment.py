@@ -28,7 +28,7 @@ from rfsf.util.tensor_util import apply_parameter_name_selector, pickle_str, spl
 
 ex = Experiment(ingredients=[dataset_ingredient])
 ex.observers.append(FileStorageObserver("data/temp/results"))
-ex.observers.append(WandbObserver(project="random-fourier-series-features"))
+ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf"))
 
 
 # noinspection PyUnusedLocal
