@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import ETA, Bar, Percentage, ProgressBar
+from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import LBFGS, Adam, Optimizer
+from torch.optim import Adam, LBFGS, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -44,10 +44,10 @@ def default_config():
     optimizer_alternate_parameters = [["all"]]
     lr_scheduler_class = ConstantLR
     lr_scheduler_kwargs = {}
-    max_iter = 20000
+    max_iter = 10000
     log_model_state_every_n_iterations = 100
-    log_parameter_values = True
-    log_parameter_grad_values = True
+    log_parameter_values = False
+    log_parameter_grad_values = False
 
 
 # noinspection PyUnusedLocal
