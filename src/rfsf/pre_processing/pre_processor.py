@@ -28,6 +28,10 @@ class PreProcessor(ABC, torch.nn.Module):
         assert self._fit_invoked, "fit() has to be invoked before transforming data"
         return self._inverse_transform_targets(targets_transformed)
 
+    def inverse_transform_target_std_devs(self, target_std_devs_transformed: torch.Tensor) -> torch.Tensor:
+        assert self._fit_invoked, "fit() has to be invoked before transforming data"
+        return self._inverse_transform_target_std_devs(target_std_devs_transformed)
+
     @abstractmethod
     def _fit(self, inputs: torch.Tensor, targets: torch.Tensor) -> None:
         raise NotImplementedError()
@@ -46,4 +50,8 @@ class PreProcessor(ABC, torch.nn.Module):
 
     @abstractmethod
     def _inverse_transform_targets(self, targets_transformed: torch.Tensor) -> torch.Tensor:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _inverse_transform_target_std_devs(self, target_std_devs_transformed: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError()

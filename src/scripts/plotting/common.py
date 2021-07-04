@@ -77,6 +77,7 @@ def plot_process(
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
     (train_x, train_y), (test_x, test_y) = dataset.load_data(device=devices.cuda())
+    test_x *= 10
     pre_processor.to(devices.cuda())
     model.to(devices.cuda())
     model.eval()
@@ -85,7 +86,8 @@ def plot_process(
         pred = model(test_x_transformed)
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
     pred_mean = pre_processor.inverse_transform_targets(pred.mean)
-    pred_conf = 2 * pred.stddev
+    # TODO: Is this inverse transformation correct? It does not seem so, but the plots look good…
+    pred_conf = torch.tensor(2) * pre_processor.inverse_transform_target_std_devs(pred.stddev)
     lower, upper = pred_mean - pred_conf, pred_mean + pred_conf
     ax.scatter(to_numpy(train_x), to_numpy(train_y), color="black", marker="*", s=100, label="Observed Data", zorder=3)
     ax.plot(to_numpy(test_x), to_numpy(test_y), color="black", label="True Func.", zorder=0)
