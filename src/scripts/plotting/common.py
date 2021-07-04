@@ -77,7 +77,6 @@ def plot_process(
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
     (train_x, train_y), (test_x, test_y) = dataset.load_data(device=devices.cuda())
-    test_x *= 10
     pre_processor.to(devices.cuda())
     model.to(devices.cuda())
     model.eval()
