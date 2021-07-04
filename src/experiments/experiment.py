@@ -18,6 +18,7 @@ from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
+from rfsf.pre_processing.no_op_pre_processor import NoOpPreProcessor
 from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.pre_processing.standardization import Standardization
 from rfsf.util import devices
@@ -52,6 +53,13 @@ def default_config():
     log_model_state_every_n_iterations = 100
     log_parameter_values = False
     log_parameter_grad_values = False
+
+
+# noinspection PyUnusedLocal
+@ex.named_config
+def no_pre_processing():
+    pre_processor_class = NoOpPreProcessor
+    pre_processor_kwargs = {}
 
 
 # noinspection PyUnusedLocal
