@@ -16,7 +16,7 @@ from rfsf.util.tensor_util import to_numpy, unpickle_str
 from scripts.plotting.util import savefig
 
 
-sample_color_cycler = cycler(color=["tab:blue", "tab:orange", "tab:green", "tab:red", "tab:purple", "tab:brown", "tab:pink", "tab:gray", "tab:olive", "tab:cyan"])
+sample_color_cycler = cycler(color=["tab:orange", "tab:green", "tab:red", "tab:purple", "tab:brown", "tab:pink", "tab:gray", "tab:olive", "tab:cyan"])
 
 
 def animate_over_model_states(
@@ -90,8 +90,9 @@ def plot_process(
     ax.scatter(to_numpy(train_x), to_numpy(train_y), color="black", marker="*", s=100, label="Observed Data", zorder=3)
     ax.plot(to_numpy(test_x), to_numpy(test_y), color="black", label="True Func.", zorder=0)
     for _, c in zip(range(num_samples), sample_color_cycler):
-        ax.plot(to_numpy(test_x), to_numpy(pre_processor.inverse_transform_targets(pred.sample())), color=c["color"], alpha=0.5, zorder=2)
-    ax.fill_between(to_numpy(test_x), to_numpy(lower), to_numpy(upper), color="tab:blue", alpha=0.2, label=r"Mean $\pm$ Confidence", zorder=1)
+        ax.plot(to_numpy(test_x), to_numpy(pre_processor.inverse_transform_targets(pred.sample())), color=c["color"], alpha=0.3, zorder=2)
+    ax.plot(to_numpy(test_x), to_numpy(pred_mean), color="tab:blue", label="Mean", zorder=3)
+    ax.fill_between(to_numpy(test_x), to_numpy(lower), to_numpy(upper), color="tab:blue", alpha=0.2, label=r"Confidence", zorder=1)
     if y_lim is not None:
         ax.set_ylim(y_lim)
     ax.set_title(title + title_suffix)
