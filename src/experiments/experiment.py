@@ -89,8 +89,8 @@ def rfsf_random():
     model_class = RFSFRandomGP
     model_kwargs = dict(
         num_samples=5000,
-        num_harmonics=16,
-        half_period=1.0,
+        num_harmonics=8,
+        half_period=3.0,  # If the inputs are standardized, which they should, ±3 includes 99.9% of the data.
         optimize_amplitudes=True,
         optimize_phases=True,
     )
@@ -103,7 +103,7 @@ def rfsf_relu():
     model_kwargs = dict(
         num_samples=5000,
         num_harmonics=8,
-        half_period=1.0,
+        half_period=3.0,  # If the inputs are standardized, which they should, ±3 includes 99.9% of the data.
         optimize_amplitudes=True,
         optimize_phases=True,
     )
