@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import ETA, Bar, Percentage, ProgressBar
+from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import LBFGS, Adam, Optimizer
+from torch.optim import Adam, LBFGS, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -18,8 +18,8 @@ from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
-from rfsf.preprocessing.pca_whitening import Standardization
-from rfsf.preprocessing.pre_processor import PreProcessor
+from rfsf.pre_processing.pre_processor import PreProcessor
+from rfsf.pre_processing.standardization import Standardization
 from rfsf.util import devices
 from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR

@@ -10,7 +10,7 @@ from sacred import Experiment, Ingredient
 from torch import nn
 
 from ingredients.dataset import dataset_ingredient
-from rfsf.preprocessing.pre_processor import PreProcessor
+from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.util.tensor_util import unpickle_str
 
 

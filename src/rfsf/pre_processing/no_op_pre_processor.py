@@ -1,6 +1,6 @@
 import torch
 
-from rfsf.preprocessing.pre_processor import PreProcessor
+from rfsf.pre_processing.pre_processor import PreProcessor
 
 
 class NoOpPreProcessor(PreProcessor):

@@ -1,7 +1,7 @@
 from gpytorch.models import GP
 from matplotlib.figure import Figure
 
-from rfsf.preprocessing.pre_processor import PreProcessor
+from rfsf.pre_processing.pre_processor import PreProcessor
 from scripts.plotting.common import animate_over_model_states, plot_covariance
 from scripts.plotting.util import AccumulativeNormalization, show_debug_info
 from scripts.util.sacred_util import load_experiment

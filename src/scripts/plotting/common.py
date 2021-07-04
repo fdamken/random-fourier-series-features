@@ -2,16 +2,15 @@ from typing import Callable, Optional, Tuple
 
 import gpytorch
 import torch
+from PIL import Image
 from gpytorch.models import GP
-from matplotlib import colors, cycler
-from matplotlib import pyplot as plt
+from matplotlib import colors, cycler, pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
-from rfsf.preprocessing.pre_processor import PreProcessor
+from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.util import devices
 from rfsf.util.tensor_util import to_numpy, unpickle_str
 from scripts.plotting.util import savefig
@@ -83,14 +82,16 @@ def plot_process(
     model.eval()
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         test_x_transformed = pre_processor.transform_inputs(test_x)
-        observed_pred = model(test_x_transformed)
+        pred = model(test_x_transformed)
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
-    # lower, upper = observed_pred.confidence_region()  # TODO: Inversely transform the confidence region somehow.
+    pred_mean = pre_processor.inverse_transform_targets(pred.mean)
+    pred_conf = 2 * pred.stddev
+    lower, upper = pred_mean - pred_conf, pred_mean + pred_conf
     ax.scatter(to_numpy(train_x), to_numpy(train_y), color="black", marker="*", s=100, label="Observed Data", zorder=3)
     ax.plot(to_numpy(test_x), to_numpy(test_y), color="black", label="True Func.", zorder=0)
     for _, c in zip(range(num_samples), sample_color_cycler):
-        ax.plot(to_numpy(test_x), to_numpy(pre_processor.inverse_transform_targets(observed_pred.sample())), color=c["color"], alpha=0.5, zorder=2)
-    # ax.fill_between(to_numpy(test_x), to_numpy(lower), to_numpy(upper), color="tab:blue", alpha=0.2, label=r"Mean $\pm$ Confidence", zorder=1)
+        ax.plot(to_numpy(test_x), to_numpy(pre_processor.inverse_transform_targets(pred.sample())), color=c["color"], alpha=0.5, zorder=2)
+    ax.fill_between(to_numpy(test_x), to_numpy(lower), to_numpy(upper), color="tab:blue", alpha=0.2, label=r"Mean $\pm$ Confidence", zorder=1)
     if y_lim is not None:
         ax.set_ylim(y_lim)
     ax.set_title(title + title_suffix)

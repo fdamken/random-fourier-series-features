@@ -4,7 +4,7 @@ from typing import Tuple
 from gpytorch.models import GP
 from matplotlib.figure import Figure
 
-from rfsf.preprocessing.pre_processor import PreProcessor
+from rfsf.pre_processing.pre_processor import PreProcessor
 from scripts.plotting.common import animate_over_model_states, plot_features
 from scripts.plotting.util import show_debug_info
 from scripts.util.sacred_util import load_experiment
