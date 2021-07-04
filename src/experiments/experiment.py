@@ -90,7 +90,7 @@ def rfsf_random():
     model_kwargs = dict(
         num_samples=5000,
         num_harmonics=8,
-        half_period=3.0,  # If the inputs are standardized, which they should, ±3 includes 99.9% of the data.
+        half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
         optimize_amplitudes=True,
         optimize_phases=True,
     )
@@ -103,7 +103,7 @@ def rfsf_relu():
     model_kwargs = dict(
         num_samples=5000,
         num_harmonics=8,
-        half_period=3.0,  # If the inputs are standardized, which they should, ±3 includes 99.9% of the data.
+        half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
         optimize_amplitudes=True,
         optimize_phases=True,
     )
