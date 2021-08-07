@@ -30,7 +30,7 @@ def default_config():
 def get_title(name: str) -> str:
     prefix = ""
     if name.startswith(_clustered_prefix):
-        name = name[len(_clustered_prefix):]
+        name = name[len(_clustered_prefix) :]
         prefix = _clustered_title_prefix
     if name in _dataset_titles:
         return prefix + _dataset_titles[name]
@@ -42,7 +42,7 @@ def get_title(name: str) -> str:
 def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
     print(f"Loading {name!r} dataset.")
     if name in (prefix + base_name for prefix in ("", _clustered_prefix) for base_name in ("sine", "cosine", "heaviside", "heavisine", "heavicosine", "discontinuous_odd_cosine")):
-        func_name = name[len(_clustered_prefix):] if name.startswith(_clustered_prefix) else name
+        func_name = name[len(_clustered_prefix) :] if name.startswith(_clustered_prefix) else name
         data = _load_dataset_similar_func(func_name, clustered=name.startswith(_clustered_prefix))
     else:
         assert False, f"unknown dataset {name!r}"
@@ -71,8 +71,7 @@ def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[t
         interval_1_lo, interval_1_up = -1.0, -0.5
         interval_2_lo, interval_2_up = +0.5, +1.0
         interval_lo, interval_up = interval_1_lo, interval_2_up
-        train_inputs = torch.cat([torch.arange(interval_1_lo, interval_1_up, train_resolution),
-                                  torch.arange(interval_2_lo, interval_2_up, train_resolution)])
+        train_inputs = torch.cat([torch.arange(interval_1_lo, interval_1_up, train_resolution), torch.arange(interval_2_lo, interval_2_up, train_resolution)])
     else:
         interval_lo, interval_up = -0.5, 0.5
         train_inputs = torch.arange(interval_lo, interval_up, train_resolution)

@@ -2,11 +2,12 @@ from typing import Callable, Optional, Tuple
 
 import gpytorch
 import torch
-from PIL import Image
 from gpytorch.models import GP
-from matplotlib import colors, cycler, pyplot as plt
+from matplotlib import colors, cycler
+from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset

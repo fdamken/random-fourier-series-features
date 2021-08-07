@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import Bar, ETA, Percentage, ProgressBar
+from progressbar import ETA, Bar, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import Adam, LBFGS, Optimizer
+from torch.optim import LBFGS, Adam, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -111,7 +111,7 @@ def rfsf_relu():
     model_kwargs = dict(
         num_samples=5000,
         num_harmonics=8,
-        half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
+        half_period=0.5,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
         optimize_amplitudes=True,
         optimize_phases=True,
     )

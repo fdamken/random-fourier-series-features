@@ -50,10 +50,14 @@ def load_experiment():
     parser.add_argument("-b", "--base_dir", default="data/temp")
     parser.add_argument("-f", "--figures_dir", default="figures")
     parser.add_argument("-r", "--results_dir", default="results")
+    parser.add_argument("-e", "--eval_dir", default="eval")
     parser.add_argument("-d", "--experiment_id", default="<latest>")
+    parser.add_argument("-D", "--load_dumped_eval", action="store_true")
     args = parser.parse_args()
     figures_dir = f"{args.base_dir}/{args.figures_dir}"
+    eval_dir = f"{args.base_dir}/{args.eval_dir}"
     experiment_dir = f"{args.base_dir}/{args.results_dir}/{args.experiment_id}"
+    load_dumped_eval = args.load_dumped_eval
     match = re.match("^(.+)/<latest([+-][1-9][0-9]*)?>$", experiment_dir)
     if match:
         dirname = match.group(1)
@@ -72,9 +76,14 @@ def load_experiment():
     else:
         os.makedirs(figures_dir)
 
+    if os.path.exists(eval_dir):
+        assert os.path.isdir(eval_dir), f"{eval_dir=} must not exist or must be a directory"
+    else:
+        os.makedirs(eval_dir)
+
     run_ingredient, load_config, load_metrics, load_run, load_model, load_pre_processor = make_run_ingredient(experiment_dir)
     ex = Experiment(ingredients=[dataset_ingredient, run_ingredient])
-    ex.add_config({"__experiment_dir": experiment_dir, "__figures_dir": figures_dir})
+    ex.add_config({"__experiment_dir": experiment_dir, "__figures_dir": figures_dir, "__eval_dir": eval_dir, "__load_dumped_eval": load_dumped_eval})
     config = load_config()
     ex.add_config(config)
     dataset_ingredient.add_config(config["dataset"])
