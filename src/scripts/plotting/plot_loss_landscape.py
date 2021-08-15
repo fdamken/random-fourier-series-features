@@ -25,7 +25,7 @@ ex, load_config, load_metrics, load_run, load_model, load_pre_processor = load_e
 @ex.config
 def default_config():
     __use_test_data = False
-    __amplitudes_limits = (0, 4)
+    __amplitudes_limits = (0.01, 4)
     __phases_limits = (-2 * np.pi, 2 * np.pi)
     __plot_amplitudes = True
     __plot_phases = True
@@ -130,10 +130,10 @@ def compute_data(
     params_limits = []
     params_value_transformations = []
     if __plot_amplitudes:
-        params.append(model.cov_module.amplitudes_sqrt)
+        params.append(model.cov_module.amplitudes_log)
         params_names.append(amplitudes_param_name)
         params_limits.append(__amplitudes_limits)
-        params_value_transformations.append(np.sqrt)
+        params_value_transformations.append(np.log)
     if __plot_phases:
         params.append(model.cov_module.phases)
         params_names.append(phases_param_name)

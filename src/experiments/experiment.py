@@ -5,11 +5,11 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import ETA, Bar, Percentage, ProgressBar
+from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import LBFGS, Adam, Optimizer
+from torch.optim import Adam, LBFGS, Optimizer
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -51,8 +51,8 @@ def default_config():
     lr_scheduler_kwargs = {}
     max_iter = 10000
     log_model_state_every_n_iterations = 100
-    log_parameter_values = False
-    log_parameter_grad_values = False
+    log_parameter_values = True
+    log_parameter_grad_values = True
 
 
 # noinspection PyUnusedLocal
@@ -65,7 +65,7 @@ def no_pre_processing():
 # noinspection PyUnusedLocal
 @ex.named_config
 def axial_iteration_opt():
-    optimizer_alternate_parameters = [["all", "!cov_module.phases"], ["all", "!cov_module.amplitudes_sqrt"]]
+    optimizer_alternate_parameters = [["all", "!cov_module.phases"], ["all", "!cov_module.amplitudes_log"]]
 
 
 # noinspection PyUnusedLocal
@@ -73,7 +73,7 @@ def axial_iteration_opt():
 def axial_iteration_lr():
     lr_scheduler_class = AxialIterationLR
     lr_scheduler_kwargs = {
-        "axial_iteration_over": ["cov_module.amplitudes_sqrt", "cov_module.phases"],
+        "axial_iteration_over": ["cov_module.amplitudes_log", "cov_module.phases"],
         "epoch_inverse_scale": 1000,
     }
 
