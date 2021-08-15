@@ -1,5 +1,5 @@
 import pickle
-from typing import Callable, Final, List, Tuple
+from typing import Callable, Final, List, Optional, Tuple
 
 import gpytorch
 import matplotlib.pyplot as plt
@@ -29,7 +29,7 @@ def default_config():
     __phases_limits = (-2 * np.pi, 2 * np.pi)
     __plot_amplitudes = True
     __plot_phases = True
-    __num_evaluations = 2
+    __num_evaluations = 50
     __save_figure = True
     __show_figure = False
 
@@ -38,6 +38,35 @@ def compute_loss(mll: ExactMarginalLogLikelihood, model: GP, inputs: torch.Tenso
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         out = model(inputs)
         return mll(out, targets).item()
+
+
+def evaluate_parameter_pair(
+    evaluate: Callable[[], float],
+    params: List[torch.nn.Parameter],
+    x_tick_param: int,
+    y_tick_param: int,
+    x_tick_param_idx: int,
+    y_tick_param_idx: int,
+    x_tick_param_values: np.ndarray,
+    y_tick_param_values: np.ndarray,
+    *,
+    pbar: Optional[tqdm] = None,
+) -> np.ndarray:
+    x_tick_orig_param_value = params[x_tick_param][x_tick_param_idx].item()
+    y_tick_orig_param_value = params[y_tick_param][y_tick_param_idx].item()
+    losses = []
+    for x_tick_param_value in x_tick_param_values:
+        sub_losses = []
+        params[x_tick_param][x_tick_param_idx] = x_tick_param_value.item()
+        for y_tick_param_value in y_tick_param_values:
+            params[y_tick_param][y_tick_param_idx] = y_tick_param_value.item()
+            sub_losses.append(evaluate())
+            if pbar is not None:
+                pbar.update()
+        losses.append(sub_losses)
+    params[x_tick_param][x_tick_param_idx] = x_tick_orig_param_value
+    params[y_tick_param][y_tick_param_idx] = y_tick_orig_param_value
+    return np.asarray(losses)
 
 
 @ex.capture
@@ -60,20 +89,10 @@ def calculate_losses_grid(
                 elif x > y:
                     losses = losses_grid[y][x][-1].T
                 else:
-                    losses = []
-                    for x_tick_param_value in x_tick_param_values:
-                        sub_losses = []
-                        params[x_tick_param][x_tick_param_idx] = x_tick_param_value.item()
-                        for y_tick_param_value in y_tick_param_values:
-                            params[y_tick_param][y_tick_param_idx] = y_tick_param_value.item()
-                            sub_losses.append(evaluate())
-                            pbar.update()
-                        losses.append(sub_losses)
-                params[x_tick_param][x_tick_param_idx] = x_tick_orig_param_value
-                params[y_tick_param][y_tick_param_idx] = y_tick_orig_param_value
-                sub_losses_grid.append(
-                    (x_tick_param_name, y_tick_param_name, x_tick_param_limits, y_tick_param_limits, x_tick_orig_param_value, y_tick_orig_param_value, np.asarray(losses))
-                )
+                    losses = evaluate_parameter_pair(
+                        evaluate, params, x_tick_param, y_tick_param, x_tick_param_idx, y_tick_param_idx, x_tick_param_values, y_tick_param_values, pbar=pbar
+                    )
+                sub_losses_grid.append((x_tick_param_name, y_tick_param_name, x_tick_param_limits, y_tick_param_limits, x_tick_orig_param_value, y_tick_orig_param_value, losses))
             losses_grid.append(sub_losses_grid)
     return losses_grid
 
@@ -141,7 +160,7 @@ def plot_losses_grid(losses_grid: List[List[Tuple[str, str, Tuple[float, float],
     with tqdm(total=2 * grid_size ** 2, desc="   Plotting") as pbar:
         for x, (axs, sub_losses_grid) in enumerate(zip(axss.T, losses_grid)):
             for y, (ax, (x_tick_param_name, y_tick_param_name, x_tick_param_limits, y_tick_param_limits, x_tick_orig_param_value, y_tick_orig_param_value, losses)) in enumerate(
-                zip(axs, sub_losses_grid)
+                    zip(axs, sub_losses_grid)
             ):
                 ax.imshow(losses.T, extent=[*x_tick_param_limits, *y_tick_param_limits], aspect="auto", cmap="binary" if x == y else "winter")
                 if amplitudes_param_name in x_tick_param_name:

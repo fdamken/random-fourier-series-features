@@ -1,9 +1,10 @@
 import os
-from typing import Final, List
+from typing import Final, List, Optional
 
 import numpy as np
 from matplotlib import colors
-from matplotlib.figure import Figure
+from matplotlib import pyplot as plt
+from matplotlib.collections import LineCollection
 
 
 HIDE_DEBUG_INFO: Final[bool] = os.environ.get("HIDE_DEBUG_INFO") is not None
@@ -27,7 +28,7 @@ class AccumulativeNormalization(colors.Normalize):
             self.vmax = vmax
 
 
-def savefig(fig: Figure, path: str, filename: str, *, formats: List[str] = None) -> Figure:
+def savefig(fig: plt.Figure, path: str, filename: str, *, formats: List[str] = None) -> plt.Figure:
     if formats is None:
         formats = ["pdf", "pgf", "png"]
     for fmt in formats:
@@ -35,7 +36,7 @@ def savefig(fig: Figure, path: str, filename: str, *, formats: List[str] = None)
     return fig
 
 
-def show_debug_info(fig: Figure, run: dict, experiment_dir: str):
+def show_debug_info(fig: plt.Figure, run: dict, experiment_dir: str):
     repos = []
     for repo in run["experiment"]["repositories"]:
         if repo not in repos:
@@ -59,3 +60,25 @@ def show_debug_info(fig: Figure, run: dict, experiment_dir: str):
         t.set_color("white")
 
     return fig
+
+
+def make_colored_line_collection(
+    x: np.ndarray,
+    y: np.ndarray,
+    z: Optional[np.ndarray] = None,
+    cmap: colors.Colormap = plt.get_cmap("copper"),
+    norm: plt.Normalize = plt.Normalize(0.0, 1.0),
+    linewidth: int = 3,
+    alpha: float = 1.0,
+) -> LineCollection:
+    # Default colors equally spaced on [0,1]:
+    if z is None:
+        z = np.linspace(0.0, 1.0, len(x))
+    # Special case if a single number:
+    if not hasattr(z, "__iter__"):
+        z = np.array([z])
+    z = np.asarray(z)
+
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    return LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)
