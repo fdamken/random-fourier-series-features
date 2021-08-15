@@ -94,6 +94,10 @@ def periodic(half_period: float) -> Callable[[Callable[[NdTensor], NdTensor]], N
     return decorator
 
 
+def process_as_numpy_array(tensor: torch.Tensor, func: Callable[[np.ndarray], np.ndarray]) -> torch.Tensor:
+    return torch.from_numpy(func(tensor.detach().cpu().numpy())).to(tensor.device)
+
+
 def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[Dict[str, Any]]]:
     parameter_group_names, opt_parameters = [], []
     for name, params in model.named_parameters():

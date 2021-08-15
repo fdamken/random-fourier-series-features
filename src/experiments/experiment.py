@@ -21,6 +21,7 @@ from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
 from rfsf.pre_processing.no_op_pre_processor import NoOpPreProcessor
+from rfsf.pre_processing.pca_whitening import PCAWhitening
 from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.pre_processing.standardization import Standardization
 from rfsf.util import devices
@@ -61,7 +62,12 @@ def default_config():
 @ex.named_config
 def no_pre_processing():
     pre_processor_class = NoOpPreProcessor
-    pre_processor_kwargs = {}
+
+
+# noinspection PyUnusedLocal
+@ex.named_config
+def pca_whitening():
+    pre_processor_class = PCAWhitening
 
 
 # noinspection PyUnusedLocal
