@@ -248,5 +248,5 @@ def main(
     return {"model_state": pickle_str(model.state_dict())}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ex.run_commandline()

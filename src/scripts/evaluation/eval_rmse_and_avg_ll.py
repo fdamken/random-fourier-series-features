@@ -36,13 +36,14 @@ def main(__figures_dir: str, __experiment_dir: str, __num_samples: int):
     train_prior_rmse, train_prior_ll = _compute_rmse_and_ll(pre_processor, model, train_inputs, train_targets)
     test_prior_rmse, test_prior_ll = _compute_rmse_and_ll(pre_processor, model, test_inputs, test_targets)
 
-    print(tabulate(
-        [[train_posterior_rmse, train_posterior_ll, train_prior_rmse, train_prior_ll],
-         [test_posterior_rmse, test_posterior_ll, test_prior_rmse, test_prior_ll]],
-        headers=("Posterior RMSE", "Posterior Avg. LL", "Prior RMSE", "Prior Avg. LL"),
-        showindex=("Train", "Test"),
-        tablefmt="github",
-    ))
+    print(
+        tabulate(
+            [[train_posterior_rmse, train_posterior_ll, train_prior_rmse, train_prior_ll], [test_posterior_rmse, test_posterior_ll, test_prior_rmse, test_prior_ll]],
+            headers=("Posterior RMSE", "Posterior Avg. LL", "Prior RMSE", "Prior Avg. LL"),
+            showindex=("Train", "Test"),
+            tablefmt="github",
+        )
+    )
 
 
 @torch.no_grad()

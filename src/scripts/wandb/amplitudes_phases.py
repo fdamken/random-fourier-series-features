@@ -4,9 +4,9 @@ from typing import Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-import wandb
 from tqdm import tqdm
 
+import wandb
 from scripts.plotting.util import savefig
 
 

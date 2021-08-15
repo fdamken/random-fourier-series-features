@@ -160,7 +160,7 @@ def plot_losses_grid(losses_grid: List[List[Tuple[str, str, Tuple[float, float],
     with tqdm(total=2 * grid_size ** 2, desc="   Plotting") as pbar:
         for x, (axs, sub_losses_grid) in enumerate(zip(axss.T, losses_grid)):
             for y, (ax, (x_tick_param_name, y_tick_param_name, x_tick_param_limits, y_tick_param_limits, x_tick_orig_param_value, y_tick_orig_param_value, losses)) in enumerate(
-                    zip(axs, sub_losses_grid)
+                zip(axs, sub_losses_grid)
             ):
                 ax.imshow(losses.T, extent=[*x_tick_param_limits, *y_tick_param_limits], aspect="auto", cmap="binary" if x == y else "winter")
                 if amplitudes_param_name in x_tick_param_name:
