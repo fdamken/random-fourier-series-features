@@ -1,6 +1,7 @@
 from logging import Logger
 from typing import Any, ClassVar, List
 
+import sklearn.utils
 import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
@@ -50,6 +51,7 @@ def default_config():
     lr_scheduler_class = ExponentialLR
     lr_scheduler_kwargs = {"gamma": 0.999}
     max_iter = 10_000
+    batch_size = 1000
     log_model_state_every_n_iterations = 100
     log_parameter_values = False
     log_parameter_grad_values = False
@@ -89,7 +91,7 @@ def scaled_rbf():
 def rfsf_random():
     model_class = RFSFRandomGP
     model_kwargs = dict(
-        num_samples=5000,
+        num_samples=500,
         num_harmonics=8,
         half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
         optimize_amplitudes=True,
@@ -124,6 +126,7 @@ def main(
     lr_scheduler_class: ClassVar[Any],
     lr_scheduler_kwargs: dict,
     max_iter: int,
+    batch_size: int,
     log_model_state_every_n_iterations: int,
     log_parameter_values: bool,
     log_parameter_grad_values: bool,
@@ -134,8 +137,8 @@ def main(
 
     pre_processor: PreProcessor = pre_processor_class(**pre_processor_kwargs)
     pre_processor.fit(train_inputs, train_targets)
-    train_inputs = pre_processor.transform_inputs(train_inputs)[:1000]
-    train_targets = pre_processor.transform_targets(train_targets)[:1000]
+    train_inputs = pre_processor.transform_inputs(train_inputs)
+    train_targets = pre_processor.transform_targets(train_targets)
 
     # Add the pre-processor as an artifact directly after fitting it such that the buffers are initialized.
     add_pickle_artifact(_run, pre_processor, "pre_processor", device=devices.cuda())
@@ -190,19 +193,26 @@ def main(
 
         learning_rates = scheduler.get_last_lr()
 
-        optimizer.zero_grad()
-        out = model(train_inputs)
-        loss = -mll(out, train_targets.squeeze())  # FIXME: Squeezing might cause issues for multi-output.
-        loss.backward()
-        optimizer.step()
+        avg_loss = 0.0
+        batch_count = 0
+        # Computing the predictive mean/variance has to be done on the complete training data.
+        train_predictions = model(train_inputs)
+        # Use batches for computing the likelihood and computing the updates as the gradient might not fit on the GPU.
+        for batch_slice in sklearn.utils.gen_batches(len(train_inputs), batch_size):
+            optimizer.zero_grad()
+            loss = -mll(train_predictions[batch_slice], train_targets[batch_slice].squeeze())  # FIXME: Squeezing might cause issues for multi-output.
+            loss.backward()
+            optimizer.step()
+            avg_loss += loss.item()
+            batch_count += 1
+        avg_loss /= batch_count
         scheduler.step()
 
-        loss_val = loss.item()
         noise = model.likelihood.noise.item()
         parameters = [p for p in model.parameters() if p.grad is not None]
         grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
 
-        _run.log_scalar("loss", loss_val, step=step)
+        _run.log_scalar("loss", avg_loss, step=step)
         _run.log_scalar("noise", noise, step=step)
         if len(learning_rates) == 1:
             _run.log_scalar("learning_rate", learning_rates[0], step=step)
