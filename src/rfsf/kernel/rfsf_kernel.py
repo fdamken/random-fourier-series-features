@@ -135,8 +135,11 @@ class RFSFKernel(Kernel):
         n = torch.arange(0, self.num_harmonics + 1, dtype=x.dtype, device=self.raw_lengthscale.device)
         weighted_inputs = x.matmul(rand_weights / self.lengthscale.transpose(-1, -2)).unsqueeze(dim=-1)
         harmonized_inputs = np.pi / self.half_period * weighted_inputs @ n.unsqueeze(dim=0)
+        del n, weighted_inputs  # Not needed anymore --> save memory.
         harmonics_activations = harmonized_inputs - phases + rand_phases.unsqueeze(dim=-1)
+        del harmonized_inputs  # Not needed anymore --> save memory.
         harmonics = amplitudes * torch.cos(harmonics_activations)
+        del harmonics_activations  # Not needed anymore --> save memory.
 
         # TODO: Is it helpful to normalize over the amplitudes?
         return harmonics.sum(dim=-1)

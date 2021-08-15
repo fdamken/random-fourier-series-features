@@ -3,6 +3,7 @@ from functools import lru_cache
 from typing import Optional, Tuple
 
 import numpy as np
+import sklearn.model_selection
 import torch
 from sacred import Ingredient
 
@@ -16,7 +17,7 @@ _uci_number_of_outputs = {
     "concrete": 1,
     "energy": 2,
     "kin8nm": 1,  # TODO: Find out if this is correct.
-    "naval": 2,
+    "naval-propulsion-plant": 2,
     "power-plant": 1,
     "protein-tertiary-structure": 1,
     "wine-quality-red": 1,
@@ -52,16 +53,18 @@ _prefix_titles = {
 def default_config():
     name = "sine"
     dataset_directory = "data/perm"
+    train_test_split_test_portion = 0.1
+    train_test_split_seed = 42
 
 
 @dataset_ingredient.capture
 def get_title(name: str) -> str:
     prefix = ""
     if name.startswith(_clustered_prefix):
-        name = name[len(_clustered_prefix) :]
+        name = name[len(_clustered_prefix):]
         prefix = _clustered_prefix
     elif name.startswith(_uci_prefix):
-        name = name[len(_uci_prefix) :]
+        name = name[len(_uci_prefix):]
         prefix = _uci_prefix
     if prefix:
         prefix = _prefix_titles[prefix]
@@ -75,10 +78,10 @@ def get_title(name: str) -> str:
 def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
     print(f"Loading {name!r} dataset.")
     if name in (prefix + base_name for prefix in ("", _clustered_prefix) for base_name in ("sine", "cosine", "heaviside", "heavisine", "heavicosine", "discontinuous_odd_cosine")):
-        func_name = name[len(_clustered_prefix) :] if name.startswith(_clustered_prefix) else name
+        func_name = name[len(_clustered_prefix):] if name.startswith(_clustered_prefix) else name
         data = _load_dataset_similar_func(func_name, clustered=name.startswith(_clustered_prefix))
     elif name.startswith(_uci_prefix):
-        uci_dataset_name = name[len(_uci_prefix) :]
+        uci_dataset_name = name[len(_uci_prefix):]
         data = _load_uci_dataset(uci_dataset_name)
     else:
         assert False, f"unknown dataset {name!r}"
@@ -129,10 +132,14 @@ def _load_uci_dataset(name: str, dataset_directory: str) -> Tuple[Tuple[torch.Te
     number_of_outputs = _uci_number_of_outputs[name]
     file = f"{dataset_directory}/uci/{name}.csv"
     data = np.genfromtxt(file, dtype=np.float32, delimiter=",")
-    train_data = data
-    test_data = np.array([[]])  # TODO: Implement train/test split.
+    train_data, test_data = _train_test_split(data)
     train_inputs = train_data[:, :-number_of_outputs]
-    train_targets = train_data[:, :number_of_outputs]
+    train_targets = train_data[:, :number_of_outputs][:, 0]  # TODO: Support multi-target regression!
     test_inputs = test_data[:, :-number_of_outputs]
-    test_targets = test_data[:, :number_of_outputs]
+    test_targets = test_data[:, :number_of_outputs][:, 0]  # TODO: Support multi-target regression!
     return (torch.from_numpy(train_inputs), torch.from_numpy(train_targets)), (torch.from_numpy(test_inputs), torch.from_numpy(test_targets))
+
+
+@dataset_ingredient.capture
+def _train_test_split(data: np.ndarray, train_test_split_test_portion: float, train_test_split_seed: int) -> Tuple[np.ndarray, np.ndarray]:
+    return sklearn.model_selection.train_test_split(data, test_size=train_test_split_test_portion, random_state=train_test_split_seed)

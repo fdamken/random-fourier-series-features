@@ -4,15 +4,16 @@ from rfsf.pre_processing.pre_processor import PreProcessor
 
 
 class Standardization(PreProcessor):
-    def __init__(self):
-        super().__init__()
-
     def _fit(self, inputs: torch.Tensor, targets: torch.Tensor) -> None:
         # Normalize over the batch dimension (the first axis).
         self.register_buffer("inputs_mean", inputs.mean(dim=0, keepdim=True))
-        self.register_buffer("inputs_std", inputs.std(dim=0, keepdim=True))
+        inputs_std = inputs.std(dim=0, keepdim=True)
+        inputs_std[torch.isclose(inputs_std, torch.tensor(0.0))] = 1.0
+        self.register_buffer("inputs_std", inputs_std)
         self.register_buffer("targets_mean", targets.mean(dim=0, keepdim=True))
-        self.register_buffer("targets_std", targets.std(dim=0, keepdim=True))
+        targets_std = targets.std(dim=0, keepdim=True)
+        targets_std[torch.isclose(targets_std, torch.tensor(0.0))] = 1.0
+        self.register_buffer("targets_std", targets_std)
 
     def _transform_inputs(self, inputs: torch.Tensor) -> torch.Tensor:
         return (inputs - self.inputs_mean) / self.inputs_std
