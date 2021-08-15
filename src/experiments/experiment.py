@@ -221,7 +221,7 @@ def main(
         def evaluate():
             optimizer.zero_grad()
             out = model(train_inputs)
-            local_loss = -mll(out, train_targets)
+            local_loss = -mll(out, train_targets.squeeze())  # FIXME: Squeezing might cause issues for multi-output.
             local_loss.backward()
             return local_loss
 

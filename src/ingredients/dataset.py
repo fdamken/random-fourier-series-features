@@ -2,6 +2,7 @@ import math
 from functools import lru_cache
 from typing import Optional, Tuple
 
+import numpy as np
 import torch
 from sacred import Ingredient
 
@@ -9,7 +10,19 @@ from sacred import Ingredient
 dataset_ingredient = Ingredient("dataset")
 
 _clustered_prefix = "clustered-"
-_clustered_title_prefix = "Clustered "
+_uci_prefix = "uci-"
+_uci_number_of_outputs = {
+    "boston-housing": 1,  # TODO: Find out if this is correct.
+    "concrete": 1,
+    "energy": 2,
+    "kin8nm": 1,  # TODO: Find out if this is correct.
+    "naval": 2,
+    "power-plant": 1,
+    "protein-tertiary-structure": 1,
+    "wine-quality-red": 1,
+    "wine-quality-white": 1,
+    "yacht": 1,
+}
 _dataset_titles = {
     "sine": "Sine",
     "cosine": "Cosine",
@@ -17,6 +30,20 @@ _dataset_titles = {
     "heavisine": "Combined Heaviside and Sine",
     "heavicosine": "Combined Heaviside and Cosine",
     "discontinuous_odd_cosine": "Discontinuous Cosine",
+    "boston-housing": "Boston Housing",  # TODO: Find correct title and will dataset README.
+    "concrete": "Concrete Compressive Strength",
+    "energy": "Energy Efficiency",
+    "kin8nm": "Kin8NM",  # TODO: Find correct title and will dataset README.
+    "naval": "Condition Based Maintenance of Naval Propulsion Plants",
+    "power-plant": "Combined Cycle Power Plant Data Set",
+    "protein-tertiary-structure": "Physicochemical Properties of Protein Tertiary Structure",
+    "wine-quality-red": "Wine Quality (Red)",
+    "wine-quality-white": "Wine Quality (White)",
+    "yacht": "Yacht Hydrodynamics",
+}
+_prefix_titles = {
+    _clustered_prefix: "Clustered ",
+    _uci_prefix: "UCI: ",
 }
 
 
@@ -24,6 +51,7 @@ _dataset_titles = {
 @dataset_ingredient.config
 def default_config():
     name = "sine"
+    dataset_directory = "data/perm"
 
 
 @dataset_ingredient.capture
@@ -31,7 +59,12 @@ def get_title(name: str) -> str:
     prefix = ""
     if name.startswith(_clustered_prefix):
         name = name[len(_clustered_prefix) :]
-        prefix = _clustered_title_prefix
+        prefix = _clustered_prefix
+    elif name.startswith(_uci_prefix):
+        name = name[len(_uci_prefix) :]
+        prefix = _uci_prefix
+    if prefix:
+        prefix = _prefix_titles[prefix]
     if name in _dataset_titles:
         return prefix + _dataset_titles[name]
     assert False, f"unknown dataset '{name}'"
@@ -44,6 +77,9 @@ def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tupl
     if name in (prefix + base_name for prefix in ("", _clustered_prefix) for base_name in ("sine", "cosine", "heaviside", "heavisine", "heavicosine", "discontinuous_odd_cosine")):
         func_name = name[len(_clustered_prefix) :] if name.startswith(_clustered_prefix) else name
         data = _load_dataset_similar_func(func_name, clustered=name.startswith(_clustered_prefix))
+    elif name.startswith(_uci_prefix):
+        uci_dataset_name = name[len(_uci_prefix) :]
+        data = _load_uci_dataset(uci_dataset_name)
     else:
         assert False, f"unknown dataset {name!r}"
     return data if device is None else tuple(tuple(da.to(device) for da in dat) for dat in data)
@@ -85,3 +121,18 @@ def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[t
     test_targets = func(test_inputs)
 
     return (train_inputs, train_targets), (test_inputs, test_targets)
+
+
+@dataset_ingredient.capture
+def _load_uci_dataset(name: str, dataset_directory: str) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+    assert name in _uci_number_of_outputs.keys(), f"unknown UCI dataset {name}"
+    number_of_outputs = _uci_number_of_outputs[name]
+    file = f"{dataset_directory}/uci/{name}.csv"
+    data = np.genfromtxt(file, dtype=np.float32, delimiter=",")
+    train_data = data
+    test_data = np.array([[]])  # TODO: Implement train/test split.
+    train_inputs = train_data[:, :-number_of_outputs]
+    train_targets = train_data[:, :number_of_outputs]
+    test_inputs = test_data[:, :-number_of_outputs]
+    test_targets = test_data[:, :number_of_outputs]
+    return (torch.from_numpy(train_inputs), torch.from_numpy(train_targets)), (torch.from_numpy(test_inputs), torch.from_numpy(test_targets))
