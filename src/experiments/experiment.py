@@ -10,6 +10,7 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
 from torch.optim import Adam, LBFGS, Optimizer
+from torch.optim.lr_scheduler import ExponentialLR
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -47,12 +48,12 @@ def default_config():
     optimizer_class = Adam
     optimizer_kwargs = {"lr": 0.01}
     optimizer_alternate_parameters = [["all"]]
-    lr_scheduler_class = ConstantLR
-    lr_scheduler_kwargs = {}
-    max_iter = 10000
+    lr_scheduler_class = ExponentialLR
+    lr_scheduler_kwargs = {"gamma": 0.999}
+    max_iter = 20_000
     log_model_state_every_n_iterations = 100
-    log_parameter_values = True
-    log_parameter_grad_values = True
+    log_parameter_values = False
+    log_parameter_grad_values = False
 
 
 # noinspection PyUnusedLocal
