@@ -50,7 +50,7 @@ def default_config():
     optimizer_alternate_parameters = [["all"]]
     lr_scheduler_class = ExponentialLR
     lr_scheduler_kwargs = {"gamma": 0.999}
-    max_iter = 20_000
+    max_iter = 10_000
     log_model_state_every_n_iterations = 100
     log_parameter_values = False
     log_parameter_grad_values = False
@@ -118,7 +118,7 @@ def rfsf_relu():
     )
 
 
-@ex.automain
+@ex.main
 def main(
     likelihood_class: ClassVar[Likelihood],
     likelihood_kwargs: dict,
@@ -269,3 +269,7 @@ def main(
     bar.finish()
 
     return {"model_state": pickle_str(model.state_dict())}
+
+
+if __name__ == '__main__':
+    ex.run_commandline()
