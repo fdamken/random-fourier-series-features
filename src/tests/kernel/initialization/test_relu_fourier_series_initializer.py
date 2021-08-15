@@ -11,10 +11,10 @@ def test_constructor(num_harmonics, half_period):
     init = ReLUFourierSeriesInitializer(num_harmonics, half_period)
     assert init.cosine_coefficients.shape == (num_harmonics + 1,)
     assert init.sine_coefficients.shape == (num_harmonics + 1,)
-    assert init.amplitudes_sqrt.shape == (num_harmonics + 1,)
+    assert init.amplitudes.shape == (num_harmonics + 1,)
     assert init.phases.shape == (num_harmonics + 1,)
     assert torch.allclose(init.sine_coefficients[0], torch.tensor(0.0))
-    assert torch.allclose(init.amplitudes_sqrt[0] ** 2, init.cosine_coefficients[0])
+    assert torch.allclose(init.amplitudes[0], init.cosine_coefficients[0])
 
 
 def test_convergence():

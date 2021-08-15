@@ -19,7 +19,7 @@ def test_non_negative_sine_coefficients():
     init = NonNegativeSineInitializer()
     assert torch.allclose(init.cosine_coefficients, torch.tensor([4.0, 0.0]))
     assert torch.allclose(init.sine_coefficients, torch.tensor([0.0, 9.0]))
-    assert torch.allclose(init.amplitudes_sqrt, torch.tensor([2.0, 3.0]))  # Compare to the square-root, obviously!
+    assert torch.allclose(init.amplitudes, torch.tensor([4.0, 9.0]))
     assert torch.allclose(init.phases, torch.tensor([np.pi / 3, np.pi / 2]))
 
 

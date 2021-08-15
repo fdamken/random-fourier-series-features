@@ -41,7 +41,7 @@ class RFSFKernel(Kernel):
         self.num_samples = num_samples
         self.num_harmonics = fourier_series_init.num_harmonics
         self.half_period = fourier_series_init.half_period
-        self.amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes_sqrt, requires_grad=fourier_series_init.optimize_amplitudes).to(device=device)
+        self.amplitudes_sqrt = torch.nn.Parameter(data=fourier_series_init.amplitudes.sqrt(), requires_grad=fourier_series_init.optimize_amplitudes).to(device=device)
         self.phases = torch.nn.Parameter(data=fourier_series_init.phases, requires_grad=fourier_series_init.optimize_phases).to(device=device)
 
     def forward(self, x1: torch.Tensor, x2: torch.Tensor, diag: bool = False, last_dim_is_batch: bool = False, **params) -> LazyTensor:

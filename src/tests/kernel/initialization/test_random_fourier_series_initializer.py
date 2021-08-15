@@ -8,5 +8,5 @@ def test_constructor(num_harmonics):
     init = RandomFourierSeriesInitializer(num_harmonics, 0.0)
     assert init.cosine_coefficients.shape == (num_harmonics + 1,)
     assert init.sine_coefficients.shape == (num_harmonics + 1,)
-    assert init.amplitudes_sqrt.shape == (num_harmonics + 1,)
+    assert init.amplitudes.shape == (num_harmonics + 1,)
     assert init.phases.shape == (num_harmonics + 1,)

@@ -13,10 +13,6 @@ class FourierSeriesInitializer(ABC):
     the amplitudes and phases from cosine/sine coefficients which can simply be obtained by integration. Subclasses can
     implement various different initialization techniques, e.g., random initialization or actually using the Fourier
     series of any function.
-
-    .. note::
-        In accordance with the RFSF implementation, this class works with the square-root of the amplitudes to ensure
-        non-negativity by squaring them on demand.
     """
 
     def __init__(self, num_harmonics: int, half_period: float, optimize_amplitudes: bool = True, optimize_phases: bool = True):
@@ -40,22 +36,22 @@ class FourierSeriesInitializer(ABC):
 
         self._cosine_coefficients = None
         self._sine_coefficients = None
-        self._amplitudes_sqrt: Optional[torch.Tensor] = None
+        self._amplitudes: Optional[torch.Tensor] = None
         self._phases: Optional[torch.Tensor] = None
 
     def __call__(self, x: torch.Tensor, *, use_sine_cosine_form: bool = True) -> torch.Tensor:
-        x = x.unsqueeze(axis=1)
+        x = x.unsqueeze(dim=1)
         if use_sine_cosine_form:
             a = self.cosine_coefficients
             b = self.sine_coefficients
-            n = torch.arange(1, self.num_harmonics + 1).unsqueeze(axis=0)
+            n = torch.arange(1, self.num_harmonics + 1).unsqueeze(dim=0)
             cos = torch.cos(np.pi / self.half_period * n * x)
             sin = torch.sin(np.pi / self.half_period * n * x)
             result = a[0] / 2 + (a[1:] * cos + b[1:].unsqueeze(axis=0) * sin).sum(axis=1)
         else:
-            amplitudes = self.amplitudes_sqrt.unsqueeze(axis=0) ** 2
-            phases = self.phases.unsqueeze(axis=0)
-            n = torch.arange(0, self.num_harmonics + 1).unsqueeze(axis=0)
+            amplitudes = self.amplitudes.unsqueeze(dim=0)
+            phases = self.phases.unsqueeze(dim=0)
+            n = torch.arange(0, self.num_harmonics + 1).unsqueeze(dim=0)
             harmonics_activations = np.pi / self.half_period * n * x - phases
             harmonics = amplitudes * torch.cos(harmonics_activations)
             result = harmonics.sum(axis=1)
@@ -78,7 +74,7 @@ class FourierSeriesInitializer(ABC):
 
         :return: cosine coefficients; shape `(num_harmonics + 1,)`
         """
-        if self._amplitudes_sqrt is None:
+        if self._amplitudes is None:
             self._cosine_coefficients, self._sine_coefficients = self._compute_coefficients()
         return self._cosine_coefficients
 
@@ -89,20 +85,20 @@ class FourierSeriesInitializer(ABC):
 
         :return: sine coefficients; shape `(num_harmonics + 1,)`
         """
-        if self._amplitudes_sqrt is None:
+        if self._amplitudes is None:
             self._cosine_coefficients, self._sine_coefficients = self._compute_coefficients()
         return self._sine_coefficients
 
     @property
-    def amplitudes_sqrt(self) -> torch.Tensor:
+    def amplitudes(self) -> torch.Tensor:
         """
-        Gets (and lazily computes) the square-root of the amplitudes.
+        Gets (and lazily computes) the amplitudes.
 
-        :return: square-root of the amplitudes; shape `(num_harmonics + 1,)`
+        :return: amplitudes; shape `(num_harmonics + 1,)`
         """
-        if self._amplitudes_sqrt is None:
-            self._amplitudes_sqrt = self._compute_amplitudes_sqrt()
-        return self._amplitudes_sqrt
+        if self._amplitudes is None:
+            self._amplitudes = self._compute_amplitudes()
+        return self._amplitudes
 
     @property
     def phases(self) -> torch.Tensor:
@@ -148,15 +144,15 @@ class FourierSeriesInitializer(ABC):
         assert_shape(sine_coefficients, (self._num_harmonics + 1,), "sine_coefficients")
         return cosine_coefficients, sine_coefficients
 
-    def _compute_amplitudes_sqrt(self) -> torch.Tensor:
+    def _compute_amplitudes(self) -> torch.Tensor:
         """
-        Computes the square-root of the amplitudes from the cosine/sine coefficients. The amplitudes are computed using
+        Computes the amplitudes from the cosine/sine coefficients. The amplitudes are computed using
         :math:`A_k = \\sqrt{a_k^2 + b_k^2}`, where :math:`a_k` and :math:`b_k` are the cosine/sine coefficients,
         respectively.
 
-        :return: square-root of the amplitudes; shape `(num_harmonics + 1,)`
+        :return: amplitudes; shape `(num_harmonics + 1,)`
         """
-        return torch.sqrt(torch.sqrt(self.cosine_coefficients ** 2 + self.sine_coefficients ** 2))
+        return torch.sqrt(self.cosine_coefficients ** 2 + self.sine_coefficients ** 2)
 
     def _compute_phases(self) -> torch.Tensor:
         """
