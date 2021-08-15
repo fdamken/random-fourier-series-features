@@ -5,12 +5,12 @@ import torch
 from gpytorch import ExactMarginalLogLikelihood
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
-from progressbar import Bar, ETA, Percentage, ProgressBar
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 from sacred.run import Run
-from torch.optim import Adam, LBFGS, Optimizer
+from torch.optim import Adam, Optimizer
 from torch.optim.lr_scheduler import ExponentialLR
+from tqdm import tqdm
 
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
@@ -26,7 +26,6 @@ from rfsf.util import devices
 from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR
 from rfsf.util.mock_lr import MockLR
-from rfsf.util.progressbar_util import NumberTrendWidget
 from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, pickle_str, split_parameter_groups
 
 
@@ -77,13 +76,6 @@ def axial_iteration_lr():
         "axial_iteration_over": ["cov_module.amplitudes_log", "cov_module.phases"],
         "epoch_inverse_scale": 1000,
     }
-
-
-# noinspection PyUnusedLocal
-@ex.named_config
-def lbfgs():
-    optimizer_class = LBFGS
-    max_iter = 1000
 
 
 # noinspection PyUnusedLocal
@@ -142,8 +134,8 @@ def main(
 
     pre_processor: PreProcessor = pre_processor_class(**pre_processor_kwargs)
     pre_processor.fit(train_inputs, train_targets)
-    train_inputs = pre_processor.transform_inputs(train_inputs)
-    train_targets = pre_processor.transform_targets(train_targets)
+    train_inputs = pre_processor.transform_inputs(train_inputs)[:1000]
+    train_targets = pre_processor.transform_targets(train_targets)[:1000]
 
     # Add the pre-processor as an artifact directly after fitting it such that the buffers are initialized.
     add_pickle_artifact(_run, pre_processor, "pre_processor", device=devices.cuda())
@@ -163,26 +155,6 @@ def main(
         + f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}",
     )
 
-    loss_val = None
-    noise = None
-
-    bar = ProgressBar(
-        widgets=[
-            "Optimization: ",
-            Percentage(),
-            " ",
-            Bar(),
-            " ",
-            ETA(),
-            ";  Loss: ",
-            NumberTrendWidget("6.3f", lambda: loss_val),
-            ";  Noise: ",
-            NumberTrendWidget("6.3f", lambda: noise),
-        ],
-        maxval=max_iter,
-        term_width=200,
-    ).start()
-
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
     parameter_group_names, opt_parameters = split_parameter_groups(model)
     if len(optimizer_alternate_parameters) > 1:
@@ -199,7 +171,6 @@ def main(
         scheduler = MockLR()
     else:
         if lr_scheduler_class is AxialIterationLR:
-            assert optimizer_class is not LBFGS, "L-BFGS optimization is not supported when using axial iteration learning rates; try multiple optimizers instead"
             optimizer = optimizer_class([{"params": params} for params in opt_parameters], **optimizer_kwargs)
             new_lr_scheduler_kwargs = {"parameter_group_names": parameter_group_names}
             new_lr_scheduler_kwargs.update(lr_scheduler_kwargs)
@@ -214,23 +185,16 @@ def main(
         f"Using {len(optimizers_parameters)} optimizer{'s' if len(optimizers_parameters) > 1 else ''} with the following parameters:\n"
         + "\n".join(f"  - {optimizer_parameters}" for optimizer_parameters in optimizers_parameters)
     )
-    for step in range(max_iter):
+    for step in tqdm(range(max_iter), desc="Optimization"):
         optimizer = optimizers[step % len(optimizers)]
 
         learning_rates = scheduler.get_last_lr()
 
-        def evaluate():
-            optimizer.zero_grad()
-            out = model(train_inputs)
-            local_loss = -mll(out, train_targets.squeeze())  # FIXME: Squeezing might cause issues for multi-output.
-            local_loss.backward()
-            return local_loss
-
-        if isinstance(optimizer, LBFGS):
-            loss = optimizer.step(evaluate)
-        else:
-            loss = evaluate()
-            optimizer.step()
+        optimizer.zero_grad()
+        out = model(train_inputs)
+        loss = -mll(out, train_targets.squeeze())  # FIXME: Squeezing might cause issues for multi-output.
+        loss.backward()
+        optimizer.step()
         scheduler.step()
 
         loss_val = loss.item()
@@ -264,9 +228,6 @@ def main(
             # Add the model as an artifact after it was first invoked as otherwise the random weights/biases are not
             # initialized and loading would fail.
             add_pickle_artifact(_run, model, "model", device=devices.cuda())
-
-        bar.update(step)
-    bar.finish()
 
     return {"model_state": pickle_str(model.state_dict())}
 
