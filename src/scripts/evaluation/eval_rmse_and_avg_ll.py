@@ -1,4 +1,6 @@
 import math
+import os
+import os.path as osp
 from typing import Tuple
 
 import gpytorch
@@ -15,14 +17,8 @@ from scripts.util.sacred_util import load_experiment
 ex, load_config, load_metrics, load_run, load_model, load_pre_processor = load_experiment()
 
 
-# noinspection PyUnusedLocal
-@ex.config
-def default_config():
-    __num_samples = 5
-
-
 @ex.main
-def main(__figures_dir: str, __experiment_dir: str, __num_samples: int):
+def main(__experiment_dir: str):
     pre_processor = load_pre_processor()
     model = load_model()
     pre_processor.to(devices.cpu())
@@ -44,6 +40,13 @@ def main(__figures_dir: str, __experiment_dir: str, __num_samples: int):
             tablefmt="github",
         )
     )
+
+    eval_file = f"{__experiment_dir}/{osp.basename(__file__).replace('.py', '')}.csv"
+    if osp.exists(eval_file):
+        assert osp.isfile(eval_file), f"{eval_file = } exists, but is not a file"
+        os.remove(eval_file)
+    with open(eval_file, "w") as f:
+        f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}")
 
 
 @torch.no_grad()
