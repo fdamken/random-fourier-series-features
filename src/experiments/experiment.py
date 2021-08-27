@@ -97,7 +97,7 @@ def scaled_rbf():
 def rfsf_random():
     model_class = RFSFRandomGP
     model_kwargs = dict(
-        num_samples=500,
+        num_samples=5000,
         num_harmonics=8,
         half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
         optimize_amplitudes=True,

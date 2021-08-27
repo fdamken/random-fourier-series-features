@@ -25,11 +25,11 @@ def default_config():
 def main(__figures_dir: str, __experiment_dir: str, __num_samples: int):
     pre_processor = load_pre_processor()
     model = load_model()
-    pre_processor.to(devices.cuda())
-    model.to(device=devices.cuda())
+    pre_processor.to(devices.cpu())
+    model.to(device=devices.cpu())
     model.eval()
 
-    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=devices.cuda())
+    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=devices.cpu())
 
     print(f"Computing posterior metrics for {len(train_targets)} training samples.")
     train_posterior_rmse, train_posterior_ll = _compute_rmse_and_ll(pre_processor, model, train_inputs, train_targets)
