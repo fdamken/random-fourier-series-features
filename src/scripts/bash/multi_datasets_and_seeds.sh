@@ -14,8 +14,8 @@ echo "Activating virtualenv."
 source venv/bin/activate
 
 echo "Starting training."
-for dataset in $datasets; do
-    for train_test_split_seed in $(seq 1 $num_eval); do
+for train_test_split_seed in $(seq 1 $num_eval); do
+    for dataset in $datasets; do
         echo "Evaluating dataset $dataset, split seed $train_test_split_seed"
         PYTHONPATH=src python src/experiments/experiment.py with dataset.name=$dataset dataset.train_test_split_seed=$train_test_split_seed $*
     done
