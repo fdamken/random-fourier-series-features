@@ -7,6 +7,7 @@ from gpytorch.kernels import Kernel
 from gpytorch.lazy import LazyTensor, LowRankRootLazyTensor, MatmulLazyTensor, RootLazyTensor
 
 from rfsf.kernel.initialization.fourier_series_initializer import FourierSeriesInitializer
+from rfsf.prediction_strategies.double_precision_prediction_strategy import DoublePrecisionPredictionStrategy
 from rfsf.util.assertions import assert_positive
 
 
@@ -148,3 +149,6 @@ class RFSFKernel(Kernel):
     def _amplitudes(self) -> torch.Tensor:
         """Computes the amplitudes from the log-amplitudes."""
         return self.amplitudes_log.exp()
+
+    def prediction_strategy(self, train_inputs, train_prior_dist, train_labels, likelihood):
+        return DoublePrecisionPredictionStrategy(train_inputs, train_prior_dist, train_labels, likelihood)
