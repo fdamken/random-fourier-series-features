@@ -1,6 +1,7 @@
 from logging import Logger
 from typing import Any, ClassVar, List
 
+import numpy as np
 import sklearn.utils
 import torch
 from gpytorch import ExactMarginalLogLikelihood
@@ -164,6 +165,7 @@ def main(
         + f"  - Non-Learn Parameters: {', '.join(f'{name} shape {tuple(param.shape)}' for name, param in model.named_parameters() if not param.requires_grad)}",
     )
 
+    avg_loss = np.nan
     mll = ExactMarginalLogLikelihood(model.likelihood, model)
     parameter_group_names, opt_parameters = split_parameter_groups(model)
     if len(optimizer_alternate_parameters) > 1:
@@ -243,7 +245,6 @@ def main(
 
     add_pickle_artifact(_run, model, f"model-final", device=devices.cuda())
 
-    # noinspection PyUnboundLocalVariable
     return {"loss": avg_loss}
 
 
