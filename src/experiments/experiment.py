@@ -1,5 +1,6 @@
+import os
 from logging import Logger
-from typing import Any, ClassVar, List
+from typing import Any, ClassVar, Final, List
 
 import numpy as np
 import sklearn.utils
@@ -32,9 +33,12 @@ from rfsf.util.mock_lr import MockLR
 from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, split_parameter_groups
 
 
+NO_WANDB: Final[bool] = "NO_WANDB" in os.environ
+
 ex = Experiment(ingredients=[dataset_ingredient])
 ex.observers.append(FileStorageObserver("data/temp/results"))
-ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf"))
+if not NO_WANDB:
+    ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf"))
 
 
 # noinspection PyUnusedLocal
