@@ -1,5 +1,4 @@
 import math
-from functools import lru_cache
 from typing import Optional, Tuple
 
 import numpy as np
@@ -73,7 +72,6 @@ def get_title(name: str) -> str:
     assert False, f"unknown dataset '{name}'"
 
 
-@lru_cache
 @dataset_ingredient.capture
 def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
     print(f"Loading {name!r} dataset.")

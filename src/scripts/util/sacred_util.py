@@ -3,7 +3,6 @@ import os.path as osp
 import pickle
 import re
 from argparse import ArgumentParser
-from functools import lru_cache
 from typing import Any, Iterator, Optional, Tuple
 
 import jsonpickle.ext.numpy
@@ -23,15 +22,12 @@ def make_run_ingredient(base_dir: str):
 
     use_legacy_model_format = osp.isfile(f"{base_dir}/model.pkl")
 
-    @lru_cache
     def load_config() -> dict:
         return _load_jsonpickle(f"{base_dir}/config.json")
 
-    @lru_cache
     def load_metrics() -> dict:
         return _load_jsonpickle(f"{base_dir}/metrics.json")
 
-    @lru_cache
     def load_run() -> dict:
         return _load_jsonpickle(f"{base_dir}/run.json")
 
@@ -73,7 +69,6 @@ def make_run_ingredient(base_dir: str):
             yield step, load_model(step)
         yield None, load_model(None)
 
-    @lru_cache
     def load_pre_processor() -> PreProcessor:
         return _load_pickle(f"{base_dir}/pre_processor.pkl")
 
