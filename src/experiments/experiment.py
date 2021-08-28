@@ -67,6 +67,11 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
 
     # noinspection PyUnusedLocal
     @ex.named_config
+    def standardization():
+        pre_processor_class = Standardization
+
+    # noinspection PyUnusedLocal
+    @ex.named_config
     def pca_whitening():
         pre_processor_class = PCAWhitening
 

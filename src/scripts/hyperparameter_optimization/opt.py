@@ -15,22 +15,12 @@ class CUDAOutOfMemoryError(RuntimeError):
     pass
 
 
-def objective(trial: optuna.Trial, dataset: str, model_name: str, max_iter: int, learning_rate: float) -> float:
-    config = {
-        "dataset": {"name": dataset},
-        "optimizer_kwargs": {"lr": learning_rate},
-        "max_iter": max_iter,
-        "model_kwargs": {
-            "num_harmonics": trial.suggest_int(name="num_harmonics", low=1, high=128),
-            "half_period": trial.suggest_float(name="half_period", low=1e-5, high=1e5),
-        },
-    }
-
+def evaluate_dataset(config, dataset, model_name, pre_processing) -> float:
+    config["dataset"] = {"name": dataset}
     try:
         # Training.
-        print(f"Training with {max_iter=}.")
         ex = make_experiment(False)
-        run = ex.run(named_configs=[model_name], config_updates=config)
+        run = ex.run(named_configs=[model_name, pre_processing], config_updates=config)
 
         # Evaluation.
         basedir = run.observers[0].dir
@@ -44,27 +34,51 @@ def objective(trial: optuna.Trial, dataset: str, model_name: str, max_iter: int,
         raise e
 
 
+def objective(trial: optuna.Trial, datasets: str, model_name: str, max_iter: int, learning_rate: float) -> float:
+    num_harmonics = trial.suggest_int(name="num_harmonics", low=1, high=32)
+    half_period = trial.suggest_float(name="half_period", low=0.1, high=10)
+    use_ard = trial.suggest_categorical(name="use_ard", choices=[True, False])
+    pre_processing = trial.suggest_categorical(name="pre_processing", choices=["no_pre_processing", "standardization", "pca_whitening"])
+
+    config = {
+        "optimizer_kwargs": {"lr": learning_rate},
+        "max_iter": max_iter,
+        "model_kwargs": {
+            "num_harmonics": num_harmonics,
+            "half_period": half_period,
+            "use_ard": use_ard
+        },
+    }
+
+    value = 0.0
+    for dataset in datasets:
+        value += evaluate_dataset(config, dataset, model_name, pre_processing)
+    return value / len(datasets)
+
+
 def main() -> None:
     parser = ArgumentParser()
-    parser.add_argument("-d", "--dataset", required=True, type=str, help="Dataset to optimize hyper-parameters on.")
+    parser.add_argument("-d", "--datasets", required=True, type=str, help="Datasets to optimize the hyper-parameters on.")
     parser.add_argument("-c", "--model", required=True, type=str, help="Name of the model (in the form of a Sacred named config) to optimize.")
     parser.add_argument("-n", "--max_iter", required=True, type=int, help="Maximum number of iterations to perform per trial.")
+    parser.add_argument("-k", "--num_trials", default=100, type=int, help="Number of Optuna trials.")
     parser.add_argument("-l", "--learning_rate", default=0.01, type=float, help="Learning rate to use.")
     args = parser.parse_args()
-    dataset = args.dataset
+    datasets = args.datasets.split(",")
     model_name = args.model
     max_iter = args.max_iter
     learning_rate = args.learning_rate
+    num_trials = args.num_trials
 
     study = optuna.create_study(
-        study_name=f"{dataset}_{model_name}_{max_iter}MaxIter_{learning_rate}LR_{datetime.now().isoformat()}",
+        study_name=f"{','.join(datasets)}_{model_name}_{max_iter}MaxIter_{learning_rate}LR_{datetime.now().isoformat()}",
         direction="minimize",
         storage="sqlite:///optuna.db",
         load_if_exists=True,
     )
     study.optimize(
-        partial(objective, dataset=dataset, model_name=model_name, max_iter=max_iter, learning_rate=learning_rate),
-        n_trials=100,
+        partial(objective, datasets=datasets, model_name=model_name, max_iter=max_iter, learning_rate=learning_rate),
+        n_trials=num_trials,
         catch=(NotPSDError, CUDAOutOfMemoryError),
     )
     print("Best parameters:", study.best_params)
