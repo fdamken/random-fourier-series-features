@@ -22,6 +22,17 @@ class RFSFRandomGP(ExactGP):
     ):
         super().__init__(train_inputs, train_targets, likelihood)
         self.mean_module = ConstantMean()
+        # Without learning prior mean (uci-concrete):
+        #     |       |       RMSE |   Avg. LL |
+        #     |-------|------------|-----------|
+        #     | Train | 0.00259215 |   4.30551 |
+        #     | Test  | 0.00502857 |   2.85511 |
+        # With learning prior mean (uci-concrete):
+        #     |       |       RMSE |   Avg. LL |
+        #     |-------|------------|-----------|
+        #     | Train | 0.00267106 |   4.0169  |
+        #     | Test  | 0.00480125 |   2.98806 |
+        self.mean_module.constant.requires_grad = False
         self.cov_module = RFSFKernel(num_samples, RandomFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases))
 
     def forward(self, x):
