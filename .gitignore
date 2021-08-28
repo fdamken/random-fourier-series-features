@@ -685,3 +685,4 @@ $RECYCLE.BIN/
 
 /data/temp
 /wandb/
+/optuna.db
