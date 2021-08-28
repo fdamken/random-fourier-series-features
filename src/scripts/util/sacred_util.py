@@ -1,9 +1,10 @@
 import os
+import os.path as osp
 import pickle
 import re
 from argparse import ArgumentParser
 from functools import lru_cache
-from typing import Any
+from typing import Any, Iterator, Optional, Tuple
 
 import jsonpickle.ext.numpy
 from sacred import Experiment, Ingredient
@@ -20,6 +21,8 @@ jsonpickle.ext.numpy.register_handlers()
 def make_run_ingredient(base_dir: str):
     run_ingredient = Ingredient("run")
 
+    use_legacy_model_format = osp.isfile(f"{base_dir}/model.pkl")
+
     @lru_cache
     def load_config() -> dict:
         return _load_jsonpickle(f"{base_dir}/config.json")
@@ -32,17 +35,49 @@ def make_run_ingredient(base_dir: str):
     def load_run() -> dict:
         return _load_jsonpickle(f"{base_dir}/run.json")
 
-    @lru_cache
-    def load_model() -> nn.Module:
-        model = _load_pickle(f"{base_dir}/model.pkl")
-        model.load_state_dict(unpickle_str(load_run()["result"]["model_state"]))
+    def load_model(step: Optional[int] = None) -> Optional[nn.Module]:
+        if use_legacy_model_format:
+            # LEGACY: Previously, the model state was saved in the result dict.
+            model = _load_pickle(f"{base_dir}/model.pkl")
+            if step is None:
+                model_state_str = load_run()["result"]["model_state"]
+            else:
+                model_states = load_metrics()["model_state"]
+                steps = model_states["steps"]
+                state_dicts = model_states["values"]
+                if step not in steps:
+                    return None
+                model_state_str = state_dicts[steps.index(step)]
+            model.load_state_dict(unpickle_str(model_state_str))
+        else:
+            if step is None:
+                model_path = f"{base_dir}/model-final.pkl"
+            else:
+                model_path = f"{base_dir}/model-{step}.pkl"
+            if not osp.isfile(model_path):
+                return None
+            model = _load_pickle(model_path)
         return model
+
+    def iterate_models() -> Iterator[Tuple[Optional[int], nn.Module]]:
+        if use_legacy_model_format:
+            steps = load_metrics()["model_state"]["steps"]
+        else:
+            steps = []
+            for file_name in os.listdir(base_dir):
+                match = re.match(r"^model-(\d+)\.pkl$", file_name)
+                if match:
+                    steps.append(int(match.group(1)))
+            steps.sort()
+        for step in steps:
+            yield step, load_model(step)
+        yield None, load_model(None)
 
     @lru_cache
     def load_pre_processor() -> PreProcessor:
         return _load_pickle(f"{base_dir}/pre_processor.pkl")
 
-    return run_ingredient, load_config, load_metrics, load_run, load_model, load_pre_processor
+    return run_ingredient, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor
 
 
 def load_experiment():
@@ -81,13 +116,13 @@ def load_experiment():
     else:
         os.makedirs(eval_dir)
 
-    run_ingredient, load_config, load_metrics, load_run, load_model, load_pre_processor = make_run_ingredient(experiment_dir)
+    run_ingredient, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = make_run_ingredient(experiment_dir)
     ex = Experiment(ingredients=[dataset_ingredient, run_ingredient])
     ex.add_config({"__experiment_dir": experiment_dir, "__figures_dir": figures_dir, "__eval_dir": eval_dir, "__load_dumped_eval": load_dumped_eval})
     config = load_config()
     ex.add_config(config)
     dataset_ingredient.add_config(config["dataset"])
-    return ex, load_config, load_metrics, load_run, load_model, load_pre_processor
+    return ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor
 
 
 def _load_jsonpickle(path: str) -> dict:

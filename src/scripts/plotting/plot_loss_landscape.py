@@ -18,7 +18,7 @@ from scripts.util.sacred_util import load_experiment
 amplitudes_param_name: Final[str] = "Amplitudes"
 phases_param_name: Final[str] = "Phases"
 
-ex, load_config, load_metrics, load_run, load_model, load_pre_processor = load_experiment()
+ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = load_experiment()
 
 
 # noinspection PyUnusedLocal

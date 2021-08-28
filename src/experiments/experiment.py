@@ -28,7 +28,7 @@ from rfsf.util import devices
 from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR
 from rfsf.util.mock_lr import MockLR
-from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, pickle_str, split_parameter_groups
+from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, split_parameter_groups
 
 
 ex = Experiment(ingredients=[dataset_ingredient])
@@ -53,7 +53,7 @@ def default_config():
     lr_scheduler_kwargs = {"gamma": 0.999}
     max_iter = 10_000
     batch_size = 1000
-    log_model_state_every_n_iterations = 100
+    save_model_every_n_iterations = 100
     log_parameter_values = False
     log_parameter_grad_values = False
 
@@ -133,7 +133,7 @@ def main(
     lr_scheduler_kwargs: dict,
     max_iter: int,
     batch_size: int,
-    log_model_state_every_n_iterations: int,
+    save_model_every_n_iterations: int,
     log_parameter_values: bool,
     log_parameter_grad_values: bool,
     _run: Run,
@@ -238,14 +238,13 @@ def main(
                         if log_parameter_grad_values and param.requires_grad:
                             _run.log_scalar(f"parameters_grad/{metric_suffix}", param.grad[index].item(), step=step)
         _run.log_scalar("grad_norm", grad_norm.item(), step=step)
-        if step % log_model_state_every_n_iterations == 0:
-            _run.log_scalar("model_state", pickle_str(model.state_dict()), step=step)
-        if step == 0:
-            # Add the model as an artifact after it was first invoked as otherwise the random weights/biases are not
-            # initialized and loading would fail.
-            add_pickle_artifact(_run, model, "model", device=devices.cuda())
+        if step % save_model_every_n_iterations == 0:
+            add_pickle_artifact(_run, model, f"model-{step}", device=devices.cuda())
 
-    return {"model_state": pickle_str(model.state_dict())}
+    add_pickle_artifact(_run, model, f"model-final", device=devices.cuda())
+
+    # noinspection PyUnboundLocalVariable
+    return {"loss": avg_loss}
 
 
 if __name__ == "__main__":

@@ -1,19 +1,18 @@
-from typing import Callable, Optional, Tuple
+from typing import Callable, Iterable, Optional, Tuple
 
 import gpytorch
 import torch
+from PIL import Image
 from gpytorch.models import GP
-from matplotlib import colors, cycler
-from matplotlib import pyplot as plt
+from matplotlib import colors, cycler, pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
 from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.util import devices
-from rfsf.util.tensor_util import to_numpy, unpickle_str
+from rfsf.util.tensor_util import to_numpy
 from scripts.plotting.util import savefig
 
 
@@ -22,9 +21,7 @@ sample_color_cycler = cycler(color=["tab:orange", "tab:green", "tab:red", "tab:p
 
 def animate_over_model_states(
     pre_processor: PreProcessor,
-    model: GP,
-    metrics: dict,
-    run: dict,
+    models: Iterable[Tuple[Optional[int], GP]],
     figures_dir: str,
     filename: str,
     plot_single: Callable[[PreProcessor, GP, str], Figure],
@@ -32,29 +29,20 @@ def animate_over_model_states(
     two_pass: bool = False,
     frame_duration: int = 50,
 ):
-    model_states = metrics["model_state"]
-
-    steps = model_states["steps"] + ["Final"]
-    state_dicts = model_states["values"] + [run["result"]["model_state"]]
-
     filenames = []
     passes = [True]
     if two_pass:
         passes = [False] + passes
     for i, save_fig in enumerate(passes):
-        print(f"Plotting {len(steps)} steps (pass {i + 1}, {'' if save_fig else 'not '}saving).")
+        print(f"Plotting steps (pass {i + 1}, {'' if save_fig else 'not '}saving).")
         filenames = []
-        for step, state_dict in tqdm(zip(steps, state_dicts)):
-            model.load_state_dict(unpickle_str(state_dict))
+        for step, model in tqdm(models):
             model.eval()
-
-            if type(step) == int:
-                frame_filename = f"{step:010d}"
-            elif type(step) == str:
-                frame_filename = f"{step.lower()}"
+            if step is None:
+                frame_filename = "final"
             else:
-                assert False, f"unexpected step type {type(step)}"
-            fig = plot_single(pre_processor, model, f"; Iter. {step}")
+                frame_filename = f"{step:010d}"
+            fig = plot_single(pre_processor, model, "; " + ("Final" if step is None else f"Step {step}"))
             if save_fig:
                 savefig(fig, figures_dir, frame_filename, formats=["png"])
                 filenames.append(frame_filename)

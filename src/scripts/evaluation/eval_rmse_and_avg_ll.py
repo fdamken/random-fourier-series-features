@@ -14,7 +14,7 @@ from rfsf.util import devices
 from scripts.util.sacred_util import load_experiment
 
 
-ex, load_config, load_metrics, load_run, load_model, load_pre_processor = load_experiment()
+ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = load_experiment()
 
 
 @ex.main
