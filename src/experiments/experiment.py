@@ -57,7 +57,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         max_iter = 10_000
         batch_size = 1000
         save_model_every_n_iterations = 100
-        log_parameter_values = True
+        log_parameter_values = False
         log_parameter_grad_values = False
 
     # noinspection PyUnusedLocal
@@ -98,13 +98,15 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     @ex.named_config
     def rfsf_random():
         model_class = RFSFRandomGP
+        # Hyperparameters where found using an Optuna study on commit a16ae4e9. These are the parameters that produces a
+        # decent result on uci-boston-housing while not beeing extremely high.
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=8,
-            half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
+            num_harmonics=15,
+            half_period=8.794312729211464,
             optimize_amplitudes=True,
             optimize_phases=True,
-            use_ard=True,
+            use_ard=False,
         )
 
     # noinspection PyUnusedLocal
