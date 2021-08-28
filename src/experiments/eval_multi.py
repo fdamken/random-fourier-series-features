@@ -8,8 +8,7 @@ def get_parser() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument("-e", "--experiment_args", required=True, type=str, help="Parameters to pass to the experiment via run_commandline.")
     parser.add_argument("-d", "--datasets", required=True, type=str, help="Comma-separated list of datasets to evaluate.")
-    parser.add_argument("-n", "--num_seeds", default=5, type=int, help="Number of seeds to evaluate.")
-    parser.add_argument("-m", "--num_split_seeds", default=5, type=int, help="Number of train/test-split seeds to evaluate per seed.")
+    parser.add_argument("-n", "--num_eval", default=5, type=int, help="Number evaluations. Seed and train/test split seed are changed simultaneously.")
     return parser
 
 
@@ -31,14 +30,14 @@ def run_experiment(seed: int, split_seed: int, dataset: str, experiment_args: Li
 def main() -> None:
     args = get_parser().parse_args()
     datasets = args.datasets.split(",")
-    num_seeds = args.num_seeds
-    num_split_seeds = args.num_split_seeds
+    num_eval = args.num_eval
     experiment_args = args.experiment_args.split(" ")
 
-    for seed in range(num_seeds):
-        for split_seed in range(num_split_seeds):
-            for dataset in datasets:
-                run_experiment(seed, split_seed, dataset, experiment_args)
+    for i in range(num_eval):
+        for dataset in datasets:
+            # Use different seed and split seed such that the first random number drawn is not identical. I'm unsure if
+            # this makes a difference, but it doesn't hurt.
+            run_experiment(i, i + 1, dataset, experiment_args)
 
 
 if __name__ == "__main__":
