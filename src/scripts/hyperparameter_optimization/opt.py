@@ -5,7 +5,6 @@ from functools import partial
 
 import optuna
 from gpytorch.utils.errors import NotPSDError
-from optuna import Trial
 
 from experiments.experiment import make_experiment
 from scripts.evaluation.eval_rmse_and_avg_ll import evaluate
@@ -16,14 +15,14 @@ class CUDAOutOfMemoryError(RuntimeError):
     pass
 
 
-def objective(trial: Trial, dataset: str, model_name: str, max_iter: int, learning_rate: float) -> float:
+def objective(trial: optuna.Trial, dataset: str, model_name: str, max_iter: int, learning_rate: float) -> float:
     config = {
         "dataset": {"name": dataset},
         "optimizer_kwargs": {"lr": learning_rate},
         "max_iter": max_iter,
         "model_kwargs": {
             "num_harmonics": trial.suggest_int(name="num_harmonics", low=1, high=128),
-            "half_period": trial.suggest_uniform(name="half_period", low=1e-2, high=1e1),
+            "half_period": trial.suggest_float(name="half_period", low=1e-5, high=1e5),
         },
     }
 
