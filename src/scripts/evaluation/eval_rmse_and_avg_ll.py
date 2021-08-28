@@ -7,36 +7,13 @@ import gpytorch
 import numpy as np
 import torch
 from gpytorch.models import ExactGP
+from sacred import Experiment
 from tabulate import tabulate
 
 from ingredients import dataset
 from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.util import devices
 from scripts.util.sacred_util import load_experiment
-
-
-ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = load_experiment()
-
-
-@ex.main
-def main(__experiment_dir: str):
-    test_posterior_ll, test_posterior_rmse, train_posterior_ll, train_posterior_rmse = evaluate(load_pre_processor(), load_model())
-
-    print(
-        tabulate(
-            [[train_posterior_rmse, train_posterior_ll], [test_posterior_rmse, test_posterior_ll]],
-            headers=("RMSE", "Avg. LL"),
-            showindex=("Train", "Test"),
-            tablefmt="github",
-        )
-    )
-
-    eval_file = f"{__experiment_dir}/{osp.basename(__file__).replace('.py', '')}.csv"
-    if osp.exists(eval_file):
-        assert osp.isfile(eval_file), f"{eval_file = } exists, but is not a file"
-        os.remove(eval_file)
-    with open(eval_file, "w") as f:
-        f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}")
 
 
 def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evaluation: bool = False) -> Tuple[float, float, float, float]:
@@ -70,5 +47,31 @@ def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: to
         return math.sqrt(mse / len(targets)), ll / len(targets)
 
 
+def make_eval_experiment() -> Experiment:
+    ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = load_experiment()
+
+    @ex.main
+    def main(__experiment_dir: str):
+        test_posterior_ll, test_posterior_rmse, train_posterior_ll, train_posterior_rmse = evaluate(load_pre_processor(), load_model())
+
+        print(
+            tabulate(
+                [[train_posterior_rmse, train_posterior_ll], [test_posterior_rmse, test_posterior_ll]],
+                headers=("RMSE", "Avg. LL"),
+                showindex=("Train", "Test"),
+                tablefmt="github",
+            )
+        )
+
+        eval_file = f"{__experiment_dir}/{osp.basename(__file__).replace('.py', '')}.csv"
+        if osp.exists(eval_file):
+            assert osp.isfile(eval_file), f"{eval_file = } exists, but is not a file"
+            os.remove(eval_file)
+        with open(eval_file, "w") as f:
+            f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}")
+
+    return ex
+
+
 if __name__ == "__main__":
-    ex.run()
+    make_eval_experiment().run()
