@@ -60,10 +60,10 @@ def default_config():
 def get_title(name: str) -> str:
     prefix = ""
     if name.startswith(_clustered_prefix):
-        name = name[len(_clustered_prefix):]
+        name = name[len(_clustered_prefix) :]
         prefix = _clustered_prefix
     elif name.startswith(_uci_prefix):
-        name = name[len(_uci_prefix):]
+        name = name[len(_uci_prefix) :]
         prefix = _uci_prefix
     if prefix:
         prefix = _prefix_titles[prefix]
@@ -76,10 +76,10 @@ def get_title(name: str) -> str:
 def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
     print(f"Loading {name!r} dataset.")
     if name in (prefix + base_name for prefix in ("", _clustered_prefix) for base_name in ("sine", "cosine", "heaviside", "heavisine", "heavicosine", "discontinuous_odd_cosine")):
-        func_name = name[len(_clustered_prefix):] if name.startswith(_clustered_prefix) else name
+        func_name = name[len(_clustered_prefix) :] if name.startswith(_clustered_prefix) else name
         data = _load_dataset_similar_func(func_name, clustered=name.startswith(_clustered_prefix))
     elif name.startswith(_uci_prefix):
-        uci_dataset_name = name[len(_uci_prefix):]
+        uci_dataset_name = name[len(_uci_prefix) :]
         data = _load_uci_dataset(uci_dataset_name)
     else:
         assert False, f"unknown dataset {name!r}"

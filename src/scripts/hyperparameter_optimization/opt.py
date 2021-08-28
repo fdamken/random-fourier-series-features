@@ -43,11 +43,7 @@ def objective(trial: optuna.Trial, datasets: str, model_name: str, max_iter: int
     config = {
         "optimizer_kwargs": {"lr": learning_rate},
         "max_iter": max_iter,
-        "model_kwargs": {
-            "num_harmonics": num_harmonics,
-            "half_period": half_period,
-            "use_ard": use_ard
-        },
+        "model_kwargs": {"num_harmonics": num_harmonics, "half_period": half_period, "use_ard": use_ard},
     }
 
     value = 0.0
