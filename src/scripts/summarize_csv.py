@@ -10,7 +10,7 @@ def main():
     file = args.file
 
     df = pd.read_csv(file)
-    print(df.describe())
+    print(df.describe().round(2))
 
 
 if __name__ == '__main__':
