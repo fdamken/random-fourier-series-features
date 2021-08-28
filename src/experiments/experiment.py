@@ -94,7 +94,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     def rfsf_random():
         model_class = RFSFRandomGP
         model_kwargs = dict(
-            num_samples=5000,
+            num_samples=2500,
             num_harmonics=8,
             half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
             optimize_amplitudes=True,
@@ -106,9 +106,9 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     def rfsf_relu():
         model_class = RFSFReLUGP
         model_kwargs = dict(
-            num_samples=5000,
+            num_samples=2500,
             num_harmonics=8,
-            half_period=0.5,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
+            half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
             optimize_amplitudes=True,
             optimize_phases=True,
         )
@@ -245,4 +245,4 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
 
 
 if __name__ == "__main__":
-    make_experiment("NO_WANDB" not in os.environ)[-1].run_commandline()
+    make_experiment("NO_WANDB" not in os.environ).run_commandline()

@@ -4,6 +4,7 @@ import os.path as osp
 from typing import Tuple
 
 import gpytorch
+import numpy as np
 import torch
 from gpytorch.models import ExactGP
 from tabulate import tabulate
@@ -19,18 +20,7 @@ ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_pr
 
 @ex.main
 def main(__experiment_dir: str):
-    pre_processor = load_pre_processor()
-    model = load_model()
-    pre_processor.to(devices.cpu())
-    model.to(device=devices.cpu())
-    model.eval()
-
-    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=devices.cpu())
-
-    print(f"Computing posterior metrics for {len(train_targets)} training samples.")
-    train_posterior_rmse, train_posterior_ll = _compute_rmse_and_ll(pre_processor, model, train_inputs, train_targets)
-    print(f"Computing posterior metrics for {len(test_targets)} test samples.")
-    test_posterior_rmse, test_posterior_ll = _compute_rmse_and_ll(pre_processor, model, test_inputs, test_targets)
+    test_posterior_ll, test_posterior_rmse, train_posterior_ll, train_posterior_rmse = evaluate(load_pre_processor(), load_model())
 
     print(
         tabulate(
@@ -47,6 +37,25 @@ def main(__experiment_dir: str):
         os.remove(eval_file)
     with open(eval_file, "w") as f:
         f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}")
+
+
+def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evaluation: bool = False) -> Tuple[float, float, float, float]:
+    pre_processor.to(devices.cpu())
+    model.to(device=devices.cpu())
+    model.eval()
+
+    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=devices.cpu())
+
+    if skip_training_evaluation:
+        train_posterior_rmse, train_posterior_ll = np.nan, np.nan
+    else:
+        print(f"Computing posterior metrics for {len(train_targets)} training samples.")
+        train_posterior_rmse, train_posterior_ll = _compute_rmse_and_ll(pre_processor, model, train_inputs, train_targets)
+
+    print(f"Computing posterior metrics for {len(test_targets)} test samples.")
+    test_posterior_rmse, test_posterior_ll = _compute_rmse_and_ll(pre_processor, model, test_inputs, test_targets)
+
+    return test_posterior_ll, test_posterior_rmse, train_posterior_ll, train_posterior_rmse
 
 
 @torch.no_grad()
