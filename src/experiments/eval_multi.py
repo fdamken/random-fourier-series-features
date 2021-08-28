@@ -35,9 +35,13 @@ def main() -> None:
 
     for i in range(num_eval):
         for dataset in datasets:
-            # Use different seed and split seed such that the first random number drawn is not identical. I'm unsure if
-            # this makes a difference, but it doesn't hurt.
-            run_experiment(i, i + 1, dataset, experiment_args)
+            try:
+                # Use different seed and split seed such that the first random number drawn is not identical. I'm unsure if
+                # this makes a difference, but it doesn't hurt.
+                run_experiment(i, i + 1, dataset, experiment_args)
+            except:
+                # This is sad. But better than crashing the whole evaluation.
+                pass
 
 
 if __name__ == "__main__":
