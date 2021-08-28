@@ -19,6 +19,7 @@ class RFSFRandomGP(ExactGP):
         half_period: float,
         optimize_amplitudes: bool,
         optimize_phases: bool,
+        use_ard: bool,
     ):
         super().__init__(train_inputs, train_targets, likelihood)
         self.mean_module = ConstantMean()
@@ -33,7 +34,8 @@ class RFSFRandomGP(ExactGP):
         #     | Train | 0.00267106 |   4.0169  |
         #     | Test  | 0.00480125 |   2.98806 |
         self.mean_module.constant.requires_grad = False
-        self.cov_module = RFSFKernel(num_samples, RandomFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases))
+        self.cov_module = RFSFKernel(num_samples, RandomFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases),
+                                     ard_num_dims=train_inputs.shape[1] if use_ard else None)
 
     def forward(self, x):
         mean = self.mean_module(x)

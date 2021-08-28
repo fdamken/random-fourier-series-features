@@ -57,7 +57,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         max_iter = 10_000
         batch_size = 1000
         save_model_every_n_iterations = 100
-        log_parameter_values = False
+        log_parameter_values = True
         log_parameter_grad_values = False
 
     # noinspection PyUnusedLocal
@@ -99,6 +99,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
             optimize_amplitudes=True,
             optimize_phases=True,
+            use_ard=True,
         )
 
     # noinspection PyUnusedLocal
@@ -111,6 +112,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
             optimize_amplitudes=True,
             optimize_phases=True,
+            use_ard=True,
         )
 
     @ex.main
