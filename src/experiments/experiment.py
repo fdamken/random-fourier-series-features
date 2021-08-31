@@ -98,25 +98,27 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     @ex.named_config
     def rfsf_random():
         model_class = RFSFRandomGP
-        # Hyperparameters where found using an Optuna study on commit a16ae4e9. These are the parameters that produces a
-        # decent result on uci-boston-housing while not beeing extremely high.
+        # Hyperparameters where found using an Optuna study on commit 6d49b808.
+        pre_processor_class = Standardization
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=15,
-            half_period=8.794312729211464,
+            num_harmonics=5,
+            half_period=8.894257014436906,
             optimize_amplitudes=True,
             optimize_phases=True,
-            use_ard=False,
+            use_ard=True,
         )
 
     # noinspection PyUnusedLocal
     @ex.named_config
     def rfsf_relu():
         model_class = RFSFReLUGP
+        # Hyperparameters where found using an Optuna study on commit 6d49b808.
+        pre_processor_class = PCAWhitening
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=8,
-            half_period=1.0,  # A value of 1.0 produces smooth results, while 3.0 is theoretically backed. See `Phenomena/Half-Period Value` in Obsidian.
+            num_harmonics=27,
+            half_period=7.586205337097311,
             optimize_amplitudes=True,
             optimize_phases=True,
             use_ard=True,
