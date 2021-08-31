@@ -1,8 +1,8 @@
 import math
+import os.path as osp
 from typing import Optional, Tuple
 
 import numpy as np
-import sklearn.model_selection
 import torch
 from sacred import Ingredient
 
@@ -11,18 +11,6 @@ dataset_ingredient = Ingredient("dataset")
 
 _clustered_prefix = "clustered-"
 _uci_prefix = "uci-"
-_uci_number_of_outputs = {
-    "boston-housing": 1,  # TODO: Find out if this is correct.
-    "concrete": 1,
-    "energy": 2,
-    "kin8nm": 1,  # TODO: Find out if this is correct.
-    "naval-propulsion-plant": 2,
-    "power-plant": 1,
-    "protein-tertiary-structure": 1,
-    "wine-quality-red": 1,
-    "wine-quality-white": 1,
-    "yacht": 1,
-}
 _dataset_titles = {
     "sine": "Sine",
     "cosine": "Cosine",
@@ -38,7 +26,6 @@ _dataset_titles = {
     "power-plant": "Combined Cycle Power Plant Data Set",
     "protein-tertiary-structure": "Physicochemical Properties of Protein Tertiary Structure",
     "wine-quality-red": "Wine Quality (Red)",
-    "wine-quality-white": "Wine Quality (White)",
     "yacht": "Yacht Hydrodynamics",
 }
 _prefix_titles = {
@@ -52,8 +39,7 @@ _prefix_titles = {
 def default_config():
     name = "sine"
     dataset_directory = "data/perm"
-    train_test_split_test_portion = 0.5
-    train_test_split_seed = 42
+    uci_split_index = 0
 
 
 @dataset_ingredient.capture
@@ -125,19 +111,23 @@ def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[t
 
 
 @dataset_ingredient.capture
-def _load_uci_dataset(name: str, dataset_directory: str) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
-    assert name in _uci_number_of_outputs.keys(), f"unknown UCI dataset {name}"
-    number_of_outputs = _uci_number_of_outputs[name]
-    file = f"{dataset_directory}/uci/{name}.csv"
-    data = np.genfromtxt(file, dtype=np.float32, delimiter=",")
-    train_data, test_data = _train_test_split(data)
-    train_inputs = train_data[:, :-number_of_outputs]
-    train_targets = train_data[:, :number_of_outputs][:, 0]  # TODO: Support multi-target regression!
-    test_inputs = test_data[:, :-number_of_outputs]
-    test_targets = test_data[:, :number_of_outputs][:, 0]  # TODO: Support multi-target regression!
+def _load_uci_dataset(name: str, dataset_directory: str, uci_split_index: int) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+    uci_dir = f"{dataset_directory}/uci/{name}"
+    assert osp.isdir(uci_dir), f"unknown UCI dataset {name}"
+
+    n_splits = int(np.loadtxt(f"{uci_dir}/n_splits.txt"))
+    assert 0 <= uci_split_index < n_splits, f"split index {uci_split_index} out of bounds; only {n_splits} available"
+
+    data = np.loadtxt(f"{uci_dir}/data.txt", dtype=np.float32)
+    features_dims = np.loadtxt(f"{uci_dir}/index_features.txt", dtype=int).reshape((-1,))
+    target_dims = np.loadtxt(f"{uci_dir}/index_target.txt", dtype=int).reshape((-1,))
+    train_indices = np.loadtxt(f"{uci_dir}/index_train_{uci_split_index}.txt", dtype=int)
+    test_indices = np.loadtxt(f"{uci_dir}/index_test_{uci_split_index}.txt", dtype=int)
+
+    train_data, test_data = data[train_indices], data[test_indices]
+    train_inputs = train_data[:, features_dims]
+    train_targets = train_data[:, target_dims][:, 0]  # TODO: Support multi-target regression!
+    test_inputs = test_data[:, features_dims]
+    test_targets = test_data[:, target_dims][:, 0]  # TODO: Support multi-target regression!
+
     return (torch.from_numpy(train_inputs), torch.from_numpy(train_targets)), (torch.from_numpy(test_inputs), torch.from_numpy(test_targets))
-
-
-@dataset_ingredient.capture
-def _train_test_split(data: np.ndarray, train_test_split_test_portion: float, train_test_split_seed: int) -> Tuple[np.ndarray, np.ndarray]:
-    return sklearn.model_selection.train_test_split(data, test_size=train_test_split_test_portion, random_state=train_test_split_seed)

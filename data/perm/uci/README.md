@@ -14,7 +14,7 @@ This directory contains data from the UCI machine learning repository. The corre
 
 ## Datasets
 
-### Boston Housing (`boston-housing.txt`)
+### Boston Housing (`boston-housing`)
 
 No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https://github.com/yaringal/DropoutUncertaintyExps).
 
@@ -47,7 +47,7 @@ No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https
 }
 ```
 
-### [Energy Efficiency](https://archive.ics.uci.edu/ml/datasets/Energy+efficiency) (`energy.csv`)
+### [Energy Efficiency](https://archive.ics.uci.edu/ml/datasets/Energy+efficiency) (`energy`)
 
 | Data Set Characteristic | Attribute Characteristic | Number of Instances | Number of Inputs | Number of Outputs |
 |:-----------------------:|:------------------------:|:-------------------:|:----------------:|:-----------------:|
@@ -76,7 +76,7 @@ No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https
 }
 ```
 
-### Kin8NM (`kin8nm.txt`)
+### Kin8NM (`kin8nm`)
 
 No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https://github.com/yaringal/DropoutUncertaintyExps).
 
@@ -118,7 +118,7 @@ No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https
 }
 ```
 
-### [Combined Cycle Power Plant Data Set](https://archive.ics.uci.edu/ml/datasets/Combined+Cycle+Power+Plant) (`power-plant.csv`)
+### [Combined Cycle Power Plant Data Set](https://archive.ics.uci.edu/ml/datasets/Combined+Cycle+Power+Plant) (`power-plant`)
 
 | Data Set Characteristic | Attribute Characteristic | Number of Instances | Number of Inputs | Number of Outputs |
 |:-----------------------:|:------------------------:|:-------------------:|:----------------:|:-----------------:|
@@ -150,7 +150,7 @@ No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https
 }
 ```
 
-### [Physicochemical Properties of Protein Tertiary Structure](https://archive.ics.uci.edu/ml/datasets/Physicochemical+Properties+of+Protein+Tertiary+Structure) (`protein-tertiary-structure.csv`)
+### [Physicochemical Properties of Protein Tertiary Structure](https://archive.ics.uci.edu/ml/datasets/Physicochemical+Properties+of+Protein+Tertiary+Structure) (`protein-tertiary-structure`)
 
 | Data Set Characteristic | Attribute Characteristic | Number of Instances | Number of Inputs | Number of Outputs |
 |:-----------------------:|:------------------------:|:-------------------:|:----------------:|:-----------------:|
@@ -167,7 +167,7 @@ No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https
 9. Spacial Distribution constraints
 10. **Size of the Residue**
 
-### [Wine Quality](https://archive.ics.uci.edu/ml/datasets/Wine+Quality) (`wine-quality-red.txt`, `wine-quality-white.txt`)
+### [Wine Quality](https://archive.ics.uci.edu/ml/datasets/Wine+Quality) (`wine-quality-red`)
 
 | Data Set Characteristic | Attribute Characteristic |    Number of Instances    | Number of Inputs | Number of Outputs |
 |:-----------------------:|:------------------------:|:-------------------------:|:----------------:|:-----------------:|
@@ -199,7 +199,7 @@ No information found on UCI. Copied from [yaringal/DropoutUncertaintyExps](https
 }
 ```
 
-### [Yacht Hydrodynamics](https://archive.ics.uci.edu/ml/datasets/Yacht+Hydrodynamics) (`yacht.csv`)
+### [Yacht Hydrodynamics](https://archive.ics.uci.edu/ml/datasets/Yacht+Hydrodynamics) (`yacht`)
 
 | Data Set Characteristic | Attribute Characteristic | Number of Instances | Number of Inputs | Number of Outputs |
 |:-----------------------:|:------------------------:|:-------------------:|:----------------:|:-----------------:|
