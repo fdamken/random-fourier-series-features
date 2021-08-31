@@ -54,7 +54,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         optimizer_alternate_parameters = [["all"]]
         lr_scheduler_class = ExponentialLR
         lr_scheduler_kwargs = {"gamma": 0.999}
-        max_iter = 10_000
+        max_iter = 1000
         batch_size = 1000
         save_model_every_n_iterations = 100
         log_parameter_values = False

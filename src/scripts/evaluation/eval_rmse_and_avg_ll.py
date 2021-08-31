@@ -38,11 +38,12 @@ def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evalu
 @torch.no_grad()
 def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: torch.Tensor, targets: torch.Tensor) -> Tuple[float, float]:
     with gpytorch.settings.fast_computations(covar_root_decomposition=False, log_prob=False, solves=False):
-        inputs = pre_processor.transform_inputs(inputs)
-        targets = pre_processor.transform_targets(targets)
-        predictions = model(inputs)
-        mse = ((predictions.mean - targets) ** 2).sum().item()
-        ll = predictions.log_prob(targets).item()
+        transformed_inputs = pre_processor.transform_inputs(inputs)
+        transformed_targets = pre_processor.transform_targets(targets)
+        predictions = model(transformed_inputs)
+        inverse_transformed_mean = pre_processor.inverse_transform_targets(predictions.mean)
+        mse = ((inverse_transformed_mean - targets) ** 2).sum().item()
+        ll = predictions.log_prob(transformed_targets).item()
         # Take mean of log-prob to not report dataset-size-dependent metrics.
         return math.sqrt(mse / len(targets)), ll / len(targets)
 
