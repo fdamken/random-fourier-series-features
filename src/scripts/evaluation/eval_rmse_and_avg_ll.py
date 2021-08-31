@@ -16,12 +16,12 @@ from rfsf.util import devices
 from scripts.util.sacred_util import load_experiment
 
 
-def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evaluation: bool = False) -> Tuple[float, float, float, float]:
-    pre_processor.to(devices.cpu())
-    model.to(device=devices.cpu())
+def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evaluation: bool = False, device: torch.device = devices.cpu()) -> Tuple[float, float, float, float]:
+    pre_processor.to(device)
+    model.to(device=device)
     model.eval()
 
-    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=devices.cpu())
+    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=device)
 
     if skip_training_evaluation:
         train_posterior_rmse, train_posterior_ll = np.nan, np.nan
@@ -32,7 +32,7 @@ def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evalu
     print(f"Computing posterior metrics for {len(test_targets)} test samples.")
     test_posterior_rmse, test_posterior_ll = _compute_rmse_and_ll(pre_processor, model, test_inputs, test_targets)
 
-    return test_posterior_ll, test_posterior_rmse, train_posterior_ll, train_posterior_rmse
+    return train_posterior_rmse, test_posterior_rmse, train_posterior_ll, test_posterior_ll
 
 
 @torch.no_grad()
@@ -48,12 +48,12 @@ def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: to
         return math.sqrt(mse / len(targets)), ll / len(targets)
 
 
-def make_eval_experiment() -> Experiment:
-    ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = load_experiment()
+def make_eval_experiment(args=None) -> Tuple[Experiment, dict]:
+    ex, load_config, load_metrics, load_run, load_model, iterate_models, load_pre_processor = load_experiment(args)
 
     @ex.main
-    def main(__experiment_dir: str):
-        test_posterior_ll, test_posterior_rmse, train_posterior_ll, train_posterior_rmse = evaluate(load_pre_processor(), load_model())
+    def main(_log, __experiment_dir: str) -> Tuple[float, float, float, float]:
+        train_posterior_rmse, test_posterior_rmse, train_posterior_ll, test_posterior_ll = evaluate(load_pre_processor(), load_model())
 
         print(
             tabulate(
@@ -71,8 +71,10 @@ def make_eval_experiment() -> Experiment:
         with open(eval_file, "w") as f:
             f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}")
 
-    return ex
+        return train_posterior_rmse, test_posterior_rmse, train_posterior_ll, test_posterior_ll
+
+    return ex, load_config()
 
 
 if __name__ == "__main__":
-    make_eval_experiment().run()
+    make_eval_experiment()[0].run()
