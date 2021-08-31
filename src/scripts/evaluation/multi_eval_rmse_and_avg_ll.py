@@ -40,7 +40,7 @@ def main():
         for metric_key in metric_keys:
             values = np.asarray(metrics[metric_key])
             mean = values.mean()
-            std = values.std()
+            std = values.std() / np.sqrt(len(values))
             row.append(f"{np.format_float_positional(mean, precision=3)} ± {np.format_float_positional(std, precision=3)}")
         table.append(row)
 
