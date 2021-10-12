@@ -27,5 +27,8 @@ class Standardization(PreProcessor):
     def _inverse_transform_targets(self, targets_transformed: torch.Tensor) -> torch.Tensor:
         return targets_transformed * self.targets_std + self.targets_mean
 
+    def _inverse_transform_covariance_matrix(self, covariance_matrix: torch.Tensor) -> torch.Tensor:
+        return covariance_matrix @ (torch.eye(covariance_matrix.shape[0]) * self.targets_std ** 2)
+
     def _inverse_transform_target_std_devs(self, target_std_devs_transformed: torch.Tensor) -> torch.Tensor:
         return target_std_devs_transformed * self.targets_std

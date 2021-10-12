@@ -40,10 +40,13 @@ def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: to
     with gpytorch.settings.fast_computations(covar_root_decomposition=False, log_prob=False, solves=False):
         transformed_inputs = pre_processor.transform_inputs(inputs)
         transformed_targets = pre_processor.transform_targets(targets)
-        predictions = model(transformed_inputs)
-        inverse_transformed_mean = pre_processor.inverse_transform_targets(predictions.mean)
+        predictive_distribution = model(transformed_inputs)
+        inverse_transformed_mean = pre_processor.inverse_transform_targets(predictive_distribution.mean)
+        jittered_covariance_matrix = predictive_distribution.covariance_matrix + torch.eye(predictive_distribution.covariance_matrix.shape[0]) * 1e-4
+        inverse_transformed_cov = pre_processor.inverse_transform_covariance_matrix(jittered_covariance_matrix)
+        inverse_transformed_predictive_distribution = torch.distributions.MultivariateNormal(inverse_transformed_mean, inverse_transformed_cov)
         mse = ((inverse_transformed_mean - targets) ** 2).sum().item()
-        ll = predictions.log_prob(transformed_targets).item()
+        ll = inverse_transformed_predictive_distribution.log_prob(transformed_targets).item()
         # Take mean of log-prob to not report dataset-size-dependent metrics.
         return math.sqrt(mse / len(targets)), ll / len(targets)
 
