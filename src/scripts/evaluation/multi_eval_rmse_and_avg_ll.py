@@ -47,5 +47,5 @@ def main():
     print(tabulate(table, headers=metric_keys, showindex=sorted(results.keys()), tablefmt="github", stralign="center"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
