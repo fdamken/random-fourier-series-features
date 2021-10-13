@@ -6,6 +6,11 @@ from rfsf.util.tensor_util import process_as_numpy_array
 
 
 class PCAInputWhitening(Standardization):
+    """
+    Pre-processor for whitening the inputs using a PCA transformation. The targets are still standardized using
+    z-scores.
+    """
+
     def __init__(self):
         super().__init__(disable_input_standardization=True)
 

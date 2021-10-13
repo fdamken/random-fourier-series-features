@@ -4,6 +4,8 @@ from rfsf.pre_processing.pre_processor import PreProcessor
 
 
 class NoOpPreProcessor(PreProcessor):
+    """Pre-processor that does nothing and returns the inputs/targets as is."""
+
     def _fit(self, inputs: torch.Tensor, targets: torch.Tensor) -> None:
         pass
 

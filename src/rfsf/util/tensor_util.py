@@ -1,7 +1,7 @@
 import codecs
 import pickle
 from itertools import product
-from typing import Any, Callable, Dict, Iterator, List, NoReturn, Tuple, TypeVar, Union
+from typing import Any, Callable, Iterator, List, NoReturn, Tuple, TypeVar, Union
 
 import numpy as np
 import torch
@@ -95,10 +95,27 @@ def periodic(half_period: float) -> Callable[[Callable[[NdTensor], NdTensor]], N
 
 
 def process_as_numpy_array(tensor: torch.Tensor, func: Callable[[np.ndarray], np.ndarray]) -> torch.Tensor:
-    return torch.from_numpy(func(tensor.detach().cpu().numpy())).to(tensor.device)
+    """
+    Invokes the given callable `func` with a detached version of `tensor` (using :py:meth:`to_numpy`) converted to a
+    NumPy array. The resulting NumPy array is than converted back to a Torch tensor using :py:meth:`torch.from_numpy`.
+    The tensor is copied back to the original device `tensor` is on.
+
+    :param tensor: tensor to process
+    :param func: callable to invoke with the given tensor converted to a NumPy array
+    :return: resulting NumPy array converted to a Torch tensor
+    """
+    return torch.from_numpy(func(to_numpy(tensor))).to(tensor.device)
 
 
-def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[Dict[str, Any]]]:
+def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[torch.nn.Parameter]]:
+    """
+    Gets the parameters of the given `model` and, if they require taking a gradient, adds them to the list of learnable
+    parameters. The names of the parameters groups are also extracted.
+
+    :param model: model to extract the parameters from
+    :return: tuple `(parameter_group_names, opt_parameters)`; the names of the parameter groups and the learnable
+             parameters such that the `i`-th element of the parameter group names corresponds to the `i`-th parameter
+    """
     parameter_group_names, opt_parameters = [], []
     for name, params in model.named_parameters():
         if params.requires_grad:
@@ -107,7 +124,17 @@ def split_parameter_groups(model: nn.Module) -> Tuple[List[str], List[Dict[str, 
     return parameter_group_names, opt_parameters
 
 
-def apply_parameter_name_selector(names: List[str], selector: List[str]):
+def apply_parameter_name_selector(names: List[str], selector: List[str]) -> List[str]:
+    """
+    Applies the given `selector` to the given list of `names`. A name is included in the result if it is contained in
+    the given `selector` and a name is removed from the result if it is contained in the given `selector` and is
+    preceded by an exclamation mark (`!`). The special name `all` includes all `names` in the result. Excludes take
+    precedence over includes.
+
+    :param names: all available names
+    :param selector: selector to apply
+    :return: selected names according to the above rules; contains no duplicated
+    """
     result = []
     negations = []
     for filt in selector:
@@ -124,10 +151,18 @@ def apply_parameter_name_selector(names: List[str], selector: List[str]):
             result.remove(filt)
         else:
             assert False, f"unknown name {filt!r}"
-    return result
+    return list(set(result))
 
 
 def gen_index_iterator(val: NdTensor) -> Iterator[tuple]:
+    """
+    Creates an iterator over the indices of the given tensor (which can also be a NumPy array), over all dimensions.
+    The resulting iterator is a list of tuples each corresponding to a single element. For example, the elements of the
+    iterator for an array with shape `(2, 3)` would be `(0, 0)`, `(0, 1)`, `(0, 2)`, `(1, 0)`, `(1, 1)`, and `(1, 2)`.
+
+    :param val: tensor to iterate over
+    :return: iterator with the index tuples as described before
+    """
     assert len(val.shape) > 0, "val has to have at least one dimension"
     indices = [range(dim_length) for dim_length in val.shape]
     return product(*indices)

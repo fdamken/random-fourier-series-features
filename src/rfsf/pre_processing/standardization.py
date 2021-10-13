@@ -4,6 +4,11 @@ from rfsf.pre_processing.pre_processor import PreProcessor
 
 
 class Standardization(PreProcessor):
+    """
+    Pre-processor realizing standardization, i.e., z-scores. This is applied to both the inputs and targets and
+    dimension-wise. That is, for example, the one dimension is standardized independent of the others.
+    """
+
     def __init__(self, *, disable_input_standardization: bool = False):
         """
         Constructor.
