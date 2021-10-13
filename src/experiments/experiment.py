@@ -23,7 +23,7 @@ from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
 from rfsf.pre_processing.no_op_pre_processor import NoOpPreProcessor
-from rfsf.pre_processing.pca_whitening import PCAWhitening
+from rfsf.pre_processing.pca_whitening import PCAInputWhitening
 from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.pre_processing.standardization import Standardization
 from rfsf.util import devices
@@ -73,7 +73,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     # noinspection PyUnusedLocal
     @ex.named_config
     def pca_whitening():
-        pre_processor_class = PCAWhitening
+        pre_processor_class = PCAInputWhitening
 
     # noinspection PyUnusedLocal
     @ex.named_config
@@ -114,7 +114,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     def rfsf_relu():
         model_class = RFSFReLUGP
         # Hyperparameters where found using an Optuna study on commit 6d49b808.
-        pre_processor_class = PCAWhitening
+        pre_processor_class = PCAInputWhitening
         model_kwargs = dict(
             num_samples=2500,
             num_harmonics=27,
@@ -201,7 +201,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             f"Using {len(optimizers_parameters)} optimizer{'s' if len(optimizers_parameters) > 1 else ''} with the following parameters:\n"
             + "\n".join(f"  - {optimizer_parameters}" for optimizer_parameters in optimizers_parameters)
         )
-        with tqdm(max_iter, desc="Optimization") as pbar:
+        with tqdm(total=max_iter, desc="Optimization") as pbar:
             for step in range(max_iter):
                 optimizer = optimizers[step % len(optimizers)]
 

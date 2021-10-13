@@ -43,7 +43,7 @@ def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: to
         predictive_distribution = model(transformed_inputs)
         inverse_transformed_mean = pre_processor.inverse_transform_targets(predictive_distribution.mean)
         jittered_covariance_matrix = predictive_distribution.covariance_matrix + torch.eye(predictive_distribution.covariance_matrix.shape[0]) * 1e-4
-        inverse_transformed_cov = pre_processor.inverse_transform_covariance_matrix(jittered_covariance_matrix)
+        inverse_transformed_cov = pre_processor.inverse_transform_target_cov(jittered_covariance_matrix)
         inverse_transformed_predictive_distribution = torch.distributions.MultivariateNormal(inverse_transformed_mean, inverse_transformed_cov)
         mse = ((inverse_transformed_mean - targets) ** 2).sum().item()
         ll = inverse_transformed_predictive_distribution.log_prob(transformed_targets).item()
@@ -60,9 +60,8 @@ def make_eval_experiment(args=None) -> Tuple[Experiment, dict]:
 
         print(
             tabulate(
-                [[train_posterior_rmse, train_posterior_ll], [test_posterior_rmse, test_posterior_ll]],
-                headers=("RMSE", "Avg. LL"),
-                showindex=("Train", "Test"),
+                [[train_posterior_rmse, test_posterior_rmse, train_posterior_ll, test_posterior_ll]],
+                headers=("Train RMSE", "Test RMSE", "Train Avg. LL", "Test Avg. LL"),
                 tablefmt="github",
             )
         )

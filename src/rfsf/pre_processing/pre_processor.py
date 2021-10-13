@@ -28,9 +28,9 @@ class PreProcessor(ABC, torch.nn.Module):
         assert self._fit_invoked, "fit() has to be invoked before transforming data"
         return self._inverse_transform_targets(targets_transformed)
 
-    def inverse_transform_covariance_matrix(self, covariance_matrix: torch.Tensor) -> torch.Tensor:
+    def inverse_transform_target_cov(self, covariance_matrix: torch.Tensor) -> torch.Tensor:
         assert self._fit_invoked, "fit() has to be invoked before transforming data"
-        return self._inverse_transform_covariance_matrix(covariance_matrix)
+        return self._inverse_transform_target_cov(covariance_matrix)
 
     def inverse_transform_target_std_devs(self, target_std_devs_transformed: torch.Tensor) -> torch.Tensor:
         assert self._fit_invoked, "fit() has to be invoked before transforming data"
@@ -57,7 +57,7 @@ class PreProcessor(ABC, torch.nn.Module):
         raise NotImplementedError()
 
     @abstractmethod
-    def _inverse_transform_covariance_matrix(self, covariance_matrix: torch.Tensor) -> torch.Tensor:
+    def _inverse_transform_target_cov(self, covariance_matrix: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError()
 
     @abstractmethod
