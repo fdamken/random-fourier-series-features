@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Install Dependencies
-        run: "pip install black==21.6b0"
+        run: "pip install black==21.9b0"
       - name: Run Black
         run: "black --check src"
   isort:

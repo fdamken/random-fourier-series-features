@@ -1,198 +1,204 @@
-black==21.7b0
-  appdirs==1.4.4
-  click==8.0.1
-  mypy-extensions==0.4.3
-  pathspec==0.8.1
-  regex==2021.4.4
-  tomli==1.2.1
-coverage==5.5
-gpytorch==1.5.0
-  scikit-learn==0.24.2
-    joblib==1.0.1
-    numpy==1.21.1
-    scipy==1.6.3
-      numpy==1.21.1
-    threadpoolctl==2.1.0
-  scipy==1.6.3
-    numpy==1.21.1
-  torch==1.9.0+cu111
-    typing-extensions==3.10.0.0
+appdirs==1.4.4
+black==21.9b0
+  - click [required: >=7.1.2, installed: 8.0.1]
+  - mypy-extensions [required: >=0.4.3, installed: 0.4.3]
+  - pathspec [required: >=0.9.0,<1, installed: 0.9.0]
+  - platformdirs [required: >=2, installed: 2.2.0]
+  - regex [required: >=2020.1.8, installed: 2021.4.4]
+  - tomli [required: >=0.2.6,<2.0.0, installed: 1.2.1]
+  - typing-extensions [required: >=3.10.0.0, installed: 3.10.0.0]
+coverage==6.0.2
+gpytorch==1.5.1
+  - scikit-learn [required: Any, installed: 0.24.2]
+    - joblib [required: >=0.11, installed: 1.0.1]
+    - numpy [required: >=1.13.3, installed: 1.21.1]
+    - scipy [required: >=0.19.1, installed: 1.6.3]
+      - numpy [required: >=1.16.5,<1.23.0, installed: 1.21.1]
+    - threadpoolctl [required: >=2.0.0, installed: 2.1.0]
+  - scipy [required: Any, installed: 1.6.3]
+    - numpy [required: >=1.16.5,<1.23.0, installed: 1.21.1]
+  - torch [required: >=1.8.1, installed: 1.9.0+cu111]
+    - typing-extensions [required: Any, installed: 3.10.0.0]
 graphviz==0.17
-ipython==7.27.0
-  backcall==0.2.0
-  decorator==5.0.9
-  jedi==0.18.0
-    parso==0.8.2
-  matplotlib-inline==0.1.2
-    traitlets==5.0.5
-      ipython-genutils==0.2.0
-  pexpect==4.8.0
-    ptyprocess==0.7.0
-  pickleshare==0.7.5
-  prompt-toolkit==3.0.18
-    wcwidth==0.2.5
-  Pygments==2.9.0
-  setuptools==56.2.0
-  traitlets==5.0.5
-    ipython-genutils==0.2.0
+ipython==7.28.0
+  - backcall [required: Any, installed: 0.2.0]
+  - decorator [required: Any, installed: 5.0.9]
+  - jedi [required: >=0.16, installed: 0.18.0]
+    - parso [required: >=0.8.0,<0.9.0, installed: 0.8.2]
+  - matplotlib-inline [required: Any, installed: 0.1.2]
+    - traitlets [required: Any, installed: 5.0.5]
+      - ipython-genutils [required: Any, installed: 0.2.0]
+  - pexpect [required: >4.3, installed: 4.8.0]
+    - ptyprocess [required: >=0.5, installed: 0.7.0]
+  - pickleshare [required: Any, installed: 0.7.5]
+  - prompt-toolkit [required: >=2.0.0,<3.1.0,!=3.0.1,!=3.0.0, installed: 3.0.18]
+    - wcwidth [required: Any, installed: 0.2.5]
+  - pygments [required: Any, installed: 2.9.0]
+  - setuptools [required: >=18.5, installed: 56.2.0]
+  - traitlets [required: >=4.2, installed: 5.0.5]
+    - ipython-genutils [required: Any, installed: 0.2.0]
 matplotlib==3.4.3
-  cycler==0.10.0
-    six==1.16.0
-  kiwisolver==1.3.1
-  numpy==1.21.1
-  Pillow==8.2.0
-  pyparsing==2.4.7
-  python-dateutil==2.8.1
-    six==1.16.0
-optuna-dashboard==0.4.2
-  bottle==0.12.19
-  optuna==2.9.1
-    alembic==1.6.5
-      Mako==1.1.5
-        MarkupSafe==2.0.1
-      python-dateutil==2.8.1
-        six==1.16.0
-      python-editor==1.0.4
-      SQLAlchemy==1.4.23
-        greenlet==1.1.1
-    cliff==3.9.0
-      autopage==0.4.0
-      cmd2==2.1.2
-        attrs==21.2.0
-        colorama==0.4.4
-        pyperclip==1.8.2
-        wcwidth==0.2.5
-      pbr==5.6.0
-      prettytable==2.2.0
-        wcwidth==0.2.5
-      pyparsing==2.4.7
-      PyYAML==5.4.1
-      stevedore==3.4.0
-        pbr==5.6.0
-    cmaes==0.8.2
-      numpy==1.21.1
-    colorlog==6.4.1
-    numpy==1.21.1
-    packaging==20.9
-      pyparsing==2.4.7
-    PyYAML==5.4.1
-    scipy==1.6.3
-      numpy==1.21.1
-    SQLAlchemy==1.4.23
-      greenlet==1.1.1
-    tqdm==4.62.1
-  scikit-learn==0.24.2
-    joblib==1.0.1
-    numpy==1.21.1
-    scipy==1.6.3
-      numpy==1.21.1
-    threadpoolctl==2.1.0
-pandas==1.3.2
-  numpy==1.21.1
-  python-dateutil==2.8.1
-    six==1.16.0
-  pytz==2021.1
-pipdeptree==2.1.0
-  pip==21.2.4
-pylint==2.10.2
-  astroid==2.7.2
-    lazy-object-proxy==1.6.0
-    setuptools==56.2.0
-    wrapt==1.12.1
-  isort==5.8.0
-  mccabe==0.6.1
-  platformdirs==2.2.0
-  toml==0.10.2
-pytest==6.2.4
-  attrs==21.2.0
-  iniconfig==1.1.1
-  packaging==20.9
-    pyparsing==2.4.7
-  pluggy==0.13.1
-  py==1.10.0
-  toml==0.10.2
+  - cycler [required: >=0.10, installed: 0.10.0]
+    - six [required: Any, installed: 1.16.0]
+  - kiwisolver [required: >=1.0.1, installed: 1.3.1]
+  - numpy [required: >=1.16, installed: 1.21.1]
+  - pillow [required: >=6.2.0, installed: 8.2.0]
+  - pyparsing [required: >=2.2.1, installed: 2.4.7]
+  - python-dateutil [required: >=2.7, installed: 2.8.1]
+    - six [required: >=1.5, installed: 1.16.0]
+optuna-dashboard==0.5.0
+  - bottle [required: Any, installed: 0.12.19]
+  - optuna [required: >=2.4, installed: 2.9.1]
+    - alembic [required: Any, installed: 1.6.5]
+      - Mako [required: Any, installed: 1.1.5]
+        - MarkupSafe [required: >=0.9.2, installed: 2.0.1]
+      - python-dateutil [required: Any, installed: 2.8.1]
+        - six [required: >=1.5, installed: 1.16.0]
+      - python-editor [required: >=0.3, installed: 1.0.4]
+      - SQLAlchemy [required: >=1.3.0, installed: 1.4.23]
+        - greenlet [required: !=0.4.17, installed: 1.1.1]
+    - cliff [required: Any, installed: 3.9.0]
+      - autopage [required: >=0.4.0, installed: 0.4.0]
+      - cmd2 [required: >=1.0.0, installed: 2.1.2]
+        - attrs [required: >=16.3.0, installed: 21.2.0]
+        - colorama [required: >=0.3.7, installed: 0.4.4]
+        - pyperclip [required: >=1.6, installed: 1.8.2]
+        - wcwidth [required: >=0.1.7, installed: 0.2.5]
+      - pbr [required: >=2.0.0,!=2.1.0, installed: 5.6.0]
+      - PrettyTable [required: >=0.7.2, installed: 2.2.0]
+        - wcwidth [required: Any, installed: 0.2.5]
+      - pyparsing [required: >=2.1.0, installed: 2.4.7]
+      - PyYAML [required: >=3.12, installed: 5.4.1]
+      - stevedore [required: >=2.0.1, installed: 3.4.0]
+        - pbr [required: >=2.0.0,!=2.1.0, installed: 5.6.0]
+    - cmaes [required: >=0.8.2, installed: 0.8.2]
+      - numpy [required: Any, installed: 1.21.1]
+    - colorlog [required: Any, installed: 6.4.1]
+    - numpy [required: Any, installed: 1.21.1]
+    - packaging [required: >=20.0, installed: 20.9]
+      - pyparsing [required: >=2.0.2, installed: 2.4.7]
+    - PyYAML [required: Any, installed: 5.4.1]
+    - scipy [required: !=1.4.0, installed: 1.6.3]
+      - numpy [required: >=1.16.5,<1.23.0, installed: 1.21.1]
+    - sqlalchemy [required: >=1.1.0, installed: 1.4.23]
+      - greenlet [required: !=0.4.17, installed: 1.1.1]
+    - tqdm [required: Any, installed: 4.62.1]
+  - scikit-learn [required: Any, installed: 0.24.2]
+    - joblib [required: >=0.11, installed: 1.0.1]
+    - numpy [required: >=1.13.3, installed: 1.21.1]
+    - scipy [required: >=0.19.1, installed: 1.6.3]
+      - numpy [required: >=1.16.5,<1.23.0, installed: 1.21.1]
+    - threadpoolctl [required: >=2.0.0, installed: 2.1.0]
+pandas==1.3.3
+  - numpy [required: >=1.17.3, installed: 1.21.1]
+  - python-dateutil [required: >=2.7.3, installed: 2.8.1]
+    - six [required: >=1.5, installed: 1.16.0]
+  - pytz [required: >=2017.3, installed: 2021.1]
+pipdeptree==2.2.0
+  - pip [required: >=6.0.0, installed: 21.2.4]
+pylint==2.11.1
+  - astroid [required: >=2.8.0,<2.9, installed: 2.8.2]
+    - lazy-object-proxy [required: >=1.4.0, installed: 1.6.0]
+    - setuptools [required: >=20.0, installed: 56.2.0]
+    - typing-extensions [required: >=3.10, installed: 3.10.0.0]
+    - wrapt [required: >=1.11,<1.13, installed: 1.12.1]
+  - isort [required: >=4.2.5,<6, installed: 5.8.0]
+  - mccabe [required: >=0.6,<0.7, installed: 0.6.1]
+  - platformdirs [required: >=2.2.0, installed: 2.2.0]
+  - toml [required: >=0.7.1, installed: 0.10.2]
+  - typing-extensions [required: >=3.10.0, installed: 3.10.0.0]
+pytest==6.2.5
+  - attrs [required: >=19.2.0, installed: 21.2.0]
+  - iniconfig [required: Any, installed: 1.1.1]
+  - packaging [required: Any, installed: 20.9]
+    - pyparsing [required: >=2.0.2, installed: 2.4.7]
+  - pluggy [required: >=0.12,<2.0, installed: 0.13.1]
+  - py [required: >=1.8.2, installed: 1.10.0]
+  - toml [required: Any, installed: 0.10.2]
 sacred==0.8.2
-  colorama==0.4.4
-  docopt==0.6.2
-  GitPython==3.1.17
-    gitdb==4.0.7
-      smmap==4.0.0
-  jsonpickle==1.5.2
-  munch==2.5.0
-    six==1.16.0
-  packaging==20.9
-    pyparsing==2.4.7
-  py-cpuinfo==8.0.0
-  wrapt==1.12.1
+  - colorama [required: >=0.4, installed: 0.4.4]
+  - docopt [required: >=0.3,<1.0, installed: 0.6.2]
+  - GitPython [required: Any, installed: 3.1.17]
+    - gitdb [required: >=4.0.1,<5, installed: 4.0.7]
+      - smmap [required: >=3.0.1,<5, installed: 4.0.0]
+  - jsonpickle [required: >=1.2,<2.0, installed: 1.5.2]
+  - munch [required: >=2.0.2,<3.0, installed: 2.5.0]
+    - six [required: Any, installed: 1.16.0]
+  - packaging [required: >=18.0, installed: 20.9]
+    - pyparsing [required: >=2.0.2, installed: 2.4.7]
+  - py-cpuinfo [required: >=4.0, installed: 8.0.0]
+  - wrapt [required: >=1.0,<2.0, installed: 1.12.1]
 tabulate==0.8.9
 tensorboard==2.6.0
-  absl-py==0.12.0
-    six==1.16.0
-  google-auth==1.31.0
-    cachetools==4.2.2
-    pyasn1-modules==0.2.8
-      pyasn1==0.4.8
-    rsa==4.7.2
-      pyasn1==0.4.8
-    setuptools==56.2.0
-    six==1.16.0
-  google-auth-oauthlib==0.4.4
-    google-auth==1.31.0
-      cachetools==4.2.2
-      pyasn1-modules==0.2.8
-        pyasn1==0.4.8
-      rsa==4.7.2
-        pyasn1==0.4.8
-      setuptools==56.2.0
-      six==1.16.0
-    requests-oauthlib==1.3.0
-      oauthlib==3.1.1
-      requests==2.25.1
-        certifi==2021.5.30
-        chardet==4.0.0
-        idna==2.10
-        urllib3==1.26.5
-  grpcio==1.38.0
-    six==1.16.0
-  Markdown==3.3.4
-  numpy==1.21.1
-  protobuf==3.17.3
-    six==1.16.0
-  requests==2.25.1
-    certifi==2021.5.30
-    chardet==4.0.0
-    idna==2.10
-    urllib3==1.26.5
-  setuptools==56.2.0
-  tensorboard-data-server==0.6.1
-  tensorboard-plugin-wit==1.8.0
-  Werkzeug==2.0.1
-  wheel==0.36.2
-wandb==0.12.1
-  click==8.0.1
-  configparser==5.0.2
-  docker-pycreds==0.4.0
-    six==1.16.0
-  GitPython==3.1.17
-    gitdb==4.0.7
-      smmap==4.0.0
-  pathtools==0.1.2
-  promise==2.3
-    six==1.16.0
-  protobuf==3.17.3
-    six==1.16.0
-  psutil==5.8.0
-  python-dateutil==2.8.1
-    six==1.16.0
-  PyYAML==5.4.1
-  requests==2.25.1
-    certifi==2021.5.30
-    chardet==4.0.0
-    idna==2.10
-    urllib3==1.26.5
-  sentry-sdk==1.1.0
-    certifi==2021.5.30
-    urllib3==1.26.5
-  shortuuid==1.0.1
-  six==1.16.0
-  subprocess32==3.5.4
+  - absl-py [required: >=0.4, installed: 0.12.0]
+    - six [required: Any, installed: 1.16.0]
+  - google-auth [required: >=1.6.3,<2, installed: 1.31.0]
+    - cachetools [required: >=2.0.0,<5.0, installed: 4.2.2]
+    - pyasn1-modules [required: >=0.2.1, installed: 0.2.8]
+      - pyasn1 [required: >=0.4.6,<0.5.0, installed: 0.4.8]
+    - rsa [required: >=3.1.4,<5, installed: 4.7.2]
+      - pyasn1 [required: >=0.1.3, installed: 0.4.8]
+    - setuptools [required: >=40.3.0, installed: 56.2.0]
+    - six [required: >=1.9.0, installed: 1.16.0]
+  - google-auth-oauthlib [required: >=0.4.1,<0.5, installed: 0.4.4]
+    - google-auth [required: >=1.0.0, installed: 1.31.0]
+      - cachetools [required: >=2.0.0,<5.0, installed: 4.2.2]
+      - pyasn1-modules [required: >=0.2.1, installed: 0.2.8]
+        - pyasn1 [required: >=0.4.6,<0.5.0, installed: 0.4.8]
+      - rsa [required: >=3.1.4,<5, installed: 4.7.2]
+        - pyasn1 [required: >=0.1.3, installed: 0.4.8]
+      - setuptools [required: >=40.3.0, installed: 56.2.0]
+      - six [required: >=1.9.0, installed: 1.16.0]
+    - requests-oauthlib [required: >=0.7.0, installed: 1.3.0]
+      - oauthlib [required: >=3.0.0, installed: 3.1.1]
+      - requests [required: >=2.0.0, installed: 2.25.1]
+        - certifi [required: >=2017.4.17, installed: 2021.5.30]
+        - chardet [required: >=3.0.2,<5, installed: 4.0.0]
+        - idna [required: >=2.5,<3, installed: 2.10]
+        - urllib3 [required: >=1.21.1,<1.27, installed: 1.26.5]
+  - grpcio [required: >=1.24.3, installed: 1.38.0]
+    - six [required: >=1.5.2, installed: 1.16.0]
+  - markdown [required: >=2.6.8, installed: 3.3.4]
+  - numpy [required: >=1.12.0, installed: 1.21.1]
+  - protobuf [required: >=3.6.0, installed: 3.17.3]
+    - six [required: >=1.9, installed: 1.16.0]
+  - requests [required: >=2.21.0,<3, installed: 2.25.1]
+    - certifi [required: >=2017.4.17, installed: 2021.5.30]
+    - chardet [required: >=3.0.2,<5, installed: 4.0.0]
+    - idna [required: >=2.5,<3, installed: 2.10]
+    - urllib3 [required: >=1.21.1,<1.27, installed: 1.26.5]
+  - setuptools [required: >=41.0.0, installed: 56.2.0]
+  - tensorboard-data-server [required: >=0.6.0,<0.7.0, installed: 0.6.1]
+  - tensorboard-plugin-wit [required: >=1.6.0, installed: 1.8.0]
+  - werkzeug [required: >=0.11.15, installed: 2.0.1]
+  - wheel [required: >=0.26, installed: 0.36.2]
+wandb==0.12.4
+  - Click [required: >=7.0,!=8.0.0, installed: 8.0.1]
+  - configparser [required: >=3.8.1, installed: 5.0.2]
+  - docker-pycreds [required: >=0.4.0, installed: 0.4.0]
+    - six [required: >=1.4.0, installed: 1.16.0]
+  - GitPython [required: >=1.0.0, installed: 3.1.17]
+    - gitdb [required: >=4.0.1,<5, installed: 4.0.7]
+      - smmap [required: >=3.0.1,<5, installed: 4.0.0]
+  - pathtools [required: Any, installed: 0.1.2]
+  - promise [required: >=2.0,<3, installed: 2.3]
+    - six [required: Any, installed: 1.16.0]
+  - protobuf [required: >=3.12.0, installed: 3.17.3]
+    - six [required: >=1.9, installed: 1.16.0]
+  - psutil [required: >=5.0.0, installed: 5.8.0]
+  - python-dateutil [required: >=2.6.1, installed: 2.8.1]
+    - six [required: >=1.5, installed: 1.16.0]
+  - PyYAML [required: Any, installed: 5.4.1]
+  - requests [required: >=2.0.0,<3, installed: 2.25.1]
+    - certifi [required: >=2017.4.17, installed: 2021.5.30]
+    - chardet [required: >=3.0.2,<5, installed: 4.0.0]
+    - idna [required: >=2.5,<3, installed: 2.10]
+    - urllib3 [required: >=1.21.1,<1.27, installed: 1.26.5]
+  - sentry-sdk [required: >=1.0.0, installed: 1.1.0]
+    - certifi [required: Any, installed: 2021.5.30]
+    - urllib3 [required: >=1.10.0, installed: 1.26.5]
+  - shortuuid [required: >=0.5.0, installed: 1.0.1]
+  - six [required: >=1.13.0, installed: 1.16.0]
+  - subprocess32 [required: >=3.5.3, installed: 3.5.4]
+  - yaspin [required: >=1.0.0, installed: 2.1.0]
+    - termcolor [required: >=1.1.0,<2.0.0, installed: 1.1.0]
