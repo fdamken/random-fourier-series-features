@@ -78,6 +78,8 @@ def plot_process(
     # TODO: Is this inverse transformation correct? It does not seem so, but the plots look good…
     pred_conf = torch.tensor(2) * pre_processor.inverse_transform_target_std_devs(pred.stddev)
     lower, upper = pred_mean - pred_conf, pred_mean + pred_conf
+    # Make one-dimensional for plotting.
+    train_x, test_x = train_x.squeeze(), test_x.squeeze()
     ax.scatter(to_numpy(train_x), to_numpy(train_y), color="black", marker="*", s=100, label="Observed Data", zorder=3)
     ax.plot(to_numpy(test_x), to_numpy(test_y), color="black", label="True Func.", zorder=0)
     for _, c in zip(range(num_samples), sample_color_cycler):

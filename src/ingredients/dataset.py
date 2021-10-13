@@ -107,7 +107,7 @@ def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[t
     train_targets = func(train_inputs) + torch.randn(train_inputs.size()) * torch.tensor(math.sqrt(noise_var))
     test_targets = func(test_inputs)
 
-    return (train_inputs, train_targets), (test_inputs, test_targets)
+    return (train_inputs.view((-1, 1)), train_targets), (test_inputs.view((-1, 1)), test_targets)
 
 
 @dataset_ingredient.capture

@@ -201,52 +201,56 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             f"Using {len(optimizers_parameters)} optimizer{'s' if len(optimizers_parameters) > 1 else ''} with the following parameters:\n"
             + "\n".join(f"  - {optimizer_parameters}" for optimizer_parameters in optimizers_parameters)
         )
-        for step in tqdm(range(max_iter), desc="Optimization"):
-            optimizer = optimizers[step % len(optimizers)]
+        with tqdm(max_iter, desc="Optimization") as pbar:
+            for step in range(max_iter):
+                optimizer = optimizers[step % len(optimizers)]
 
-            learning_rates = scheduler.get_last_lr()
+                learning_rates = scheduler.get_last_lr()
 
-            avg_loss = 0.0
-            batch_count = 0
-            # Computing the predictive mean/variance has to be done on the complete training data.
-            train_predictions = model(train_inputs)
-            # Use batches for computing the likelihood and computing the updates as the gradient might not fit on the GPU.
-            for batch_slice in sklearn.utils.gen_batches(len(train_inputs), batch_size):
-                optimizer.zero_grad()
-                loss = -mll(train_predictions[batch_slice], train_targets[batch_slice].squeeze())  # FIXME: Squeezing might cause issues for multi-output.
-                loss.backward()
-                optimizer.step()
-                avg_loss += loss.item()
-                batch_count += 1
-            avg_loss /= batch_count
-            scheduler.step()
+                avg_loss = 0.0
+                batch_count = 0
+                # Computing the predictive mean/variance has to be done on the complete training data.
+                train_predictions = model(train_inputs)
+                # Use batches for computing the likelihood and computing the updates as the gradient might not fit on the GPU.
+                for batch_slice in sklearn.utils.gen_batches(len(train_inputs), batch_size):
+                    optimizer.zero_grad()
+                    loss = -mll(train_predictions[batch_slice], train_targets[batch_slice].squeeze())  # FIXME: Squeezing might cause issues for multi-output.
+                    loss.backward()
+                    optimizer.step()
+                    avg_loss += loss.item()
+                    batch_count += 1
+                avg_loss /= batch_count
+                scheduler.step()
 
-            noise = model.likelihood.noise.item()
-            parameters = [p for p in model.parameters() if p.grad is not None]
-            grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
+                noise = model.likelihood.noise.item()
+                parameters = [p for p in model.parameters() if p.grad is not None]
+                grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
 
-            _run.log_scalar("loss", avg_loss, step=step)
-            _run.log_scalar("noise", noise, step=step)
-            if len(learning_rates) == 1:
-                _run.log_scalar("learning_rate", learning_rates[0], step=step)
-            else:
-                for param_name, lr in zip(parameter_group_names, learning_rates):
-                    _run.log_scalar(f"learning_rate/{param_name}", lr, step=step)
-            if log_parameter_values or log_parameter_grad_values:
-                for param_name, param in model.named_parameters():
-                    if param.numel() == 1:
-                        _run.log_scalar(f"parameters/{param_name}", param.item(), step=step)
-                        if log_parameter_grad_values and param.requires_grad:
-                            _run.log_scalar(f"parameters_grad/{param_name}", param.grad.item(), step=step)
-                    elif param.numel() > 1:
-                        for index in gen_index_iterator(param):
-                            metric_suffix = f"{param_name}[{', '.join([str(i) for i in index])}]"
-                            _run.log_scalar(f"parameters/{metric_suffix}", param[index].item(), step=step)
+                _run.log_scalar("loss", avg_loss, step=step)
+                _run.log_scalar("noise", noise, step=step)
+                if len(learning_rates) == 1:
+                    _run.log_scalar("learning_rate", learning_rates[0], step=step)
+                else:
+                    for param_name, lr in zip(parameter_group_names, learning_rates):
+                        _run.log_scalar(f"learning_rate/{param_name}", lr, step=step)
+                if log_parameter_values or log_parameter_grad_values:
+                    for param_name, param in model.named_parameters():
+                        if param.numel() == 1:
+                            _run.log_scalar(f"parameters/{param_name}", param.item(), step=step)
                             if log_parameter_grad_values and param.requires_grad:
-                                _run.log_scalar(f"parameters_grad/{metric_suffix}", param.grad[index].item(), step=step)
-            _run.log_scalar("grad_norm", grad_norm.item(), step=step)
-            if step % save_model_every_n_iterations == 0:
-                add_pickle_artifact(_run, model, f"model-{step}", device=devices.cuda())
+                                _run.log_scalar(f"parameters_grad/{param_name}", param.grad.item(), step=step)
+                        elif param.numel() > 1:
+                            for index in gen_index_iterator(param):
+                                metric_suffix = f"{param_name}[{', '.join([str(i) for i in index])}]"
+                                _run.log_scalar(f"parameters/{metric_suffix}", param[index].item(), step=step)
+                                if log_parameter_grad_values and param.requires_grad:
+                                    _run.log_scalar(f"parameters_grad/{metric_suffix}", param.grad[index].item(), step=step)
+                _run.log_scalar("grad_norm", grad_norm.item(), step=step)
+                if step % save_model_every_n_iterations == 0:
+                    add_pickle_artifact(_run, model, f"model-{step}", device=devices.cuda())
+
+                pbar.set_postfix({"loss": avg_loss})
+                pbar.update()
 
         add_pickle_artifact(_run, model, f"model-final", device=devices.cuda())
 
