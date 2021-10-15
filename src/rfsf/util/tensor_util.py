@@ -1,10 +1,12 @@
 import codecs
 import pickle
+import warnings
 from itertools import product
 from typing import Any, Callable, Iterator, List, NoReturn, Tuple, TypeVar, Union
 
 import numpy as np
 import torch
+from numpy.linalg import LinAlgError
 from torch import nn
 
 
@@ -166,3 +168,50 @@ def gen_index_iterator(val: NdTensor) -> Iterator[tuple]:
     assert len(val.shape) > 0, "val has to have at least one dimension"
     indices = [range(dim_length) for dim_length in val.shape]
     return product(*indices)
+
+
+def make_positive_definite(val: NdTensor, *, warn_on_jitter: bool = True, jitter_exponent_lo: int = -10, jitter_exponent_up: int = 0) -> NdTensor:
+    """
+    Makes the given two-dimensional quadratic tensor `val` positive definite by adding jittering on the diagonal. Tries
+    to start with no jittering and subsequently adds jittering starting from `10 ** jitter_exponent_lo` up to
+    `10 ** jitter_exponent_up` (in equidistant steps of `1` in the exponent).
+
+    :param val: matrix to make positive definite
+    :param warn_on_jitter: whether a `UserWarning` should be printed when jittering is applied
+    :param jitter_exponent_lo: first jittering exponent value that is applied
+    :param jitter_exponent_up: last jittering exponent to try
+    :return: the jittered matrix
+    :raises RuntimeError: if the matrix was not positive definite after adding jittering of `10 ** jitter_exponent_up`
+    """
+
+    assert len(val.shape) == 2, "val has to be two-dimensional"
+
+    if is_numpy(val):
+        eye = np.eye(val.shape[-1])
+    elif is_torch(val):
+        eye = torch.eye(val.shape[-1])
+    else:
+        assert False, "A is neither NumPy nor Torch tensor"
+
+    val_jittered = val
+    jitter_exponent = jitter_exponent_lo
+    while jitter_exponent <= jitter_exponent_up:
+        try:
+            if is_numpy(val_jittered):
+                np.linalg.cholesky(val_jittered)
+            elif is_torch(val_jittered):
+                torch.linalg.cholesky(val_jittered)
+            else:
+                assert False, "val_jittered is neither NumPy nor Torch tensor"
+            break
+        except (LinAlgError, RuntimeError) as ex:
+            if isinstance(ex, LinAlgError) or "singular U." in getattr(ex, "args", [""])[0]:
+                if warn_on_jitter:
+                    warnings.warn(f"Inverse transformed covariance is singular, adding jitter of 10e{jitter_exponent}.", UserWarning)
+                val_jittered = val + 10 ** jitter_exponent * eye
+                jitter_exponent += 1
+            else:
+                raise ex
+    else:  # Invoke iff the above loop does not exit with the break but ends regularly.
+        raise RuntimeError(f"A is not positive definite after adding jittering up to 10e{jitter_exponent_up}.")
+    return val_jittered

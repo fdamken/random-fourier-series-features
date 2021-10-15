@@ -13,6 +13,7 @@ from tabulate import tabulate
 from ingredients import dataset
 from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.util import devices
+from rfsf.util.tensor_util import make_positive_definite
 from scripts.util.sacred_util import load_experiment
 
 
@@ -42,8 +43,7 @@ def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: to
         transformed_targets = pre_processor.transform_targets(targets)
         predictive_distribution = model(transformed_inputs)
         inverse_transformed_mean = pre_processor.inverse_transform_targets(predictive_distribution.mean)
-        jittered_covariance_matrix = predictive_distribution.covariance_matrix + torch.eye(predictive_distribution.covariance_matrix.shape[0]) * 1e-4
-        inverse_transformed_cov = pre_processor.inverse_transform_target_cov(jittered_covariance_matrix)
+        inverse_transformed_cov = make_positive_definite(pre_processor.inverse_transform_target_cov(predictive_distribution.covariance_matrix))
         inverse_transformed_predictive_distribution = torch.distributions.MultivariateNormal(inverse_transformed_mean, inverse_transformed_cov)
         mse = ((inverse_transformed_mean - targets) ** 2).sum().item()
         ll = inverse_transformed_predictive_distribution.log_prob(transformed_targets).item()
