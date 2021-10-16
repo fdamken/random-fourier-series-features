@@ -135,7 +135,7 @@ def apply_parameter_name_selector(names: List[str], selector: List[str]) -> List
 
     :param names: all available names
     :param selector: selector to apply
-    :return: selected names according to the above rules; contains no duplicated
+    :return: selected names according to the above rules; contains no duplicates but are in an arbitrary order
     """
     result = []
     negations = []
