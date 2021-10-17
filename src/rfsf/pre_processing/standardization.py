@@ -57,4 +57,4 @@ class Standardization(PreProcessor):
     @property
     def standardize_inputs(self) -> bool:
         """Whether to standardize the inputs. Must only be `True` if the transformation is overwritten."""
-        return self._standardize_inputs
+        return getattr(self, "_standardize_inputs", True)  # Use getattr for backward compatibility with old pickle files.
