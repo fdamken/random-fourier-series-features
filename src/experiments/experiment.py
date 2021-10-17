@@ -22,6 +22,7 @@ from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
+from rfsf.kernel.rfsf_kernel import RFSFKernel
 from rfsf.pre_processing.no_op_pre_processor import NoOpPreProcessor
 from rfsf.pre_processing.pca_whitening import PCAInputWhitening
 from rfsf.pre_processing.pre_processor import PreProcessor
@@ -45,7 +46,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         seed = 42
         likelihood_class = GaussianLikelihood
         likelihood_kwargs = {}
-        pre_processor_class = Standardization
+        pre_processor_class = PCAInputWhitening
         pre_processor_kwargs = {}
         model_class = ExactGP  # Has to be overwritten by named configs.
         model_kwargs = {}
@@ -92,7 +93,6 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     # noinspection PyUnusedLocal
     @ex.named_config
     def scaled_rbf():
-        pre_processor_class = NoOpPreProcessor
         model_class = ScaledRBFGP
 
     # noinspection PyUnusedLocal
@@ -102,13 +102,13 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         max_iter = 1000
 
         # Hyperparameters found using an Optuna study on commit 6d49b808.
-        pre_processor_class = Standardization
         model_kwargs = dict(
             num_samples=2500,
             num_harmonics=5,
             half_period=8.894257014436906,
             optimize_amplitudes=True,
             optimize_phases=True,
+            optimize_half_period=True,
             use_ard=True,
         )
 
@@ -119,13 +119,13 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         max_iter = 1000
 
         # Hyperparameters found using an Optuna study on commit 6d49b808.
-        pre_processor_class = PCAInputWhitening
         model_kwargs = dict(
             num_samples=2500,
             num_harmonics=27,
             half_period=7.586205337097311,
             optimize_amplitudes=True,
             optimize_phases=True,
+            optimize_half_period=True,
             use_ard=True,
         )
 
@@ -230,6 +230,10 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
                 noise = model.likelihood.noise.item()
                 parameters = [p for p in model.parameters() if p.grad is not None]
                 grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
+                if hasattr(model, "cov_module") and isinstance(model.cov_module, RFSFKernel):
+                    half_period = model.cov_module.half_period.item()
+                else:
+                    half_period = None
 
                 _run.log_scalar("loss", avg_loss, step=step)
                 _run.log_scalar("noise", noise, step=step)
@@ -251,6 +255,8 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
                                 if log_parameter_grad_values and param.requires_grad:
                                     _run.log_scalar(f"parameters_grad/{metric_suffix}", param.grad[index].item(), step=step)
                 _run.log_scalar("grad_norm", grad_norm.item(), step=step)
+                if half_period is not None:
+                    _run.log_scalar("half_period", half_period, step=step)
                 if step % save_model_every_n_iterations == 0:
                     add_pickle_artifact(_run, model, f"model-{step}", device=devices.cuda())
 

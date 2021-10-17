@@ -41,7 +41,7 @@ class RFSFKernel(Kernel):
 
         self.num_samples = num_samples
         self.num_harmonics = fourier_series_init.num_harmonics
-        self.half_period = fourier_series_init.half_period
+        self.half_period = torch.nn.Parameter(torch.tensor(fourier_series_init.half_period), requires_grad=fourier_series_init.optimize_half_period).to(device=device)
         self.amplitudes_log = torch.nn.Parameter(data=fourier_series_init.amplitudes.log(), requires_grad=fourier_series_init.optimize_amplitudes).to(device=device)
         self.phases = torch.nn.Parameter(data=fourier_series_init.phases, requires_grad=fourier_series_init.optimize_phases).to(device=device)
 

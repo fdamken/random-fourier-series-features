@@ -15,17 +15,19 @@ class FourierSeriesInitializer(ABC):
     series of any function.
     """
 
-    def __init__(self, num_harmonics: int, half_period: float, optimize_amplitudes: bool = True, optimize_phases: bool = True):
+    def __init__(self, num_harmonics: int, half_period: float, optimize_amplitudes: bool = True, optimize_phases: bool = True, optimize_half_period: bool = True):
         """
         Constructor.
 
         :param num_harmonics: number of harmonics to use; generally, the more harmonics are used, the better the
                               initialization function can be approximated; has to be positive
-        :param half_period: half the assumed period after which the ReLU repeats
-        :param optimize_amplitudes: whether to optimize the amplitudes later on; causes `required_grad` of the
+        :param half_period: initial value of half the assumed period after which the function repeats
+        :param optimize_amplitudes: whether to optimize the amplitudes later on; causes `requires_grad` of the
                                     corresponding parameter in the RFSF kernel to be set to `True`
-        :param optimize_phases: whether to optimize the phases later on; causes `required_grad` of the corresponding
+        :param optimize_phases: whether to optimize the phases later on; causes `requires_grad` of the corresponding
                                 parameter in the RFSF kernel to be set to `True`
+        :param optimize_half_period: whether to optimize the half-period value; causes `requires_grad` of the
+                                     corresponding parameter in the RFSF kernel to be set to `True`.
         """
         assert_positive(num_harmonics, "num_harmonics")
 
@@ -33,6 +35,7 @@ class FourierSeriesInitializer(ABC):
         self._half_period = half_period
         self._optimize_amplitudes = optimize_amplitudes
         self._optimize_phases = optimize_phases
+        self._optimize_half_period = optimize_half_period
 
         self._cosine_coefficients = None
         self._sine_coefficients = None
@@ -131,6 +134,11 @@ class FourierSeriesInitializer(ABC):
     def optimize_phases(self) -> bool:
         """Gets whether to optimize the phases."""
         return self._optimize_phases
+
+    @property
+    def optimize_half_period(self) -> bool:
+        """Gets whether to optimize the half-period."""
+        return self._optimize_half_period
 
     def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """
