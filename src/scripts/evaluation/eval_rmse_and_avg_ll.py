@@ -39,14 +39,12 @@ def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evalu
 @torch.no_grad()
 def _compute_rmse_and_ll(pre_processor: PreProcessor, model: ExactGP, inputs: torch.Tensor, targets: torch.Tensor) -> Tuple[float, float]:
     with gpytorch.settings.fast_computations(covar_root_decomposition=False, log_prob=False, solves=False):
-        transformed_inputs = pre_processor.transform_inputs(inputs)
-        transformed_targets = pre_processor.transform_targets(targets)
-        predictive_distribution = model(transformed_inputs)
-        inverse_transformed_mean = pre_processor.inverse_transform_targets(predictive_distribution.mean)
-        inverse_transformed_cov = make_positive_definite(pre_processor.inverse_transform_target_cov(predictive_distribution.covariance_matrix))
-        inverse_transformed_predictive_distribution = torch.distributions.MultivariateNormal(inverse_transformed_mean, inverse_transformed_cov)
-        mse = ((inverse_transformed_mean - targets) ** 2).sum().item()
-        ll = inverse_transformed_predictive_distribution.log_prob(transformed_targets).item()
+        predictive_transformed_distribution = model.likelihood(model(pre_processor.transform_inputs(inputs)))
+        mean = pre_processor.inverse_transform_targets(predictive_transformed_distribution.mean)
+        cov = make_positive_definite(pre_processor.inverse_transform_target_cov(predictive_transformed_distribution.covariance_matrix))
+        predictive_distribution = torch.distributions.MultivariateNormal(mean, cov)
+        mse = ((mean - targets) ** 2).sum().item()
+        ll = predictive_distribution.log_prob(targets).item()
         # Take mean of log-prob to not report dataset-size-dependent metrics.
         return math.sqrt(mse / len(targets)), ll / len(targets)
 

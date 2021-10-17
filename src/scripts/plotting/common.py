@@ -2,12 +2,11 @@ from typing import Callable, Iterable, Optional, Tuple
 
 import gpytorch
 import torch
-from gpytorch.models import GP
-from matplotlib import colors, cycler
-from matplotlib import pyplot as plt
+from PIL import Image
+from gpytorch.models import ExactGP, GP
+from matplotlib import colors, cycler, pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
@@ -56,7 +55,7 @@ def animate_over_model_states(
 
 def plot_process(
     pre_processor: PreProcessor,
-    model: GP,
+    model: ExactGP,
     num_samples: int,
     title: str,
     *,
@@ -72,7 +71,7 @@ def plot_process(
     model.eval()
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         test_x_transformed = pre_processor.transform_inputs(test_x)
-        pred = model(test_x_transformed)
+        pred = model.likelihood(model(test_x_transformed))
     fig, ax = plt.subplots() if fig_ax is None else fig_ax
     pred_mean = pre_processor.inverse_transform_targets(pred.mean)
     # TODO: Is this inverse transformation correct? It does not seem so, but the plots look good…
@@ -115,7 +114,7 @@ def plot_features(
     return fig
 
 
-def plot_covariance(
+def plot_epistemic_covariance(
     pre_processor: PreProcessor,
     model: GP,
     *,
