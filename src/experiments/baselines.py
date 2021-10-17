@@ -33,7 +33,7 @@ from rfsf.util.mock_lr import MockLR
 from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, split_parameter_groups
 
 
-def make_experiment(log_to_wandb: bool) -> Experiment:
+def make_baseline_experiment(log_to_wandb: bool) -> Experiment:
     ex = Experiment(ingredients=[dataset_ingredient])
     ex.observers.append(FileStorageObserver("data/temp/results"))
     if log_to_wandb:
@@ -92,16 +92,13 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     # noinspection PyUnusedLocal
     @ex.named_config
     def scaled_rbf():
-        pre_processor_class = NoOpPreProcessor
         model_class = ScaledRBFGP
 
     # noinspection PyUnusedLocal
     @ex.named_config
     def rfsf_random():
         model_class = RFSFRandomGP
-        max_iter = 1000
-
-        # Hyperparameters found using an Optuna study on commit 6d49b808.
+        # Hyperparameters where found using an Optuna study on commit 6d49b808.
         pre_processor_class = Standardization
         model_kwargs = dict(
             num_samples=2500,
@@ -116,9 +113,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     @ex.named_config
     def rfsf_relu():
         model_class = RFSFReLUGP
-        max_iter = 1000
-
-        # Hyperparameters found using an Optuna study on commit 6d49b808.
+        # Hyperparameters where found using an Optuna study on commit 6d49b808.
         pre_processor_class = PCAInputWhitening
         model_kwargs = dict(
             num_samples=2500,
@@ -265,4 +260,4 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
 
 
 if __name__ == "__main__":
-    make_experiment("NO_WANDB" not in os.environ).run_commandline()
+    make_baseline_experiment("NO_WANDB" not in os.environ).run_commandline()
