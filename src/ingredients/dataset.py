@@ -6,6 +6,8 @@ import numpy as np
 import torch
 from sacred import Ingredient
 
+from rfsf.util import devices
+
 
 dataset_ingredient = Ingredient("dataset")
 
@@ -40,6 +42,7 @@ def default_config():
     name = "sine"
     dataset_directory = "data/perm"
     uci_split_index = 0
+    double_precision = False  # Can improve accuracy and can fix failing runs, must is very GPU-memory costly!
 
 
 @dataset_ingredient.capture
@@ -59,7 +62,10 @@ def get_title(name: str) -> str:
 
 
 @dataset_ingredient.capture
-def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+def load_data(name: str, double_precision: bool, *, device: Optional[torch.device] = None) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+    if device is None:
+        device = devices.cpu()
+
     print(f"Loading {name!r} dataset.")
     if name in (prefix + base_name for prefix in ("", _clustered_prefix) for base_name in ("sine", "cosine", "heaviside", "heavisine", "heavicosine", "discontinuous_odd_cosine")):
         func_name = name[len(_clustered_prefix) :] if name.startswith(_clustered_prefix) else name
@@ -69,7 +75,8 @@ def load_data(name: str, *, device: Optional[torch.device] = None) -> Tuple[Tupl
         data = _load_uci_dataset(uci_dataset_name)
     else:
         assert False, f"unknown dataset {name!r}"
-    return data if device is None else tuple(tuple(da.to(device) for da in dat) for dat in data)
+    # noinspection PyTypeChecker
+    return tuple(tuple((da.double() if double_precision else da.float()).to(device) for da in dat) for dat in data)
 
 
 def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:

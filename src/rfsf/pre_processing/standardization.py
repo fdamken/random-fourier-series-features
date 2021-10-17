@@ -25,13 +25,13 @@ class Standardization(PreProcessor):
             # Normalize over the batch dimension (the first axis).
             self.register_buffer("inputs_mean", inputs.mean(dim=0, keepdim=True))
             inputs_std = inputs.std(dim=0, keepdim=True)
-            inputs_std[torch.isclose(inputs_std, torch.tensor(0.0))] = 1.0
+            inputs_std[torch.isclose(inputs_std, torch.tensor(0.0, dtype=inputs.dtype, device=inputs.device))] = torch.tensor(1.0, dtype=inputs.dtype, device=inputs.device)
             self.register_buffer("inputs_std", inputs_std)
 
         # Standardize targets.
         self.register_buffer("targets_mean", targets.mean(dim=0, keepdim=True))
         targets_std = targets.std(dim=0, keepdim=True)
-        targets_std[torch.isclose(targets_std, torch.tensor(0.0))] = 1.0
+        targets_std[torch.isclose(targets_std, torch.tensor(0.0, dtype=targets.dtype, device=targets.device))] = torch.tensor(1.0, dtype=targets.dtype, device=targets.device)
         self.register_buffer("targets_std", targets_std)
 
     def _transform_inputs(self, inputs: torch.Tensor) -> torch.Tensor:

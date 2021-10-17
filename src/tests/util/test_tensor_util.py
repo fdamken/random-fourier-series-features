@@ -38,4 +38,5 @@ def test_periodic(trig):
     ],
 )
 def test_apply_parameter_name_selector(selector, expected):
-    assert apply_parameter_name_selector(["a", "b", "c"], selector) == expected
+    # Convert to sets to compare without respecting the order.
+    assert set(apply_parameter_name_selector(["a", "b", "c"], selector)) == set(expected)
