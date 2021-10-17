@@ -1,10 +1,9 @@
 import warnings
 
 import numpy
+import wandb
 from sacred.dependencies import get_digest
 from sacred.observers import RunObserver
-
-import wandb
 
 
 class WandbObserver(RunObserver):
