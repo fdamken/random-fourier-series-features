@@ -14,18 +14,22 @@ class RFSFReLUGP(ExactGP):
         train_inputs: torch.Tensor,
         train_targets: torch.Tensor,
         likelihood: Likelihood,
+        *,
         num_samples: int,
         num_harmonics: int,
         half_period: float,
         optimize_amplitudes: bool,
         optimize_phases: bool,
+        optimize_half_period: bool,
         use_ard: bool,
     ):
         super().__init__(train_inputs, train_targets, likelihood)
         self.mean_module = ConstantMean()
         self.mean_module.constant.requires_grad = False
         self.cov_module = RFSFKernel(
-            num_samples, ReLUFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases), ard_num_dims=train_inputs.shape[1] if use_ard else None
+            num_samples,
+            ReLUFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases, optimize_half_period),
+            ard_num_dims=train_inputs.shape[1] if use_ard else None,
         )
 
     def forward(self, x):
