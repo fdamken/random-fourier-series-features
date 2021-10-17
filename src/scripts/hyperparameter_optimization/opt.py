@@ -15,7 +15,7 @@ class CUDAOutOfMemoryError(RuntimeError):
     pass
 
 
-def evaluate_dataset(config, dataset, model_name, pre_processing) -> float:
+def evaluate_dataset(config: dict, dataset: str, model_name: str, pre_processing: str, optimize_rmse_not_likelihood: bool) -> float:
     config["dataset"] = {"name": dataset}
     try:
         # Training.
@@ -26,7 +26,8 @@ def evaluate_dataset(config, dataset, model_name, pre_processing) -> float:
         basedir = run.observers[0].dir
         pre_processor = _load_pickle(f"{basedir}/pre_processor.pkl")
         model = _load_pickle(f"{basedir}/model-final.pkl")
-        return evaluate(pre_processor, model, skip_training_evaluation=True)[1]
+        _, test_posterior_rmse, _, test_posterior_ll = evaluate(pre_processor, model, skip_training_evaluation=True)
+        return test_posterior_rmse if optimize_rmse_not_likelihood else test_posterior_ll
     except RuntimeError as e:
         if hasattr(e, "args") and type(e.args) is tuple and e.args[0].startswith("CUDA out of memory"):
             warnings.warn(f"CUDA out of memory for config {config}. Pruning trial.")
@@ -34,7 +35,7 @@ def evaluate_dataset(config, dataset, model_name, pre_processing) -> float:
         raise e
 
 
-def objective(trial: optuna.Trial, datasets: str, model_name: str, max_iter: int, learning_rate: float) -> float:
+def objective(trial: optuna.Trial, datasets: str, model_name: str, max_iter: int, learning_rate: float, optimize_rmse_not_likelihood: bool) -> float:
     num_harmonics = trial.suggest_int(name="num_harmonics", low=1, high=32)
     half_period = trial.suggest_float(name="half_period", low=0.1, high=10)
     use_ard = trial.suggest_categorical(name="use_ard", choices=[True, False])
@@ -48,11 +49,13 @@ def objective(trial: optuna.Trial, datasets: str, model_name: str, max_iter: int
 
     value = 0.0
     for dataset in datasets:
-        value += evaluate_dataset(config, dataset, model_name, pre_processing)
+        value += evaluate_dataset(config, dataset, model_name, pre_processing, optimize_rmse_not_likelihood)
     return value / len(datasets)
 
 
 def main() -> None:
+    optimize_rmse_not_likelihood = False  # True <=> Optimize RMSE;  False <=> Optimize LL
+
     parser = ArgumentParser()
     parser.add_argument("-d", "--datasets", required=True, type=str, help="Datasets to optimize the hyper-parameters on.")
     parser.add_argument("-c", "--model", required=True, type=str, help="Name of the model (in the form of a Sacred named config) to optimize.")
@@ -68,12 +71,12 @@ def main() -> None:
 
     study = optuna.create_study(
         study_name=f"{','.join(datasets)}_{model_name}_{max_iter}MaxIter_{learning_rate}LR_{datetime.now().isoformat()}",
-        direction="minimize",
+        direction="minimize" if optimize_rmse_not_likelihood else "maximize",
         storage="sqlite:///optuna.db",
         load_if_exists=True,
     )
     study.optimize(
-        partial(objective, datasets=datasets, model_name=model_name, max_iter=max_iter, learning_rate=learning_rate),
+        partial(objective, datasets=datasets, model_name=model_name, max_iter=max_iter, learning_rate=learning_rate, optimize_rmse_not_likelihood=optimize_rmse_not_likelihood),
         n_trials=num_trials,
         catch=(NotPSDError, CUDAOutOfMemoryError),
     )
