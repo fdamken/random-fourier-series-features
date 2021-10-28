@@ -142,8 +142,7 @@ class RFSFKernel(Kernel):
         harmonics = amplitudes * torch.cos(harmonics_activations)
         del harmonics_activations  # Not needed anymore --> save memory.
 
-        # TODO: Is it helpful to normalize over the amplitudes?
-        return harmonics.sum(dim=-1)
+        return harmonics.sum(dim=-1) / amplitudes.sum()
 
     @property
     def _amplitudes(self) -> torch.Tensor:
