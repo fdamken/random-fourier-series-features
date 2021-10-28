@@ -6,6 +6,7 @@ import numpy as np
 import sklearn.utils
 import torch
 from gpytorch import ExactMarginalLogLikelihood
+from gpytorch.kernels import ScaleKernel
 from gpytorch.likelihoods import GaussianLikelihood, Likelihood
 from gpytorch.models import ExactGP
 from sacred import Experiment
@@ -108,7 +109,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             half_period=8.894257014436906,
             optimize_amplitudes=True,
             optimize_phases=True,
-            optimize_half_period=True,
+            optimize_half_period=False,
             use_ard=True,
         )
 
@@ -230,8 +231,11 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
                 noise = model.likelihood.noise.item()
                 parameters = [p for p in model.parameters() if p.grad is not None]
                 grad_norm = torch.norm(torch.stack([torch.norm(p.grad.detach()).to(devices.cuda()) for p in parameters]))
-                if hasattr(model, "cov_module") and isinstance(model.cov_module, RFSFKernel):
-                    half_period = model.cov_module.half_period.item()
+                cov_module = getattr(model, "cov_module", None)
+                if isinstance(cov_module, ScaleKernel):
+                    cov_module = cov_module.base_kernel
+                if isinstance(cov_module, RFSFKernel):
+                    half_period = cov_module.half_period.item()
                 else:
                     half_period = None
 
