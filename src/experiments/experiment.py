@@ -105,7 +105,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         max_iter = 1000
 
         model_kwargs = dict(
-            num_samples=100,
+            num_samples=2500,
             use_ard=True,
         )
 
@@ -117,13 +117,13 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
 
         # Hyperparameters found using an Optuna study on commit 6d49b808.
         model_kwargs = dict(
-            num_samples=1000,
-            num_harmonics=5,
-            half_period=8.894257014436906,
+            num_samples=2500,
+            num_harmonics=1,
+            half_period=np.pi,
             optimize_amplitudes=False,
             optimize_phases=False,
             optimize_half_period=False,
-            use_sine_cosine_form=False,
+            use_sine_cosine_form=True,
             use_ard=True,
         )
 
@@ -184,7 +184,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         _run: Run,
         _log: Logger,
     ):
-        (train_inputs, train_targets), _ = dataset.load_data(device=devices.cuda())
+        (train_inputs, train_targets), _ = dataset.load_data(device=devices.cuda(), double_precision=True)
 
         pre_processor: PreProcessor = pre_processor_class(**pre_processor_kwargs)
         pre_processor.fit(train_inputs, train_targets)
@@ -194,8 +194,8 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         # Add the pre-processor as an artifact directly after fitting it such that the buffers are initialized.
         add_pickle_artifact(_run, pre_processor, "pre_processor", device=devices.cuda())
 
-        likelihood: Likelihood = likelihood_class(**likelihood_kwargs)
-        model: ExactGP = model_class(train_inputs, train_targets, likelihood, **model_kwargs)
+        likelihood: Likelihood = likelihood_class(**likelihood_kwargs).double()
+        model: ExactGP = model_class(train_inputs, train_targets, likelihood, **model_kwargs).double()
 
         likelihood.to(devices.cuda())
         model.to(devices.cuda())
