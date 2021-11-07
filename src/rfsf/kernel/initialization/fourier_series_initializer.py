@@ -61,7 +61,7 @@ class FourierSeriesInitializer(ABC):
         return result
 
     @abstractmethod
-    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Computes the cosine/sine coefficients.
 
@@ -69,6 +69,18 @@ class FourierSeriesInitializer(ABC):
                  `(num_harmonics + 1,)`, where the first entry of the sine coefficients is zero for real fourier series
         """
         raise NotImplementedError()  # pragma: no cover
+
+    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Computes the cosine/sine coefficients and checks their shapes.
+
+        :return: tuple `(cosine_coefficients, sine_coefficients)`; the cosine/sine coefficients; each has shape
+                 `(num_harmonics + 1,)`, where the first entry of the sine coefficients is zero for real fourier series
+        """
+        cosine_coefficients, sine_coefficients = self._compute_coefficients()
+        assert_shape(cosine_coefficients, (self._num_harmonics + 1,), "cosine_coefficients")
+        assert_shape(sine_coefficients, (self._num_harmonics + 1,), "sine_coefficients")
+        return cosine_coefficients, sine_coefficients
 
     @property
     def cosine_coefficients(self) -> torch.Tensor:
@@ -139,18 +151,6 @@ class FourierSeriesInitializer(ABC):
     def optimize_half_period(self) -> bool:
         """Gets whether to optimize the half-period."""
         return self._optimize_half_period
-
-    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Computes the cosine/sine coefficients and checks their shapes.
-
-        :return: tuple `(cosine_coefficients, sine_coefficients)`; the cosine/sine coefficients; each has shape
-                 `(num_harmonics + 1,)`, where the first entry of the sine coefficients is zero for real fourier series
-        """
-        cosine_coefficients, sine_coefficients = self.compute_coefficients()
-        assert_shape(cosine_coefficients, (self._num_harmonics + 1,), "cosine_coefficients")
-        assert_shape(sine_coefficients, (self._num_harmonics + 1,), "sine_coefficients")
-        return cosine_coefficients, sine_coefficients
 
     def _compute_amplitudes(self) -> torch.Tensor:
         """

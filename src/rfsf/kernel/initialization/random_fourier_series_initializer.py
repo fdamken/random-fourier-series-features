@@ -10,6 +10,6 @@ class RandomFourierSeriesInitializer(FourierSeriesInitializer):
     Initializes the coefficients of the Fourier series randomly, drawn from a uniform distribution on :math:`[0, 1]`.
     """
 
-    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """Samples the cosine/sine coefficients from a uniform distribution."""
         return tuple(torch.rand((2, self._num_harmonics + 1)))

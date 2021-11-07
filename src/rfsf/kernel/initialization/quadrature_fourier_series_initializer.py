@@ -73,7 +73,7 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
         self._quadrature_maxiter = quadrature_maxiter
         self._quadrature_kwargs = quadrature_kwargs
 
-    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """Computes the cosine/sine coefficients using Gaussian quadrature."""
 
         func = lambda x: self._func((x + self.half_period) % (2 * self.half_period) - self.half_period)

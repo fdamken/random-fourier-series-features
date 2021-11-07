@@ -10,7 +10,7 @@ class NonNegativeSineInitializer(FourierSeriesInitializer):
     def __init__(self):
         super().__init__(1, np.pi)
 
-    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         # Represents a pure sine wave that with an amplitude of nine, shifted by two on the y-axis: f(x) = 9 sin(x) + 2.
         return torch.tensor([4.0, 0.0]), torch.tensor([0.0, 9.0])
 

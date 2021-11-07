@@ -11,15 +11,8 @@ class SingleHarmonicFourierSeriesInitializer(FourierSeriesInitializer):
     amplitudes are zero (or close to zero).
     """
 
-    @property
-    def amplitudes(self) -> torch.Tensor:
-        amplitudes = torch.ones((self.num_harmonics + 1,)) * 1e-5
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+        amplitudes = torch.zeros((self.num_harmonics + 1,))
         amplitudes[1] = torch.tensor(1.0)
-        return amplitudes
-
-    @property
-    def phases(self) -> torch.Tensor:
-        return torch.zeros((self.num_harmonics + 1,))
-
-    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
-        raise NotImplementedError()  # TODO: This is currently a hacky implementation.
+        phases = torch.zeros((self.num_harmonics + 1,))
+        return amplitudes * phases.cos(), amplitudes * phases.sin()

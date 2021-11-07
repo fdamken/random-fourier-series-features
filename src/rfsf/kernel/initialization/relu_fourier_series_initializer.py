@@ -11,7 +11,7 @@ class ReLUFourierSeriesInitializer(FourierSeriesInitializer):
     Initializes the coefficients of the Fourier series such that they resemble a Rectified Linear Unit (ReLU).
     """
 
-    def compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """Computes the cosine/sine coefficients to resemble a ReLU."""
 
         a = torch.zeros((self.num_harmonics + 1,))
