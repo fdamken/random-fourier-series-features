@@ -33,8 +33,8 @@ def main(__figures_dir: str, __experiment_dir: str, __y_lim: Tuple[float, float]
     def plot_single(pre_processor: PreProcessor, model: GP, title_suffix: str) -> Figure:
         if hasattr(model, "cov_module") and isinstance(model.cov_module, RFSFKernel):
             if weights_and_phases.value is None:
-                weights_and_phases.value = model.cov_module.get_weights_and_phases(None)
-            model.cov_module.set_weights_and_phases(*weights_and_phases.value)
+                weights_and_phases.value = model.cov_module.get_random_components(None)
+            model.cov_module.set_random_components(*weights_and_phases.value)
         return show_debug_info(
             plot_process(pre_processor, model, 0, dataset.get_title(), y_lim=__y_lim, title_suffix=title_suffix),
             load_run(),

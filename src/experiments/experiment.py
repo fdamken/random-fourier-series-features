@@ -123,6 +123,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             optimize_amplitudes=False,
             optimize_phases=False,
             optimize_half_period=False,
+            use_sine_cosine_form=False,
             use_ard=True,
         )
 
@@ -139,7 +140,8 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             half_period=8.894257014436906,
             optimize_amplitudes=True,
             optimize_phases=True,
-            optimize_half_period=False,
+            optimize_half_period=True,
+            use_sine_cosine_form=True,
             use_ard=True,
         )
 
@@ -157,6 +159,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             optimize_amplitudes=True,
             optimize_phases=True,
             optimize_half_period=True,
+            use_sine_cosine_form=False,
             use_ard=True,
         )
 

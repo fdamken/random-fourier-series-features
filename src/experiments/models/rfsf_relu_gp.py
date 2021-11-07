@@ -21,6 +21,7 @@ class RFSFReLUGP(ExactGP):
         optimize_amplitudes: bool,
         optimize_phases: bool,
         optimize_half_period: bool,
+        use_sine_cosine_form: bool,
         use_ard: bool,
     ):
         super().__init__(train_inputs, train_targets, likelihood)
@@ -29,6 +30,7 @@ class RFSFReLUGP(ExactGP):
         self.cov_module = RFSFKernel(
             num_samples,
             ReLUFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases, optimize_half_period),
+            use_sine_cosine_form=use_sine_cosine_form,
             ard_num_dims=train_inputs.shape[1] if use_ard else None,
         )
 
