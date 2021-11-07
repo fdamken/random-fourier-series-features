@@ -7,7 +7,6 @@ from gpytorch.kernels import Kernel
 from gpytorch.lazy import LazyTensor, LowRankRootLazyTensor, MatmulLazyTensor, RootLazyTensor
 
 from rfsf.kernel.initialization.fourier_series_initializer import FourierSeriesInitializer
-from rfsf.prediction_strategies.double_precision_prediction_strategy import DoublePrecisionPredictionStrategy
 from rfsf.util.assertions import assert_positive
 
 
@@ -158,6 +157,3 @@ class RFSFKernel(Kernel):
             result = harmonics.sum(-1)
             del harmonics  # Not needed anymore --> save memory.
         return result
-
-    def prediction_strategy(self, train_inputs, train_prior_dist, train_labels, likelihood):
-        return DoublePrecisionPredictionStrategy(train_inputs, train_prior_dist, train_labels, likelihood)
