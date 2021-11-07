@@ -12,4 +12,4 @@ class RandomFourierSeriesInitializer(FourierSeriesInitializer):
 
     def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """Samples the cosine/sine coefficients from a uniform distribution."""
-        return tuple(torch.rand((2, self._num_harmonics + 1)))
+        return tuple(torch.rand((2, self._num_harmonics)))

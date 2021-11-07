@@ -13,6 +13,10 @@ class FourierSeriesInitializer(ABC):
     the amplitudes and phases from cosine/sine coefficients which can simply be obtained by integration. Subclasses can
     implement various different initialization techniques, e.g., random initialization or actually using the Fourier
     series of any function.
+
+    Note that this class does not represent fourier series at their full glory as the bias is ignored. Hence only
+    functions with with mean zero can be represented accurately. This simplifies subsequent learning and reduces some
+    ambiguity.
     """
 
     def __init__(self, num_harmonics: int, half_period: float, optimize_amplitudes: bool = True, optimize_phases: bool = True, optimize_half_period: bool = True):
@@ -50,14 +54,14 @@ class FourierSeriesInitializer(ABC):
             n = torch.arange(1, self.num_harmonics + 1).unsqueeze(dim=0)
             cos = torch.cos(np.pi / self.half_period * n * x)
             sin = torch.sin(np.pi / self.half_period * n * x)
-            result = a[0] / 2 + (a[1:] * cos + b[1:].unsqueeze(axis=0) * sin).sum(axis=1)
+            result = (a.unsqueeze(dim=0) * cos + b.unsqueeze(dim=0) * sin).sum(dim=1)
         else:
             amplitudes = self.amplitudes.unsqueeze(dim=0)
             phases = self.phases.unsqueeze(dim=0)
-            n = torch.arange(0, self.num_harmonics + 1).unsqueeze(dim=0)
+            n = torch.arange(1, self.num_harmonics + 1).unsqueeze(dim=0)
             harmonics_activations = np.pi / self.half_period * n * x - phases
             harmonics = amplitudes * torch.cos(harmonics_activations)
-            result = harmonics.sum(axis=1)
+            result = harmonics.sum(dim=1)
         return result
 
     @abstractmethod
@@ -66,7 +70,7 @@ class FourierSeriesInitializer(ABC):
         Computes the cosine/sine coefficients.
 
         :return: tuple `(cosine_coefficients, sine_coefficients)`; the cosine/sine coefficients; each has shape
-                 `(num_harmonics + 1,)`, where the first entry of the sine coefficients is zero for real fourier series
+                 `(num_harmonics,)`, where the first entry of the sine coefficients is zero for real fourier series
         """
         raise NotImplementedError()  # pragma: no cover
 
@@ -75,11 +79,11 @@ class FourierSeriesInitializer(ABC):
         Computes the cosine/sine coefficients and checks their shapes.
 
         :return: tuple `(cosine_coefficients, sine_coefficients)`; the cosine/sine coefficients; each has shape
-                 `(num_harmonics + 1,)`, where the first entry of the sine coefficients is zero for real fourier series
+                 `(num_harmonics,)`, where the first entry of the sine coefficients is zero for real fourier series
         """
         cosine_coefficients, sine_coefficients = self._compute_coefficients()
-        assert_shape(cosine_coefficients, (self._num_harmonics + 1,), "cosine_coefficients")
-        assert_shape(sine_coefficients, (self._num_harmonics + 1,), "sine_coefficients")
+        assert_shape(cosine_coefficients, (self._num_harmonics,), "cosine_coefficients")
+        assert_shape(sine_coefficients, (self._num_harmonics,), "sine_coefficients")
         return cosine_coefficients, sine_coefficients
 
     @property
@@ -87,7 +91,7 @@ class FourierSeriesInitializer(ABC):
         """
         Gets (and lazily computes) the cosine coefficients.
 
-        :return: cosine coefficients; shape `(num_harmonics + 1,)`
+        :return: cosine coefficients; shape `(num_harmonics,)`
         """
         if self._amplitudes is None:
             self._cosine_coefficients, self._sine_coefficients = self._compute_coefficients()
@@ -98,7 +102,7 @@ class FourierSeriesInitializer(ABC):
         """
         Gets (and lazily computes) the sine coefficients.
 
-        :return: sine coefficients; shape `(num_harmonics + 1,)`
+        :return: sine coefficients; shape `(num_harmonics,)`
         """
         if self._amplitudes is None:
             self._cosine_coefficients, self._sine_coefficients = self._compute_coefficients()
@@ -109,7 +113,7 @@ class FourierSeriesInitializer(ABC):
         """
         Gets (and lazily computes) the amplitudes.
 
-        :return: amplitudes; shape `(num_harmonics + 1,)`
+        :return: amplitudes; shape `(num_harmonics,)`
         """
         if self._amplitudes is None:
             self._amplitudes = self._compute_amplitudes()
@@ -121,7 +125,7 @@ class FourierSeriesInitializer(ABC):
         Gets (and lazily computes) the phases. The first entry is always :math:`\\pi/3` to pull the first amplitude into
         the sum.
 
-        :return: phases; shape `(num_harmonics + 1,)`
+        :return: phases; shape `(num_harmonics,)`
         """
         if self._phases is None:
             self._phases = self._compute_phases()
@@ -158,7 +162,7 @@ class FourierSeriesInitializer(ABC):
         :math:`A_k = \\sqrt{a_k^2 + b_k^2}`, where :math:`a_k` and :math:`b_k` are the cosine/sine coefficients,
         respectively.
 
-        :return: amplitudes; shape `(num_harmonics + 1,)`
+        :return: amplitudes; shape `(num_harmonics,)`
         """
         return torch.sqrt(self.cosine_coefficients ** 2 + self.sine_coefficients ** 2)
 
@@ -171,10 +175,6 @@ class FourierSeriesInitializer(ABC):
             Method :py:meth:`.compute_coefficients` has to be executed beforehand, which is usually done in the
             constructor.
 
-        :return: phases; shape `(num_harmonics + 1,)`
+        :return: phases; shape `(num_harmonics,)`
         """
-        phases = torch.atan2(self.sine_coefficients, self.cosine_coefficients)
-        # To pull the amplitude $A_0$ into the sum, $\varphi_0 = \pi/3$ has to be true for the cosine to become $1/2$,
-        # but $\mathrm{atan2}(x, 0) = \pi/2$ for all $x$.
-        phases[0] = np.pi / 3
-        return phases
+        return torch.atan2(self.sine_coefficients, self.cosine_coefficients)

@@ -8,12 +8,12 @@ from rfsf.kernel.rfsf_kernel import RFSFKernel
 
 
 def test_constructor():
-    RFSFKernel(100, RandomFourierSeriesInitializer(10, 0))
+    RFSFKernel(100, RandomFourierSeriesInitializer(10, 0.0))
 
 
 def test_initialization():
     num_samples = 1
-    half_period = 1
+    half_period = 1.0
     init = ReLUFourierSeriesInitializer(8, half_period)
     rfsf = RFSFKernel(num_samples, init)
     rfsf.lengthscale = torch.tensor(1.0)
@@ -30,7 +30,7 @@ def test_initialization():
 @pytest.mark.parametrize("samples_q", [1, 2, 3, 5])
 @pytest.mark.parametrize("dim", [1, 2, 3, 5])
 def test_compute(batch_a, batch_b, samples_p, samples_q, dim):
-    rfsf = RFSFKernel(100, RandomFourierSeriesInitializer(10, 1))
+    rfsf = RFSFKernel(100, RandomFourierSeriesInitializer(10, 1.0))
     p = torch.rand(size=(batch_a, batch_b, samples_p, dim))
     q = torch.rand(size=(batch_a, batch_b, samples_q, dim))
     with gpytorch.settings.lazily_evaluate_kernels(False):
@@ -43,7 +43,7 @@ def test_compute(batch_a, batch_b, samples_p, samples_q, dim):
 @pytest.mark.parametrize("samples", [1, 2, 3, 5])
 @pytest.mark.parametrize("dim", [1, 2, 3, 5])
 def test_compute_diag(batch_a, batch_b, samples, dim):
-    rfsf = RFSFKernel(100, RandomFourierSeriesInitializer(10, 1))
+    rfsf = RFSFKernel(100, RandomFourierSeriesInitializer(10, 1.0))
     p = torch.rand(size=(batch_a, batch_b, samples, dim))
     q = torch.rand(size=(batch_a, batch_b, samples, dim))
     with gpytorch.settings.lazily_evaluate_kernels(False):
@@ -57,7 +57,7 @@ def test_compute_diag(batch_a, batch_b, samples, dim):
 @pytest.mark.parametrize("dim", [1, 2, 3, 5])
 @pytest.mark.parametrize("num_samples", [1, 2, 3, 5])
 def test_compute_eq(batch_a, batch_b, samples, dim, num_samples):
-    rfsf = RFSFKernel(num_samples, RandomFourierSeriesInitializer(10, 1))
+    rfsf = RFSFKernel(num_samples, RandomFourierSeriesInitializer(10, 1.0))
     p = torch.rand(size=(batch_a, batch_b, samples, dim))
     with gpytorch.settings.lazily_evaluate_kernels(False):
         cov = rfsf(p)
@@ -67,7 +67,7 @@ def test_compute_eq(batch_a, batch_b, samples, dim, num_samples):
 @pytest.mark.parametrize("dim", [1, 2, 3, 5])
 @pytest.mark.parametrize("num_samples", [1, 2, 3, 5])
 def test_random_weights_and_phases_shape(dim, num_samples):
-    rfsf = RFSFKernel(num_samples, RandomFourierSeriesInitializer(10, 1))
+    rfsf = RFSFKernel(num_samples, RandomFourierSeriesInitializer(10, 1.0))
     assert not hasattr(rfsf, RFSFKernel.BUFFER_RAND_WEIGHTS)
     assert not hasattr(rfsf, RFSFKernel.BUFFER_RAND_BIASES)
     weights_1, phases_1 = rfsf.get_weights_and_phases(dim)
@@ -78,7 +78,7 @@ def test_random_weights_and_phases_shape(dim, num_samples):
 @pytest.mark.parametrize("dim", [1, 2, 3, 5])
 @pytest.mark.parametrize("num_samples", [1, 2, 3, 5])
 def test_random_weights_and_phases_buffer(dim, num_samples):
-    rfsf = RFSFKernel(num_samples, RandomFourierSeriesInitializer(10, 1))
+    rfsf = RFSFKernel(num_samples, RandomFourierSeriesInitializer(10, 1.0))
     assert not hasattr(rfsf, RFSFKernel.BUFFER_RAND_WEIGHTS)
     assert not hasattr(rfsf, RFSFKernel.BUFFER_RAND_BIASES)
 

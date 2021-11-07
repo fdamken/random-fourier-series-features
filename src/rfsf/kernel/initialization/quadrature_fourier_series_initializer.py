@@ -8,6 +8,7 @@ from scipy.integrate import quadrature
 
 from rfsf.kernel.initialization.fourier_series_initializer import FourierSeriesInitializer
 from rfsf.util.assertions import assert_positive
+from rfsf.util.tensor_util import periodic
 
 
 class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
@@ -68,7 +69,7 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
         if quadrature_kwargs is None:
             quadrature_kwargs = {}
         assert_positive(quadrature_maxiter, "quadrature_maxiter")
-        self._func = func
+        self._func = periodic(self.half_period)(func)
         self._torch_dtype = torch_dtype
         self._quadrature_maxiter = quadrature_maxiter
         self._quadrature_kwargs = quadrature_kwargs
@@ -76,17 +77,16 @@ class QuadratureFourierSeriesInitializer(FourierSeriesInitializer):
     def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
         """Computes the cosine/sine coefficients using Gaussian quadrature."""
 
-        func = lambda x: self._func((x + self.half_period) % (2 * self.half_period) - self.half_period)
-        func_cosine_coefficients = lambda k: lambda x: func(x) * np.cos(np.pi / self.half_period * k * x)
-        func_sine_coefficients = lambda k: lambda x: func(x) * np.sin(np.pi / self.half_period * k * x)
+        func_cosine_coefficients = lambda k: lambda x: self._func(x) * np.cos(np.pi / self.half_period * k * x)
+        func_sine_coefficients = lambda k: lambda x: self._func(x) * np.sin(np.pi / self.half_period * k * x)
 
         interval_lo = -self.half_period
         interval_up = +self.half_period
 
         quadrature_kwargs = {"a": interval_lo, "b": interval_up, "maxiter": self._quadrature_maxiter}
         quadrature_kwargs.update(self._quadrature_kwargs)
-        cosine_coefficients = [(quadrature(func, **quadrature_kwargs))[0] / self.half_period]
-        sine_coefficients = [0.0]
+        cosine_coefficients = []
+        sine_coefficients = []
         for n in range(1, self.num_harmonics + 1):
             cosine_coefficients.append(quadrature(func_cosine_coefficients(n), **quadrature_kwargs)[0] / self.half_period)
             sine_coefficients.append(quadrature(func_sine_coefficients(n), **quadrature_kwargs)[0] / self.half_period)

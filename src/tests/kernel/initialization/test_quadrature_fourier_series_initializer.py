@@ -20,12 +20,10 @@ def disable_accuracy_warnings():
 @pytest.mark.parametrize("half_period", [np.pi, 2 * np.pi, 10])
 def test_constructor(num_harmonics, half_period, disable_accuracy_warnings):
     init = QuadratureFourierSeriesInitializer(QuadratureFourierSeriesInitializer.relu, num_harmonics, half_period, torch_dtype=torch.float)
-    assert init.cosine_coefficients.shape == (num_harmonics + 1,)
-    assert init.sine_coefficients.shape == (num_harmonics + 1,)
-    assert init.amplitudes.shape == (num_harmonics + 1,)
-    assert init.phases.shape == (num_harmonics + 1,)
-    assert torch.allclose(init.sine_coefficients[0], torch.tensor(0.0, dtype=torch.float))
-    assert torch.allclose(init.amplitudes[0], init.cosine_coefficients[0])
+    assert init.cosine_coefficients.shape == (num_harmonics,)
+    assert init.sine_coefficients.shape == (num_harmonics,)
+    assert init.amplitudes.shape == (num_harmonics,)
+    assert init.phases.shape == (num_harmonics,)
 
 
 @pytest.mark.parametrize("num_harmonics", [1, 2, 3, 5, 7, 11])

@@ -12,7 +12,7 @@ class SingleHarmonicFourierSeriesInitializer(FourierSeriesInitializer):
     """
 
     def _compute_coefficients(self) -> Tuple[torch.Tensor, torch.Tensor]:
-        amplitudes = torch.zeros((self.num_harmonics + 1,))
-        amplitudes[1] = torch.tensor(1.0)
-        phases = torch.zeros((self.num_harmonics + 1,))
+        amplitudes = torch.zeros((self.num_harmonics,))
+        amplitudes[0] = torch.tensor(1.0)
+        phases = torch.zeros((self.num_harmonics,))
         return amplitudes * phases.cos(), amplitudes * phases.sin()
