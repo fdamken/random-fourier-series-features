@@ -16,8 +16,10 @@ from torch.optim import Adam, Optimizer
 from torch.optim.lr_scheduler import ExponentialLR
 from tqdm import tqdm
 
+from experiments.models.rff_gp import RFFGP
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
+from experiments.models.rfsf_single_harmonic_gp import RFSFSingleHarmonicGP
 from experiments.models.scaled_rbf_gp import ScaledRBFGP
 from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
@@ -59,7 +61,7 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         max_iter = 1000
         batch_size = 1000
         save_model_every_n_iterations = 100
-        log_parameter_values = False
+        log_parameter_values = True
         log_parameter_grad_values = False
 
     # noinspection PyUnusedLocal
@@ -95,6 +97,34 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     @ex.named_config
     def scaled_rbf():
         model_class = ScaledRBFGP
+
+    # noinspection PyUnusedLocal
+    @ex.named_config
+    def rff():
+        model_class = RFFGP
+        max_iter = 1000
+
+        model_kwargs = dict(
+            num_samples=100,
+            use_ard=True,
+        )
+
+    # noinspection PyUnusedLocal
+    @ex.named_config
+    def rfsf_single_harmonic():
+        model_class = RFSFSingleHarmonicGP
+        max_iter = 1000
+
+        # Hyperparameters found using an Optuna study on commit 6d49b808.
+        model_kwargs = dict(
+            num_samples=1000,
+            num_harmonics=5,
+            half_period=8.894257014436906,
+            optimize_amplitudes=False,
+            optimize_phases=False,
+            optimize_half_period=False,
+            use_ard=True,
+        )
 
     # noinspection PyUnusedLocal
     @ex.named_config
