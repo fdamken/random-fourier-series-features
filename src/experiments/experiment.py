@@ -115,10 +115,9 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         model_class = RFSFSingleHarmonicGP
         max_iter = 1000
 
-        # Hyperparameters found using an Optuna study on commit 6d49b808.
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=1,
+            num_harmonics=8,
             half_period=np.pi,
             optimize_amplitudes=False,
             optimize_phases=False,
@@ -131,13 +130,12 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
     @ex.named_config
     def rfsf_random():
         model_class = RFSFRandomGP
-        max_iter = 1000
+        max_iter = 500
 
-        # Hyperparameters found using an Optuna study on commit 6d49b808.
         model_kwargs = dict(
-            num_samples=2500,
-            num_harmonics=5,
-            half_period=8.894257014436906,
+            num_samples=1000,
+            num_harmonics=26,
+            half_period=47.37293057942358,
             optimize_amplitudes=True,
             optimize_phases=True,
             optimize_half_period=True,
@@ -151,7 +149,6 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
         model_class = RFSFReLUGP
         max_iter = 1000
 
-        # Hyperparameters found using an Optuna study on commit 6d49b808.
         model_kwargs = dict(
             num_samples=2500,
             num_harmonics=27,

@@ -36,10 +36,10 @@ def evaluate_dataset(config: dict, dataset: str, model_name: str, pre_processing
 
 
 def objective(trial: optuna.Trial, datasets: str, model_name: str, max_iter: int, learning_rate: float, optimize_rmse_not_likelihood: bool) -> float:
-    num_harmonics = trial.suggest_int(name="num_harmonics", low=1, high=32)
-    half_period = trial.suggest_float(name="half_period", low=0.1, high=10)
-    use_ard = trial.suggest_categorical(name="use_ard", choices=[True, False])
-    pre_processing = trial.suggest_categorical(name="pre_processing", choices=["no_pre_processing", "standardization", "pca_whitening"])
+    num_harmonics = trial.suggest_int(name="num_harmonics", low=1, high=64)
+    half_period = trial.suggest_float(name="half_period", low=1e-2, high=1e2)
+    use_ard = True  # trial.suggest_categorical(name="use_ard", choices=[True, False])
+    pre_processing = "pca_whitening"  # trial.suggest_categorical(name="pre_processing", choices=["no_pre_processing", "standardization", "pca_whitening"])
 
     config = {
         "optimizer_kwargs": {"lr": learning_rate},

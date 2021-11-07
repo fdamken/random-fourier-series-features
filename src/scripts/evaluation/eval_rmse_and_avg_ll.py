@@ -18,11 +18,13 @@ from scripts.util.sacred_util import load_experiment
 
 
 def evaluate(pre_processor: PreProcessor, model: ExactGP, *, skip_training_evaluation: bool = False, device: torch.device = devices.cpu()) -> Tuple[float, float, float, float]:
+    model = model.double()
+
     pre_processor.to(device)
     model.to(device=device)
     model.eval()
 
-    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=device)
+    (train_inputs, train_targets), (test_inputs, test_targets) = dataset.load_data(device=device, double_precision=True)
 
     if skip_training_evaluation:
         train_posterior_rmse, train_posterior_ll = np.nan, np.nan
