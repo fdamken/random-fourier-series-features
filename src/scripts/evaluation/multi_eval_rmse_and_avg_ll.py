@@ -37,14 +37,20 @@ def main():
     table = []
     for dataset_name, metrics in sorted(results.items()):
         row = []
+        first = True
         for metric_key in metric_keys:
             values = np.asarray(metrics[metric_key])
+            sample_size = len(values)
+            if first:
+                row.append(sample_size)
             mean = values.mean()
-            std = values.std() / np.sqrt(len(values))
+            std = values.std() / np.sqrt(sample_size)
             row.append(f"{np.format_float_positional(mean, precision=3)} ± {np.format_float_positional(std, precision=3)}")
+            first = False
+        row.append("")
         table.append(row)
 
-    print(tabulate(table, headers=metric_keys, showindex=sorted(results.keys()), tablefmt="github", stralign="center"))
+    print(tabulate(table, headers=("Sample Size",) + metric_keys + ("Notes",), showindex=sorted(results.keys()), tablefmt="github", stralign="center"))
 
 
 if __name__ == "__main__":
