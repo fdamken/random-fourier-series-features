@@ -105,8 +105,8 @@ def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[t
     train_resolution = 0.05
     noise_var = 0.0001
     if clustered:
-        interval_1_lo, interval_1_up = -1.0, -0.5
-        interval_2_lo, interval_2_up = +0.5, +1.0
+        interval_1_lo, interval_1_up = -0.75, -0.25
+        interval_2_lo, interval_2_up = +0.50, +1.00
         interval_lo, interval_up = interval_1_lo, interval_2_up
         train_inputs = torch.cat([torch.arange(interval_1_lo, interval_1_up, train_resolution), torch.arange(interval_2_lo, interval_2_up, train_resolution)])
     else:

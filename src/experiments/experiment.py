@@ -20,7 +20,7 @@ from experiments.models.rff_gp import RFFGP
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
 from experiments.models.rfsf_single_harmonic_gp import RFSFSingleHarmonicGP
-from experiments.models.scaled_rbf_gp import ScaledRBFGP
+from experiments.models.rbf_gp import RBFGP
 from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
@@ -66,78 +66,16 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
 
     # noinspection PyUnusedLocal
     @ex.named_config
-    def no_pre_processing():
-        pre_processor_class = NoOpPreProcessor
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def standardization():
-        pre_processor_class = Standardization
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def pca_whitening():
-        pre_processor_class = PCAInputWhitening
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def axial_iteration_opt():
-        optimizer_alternate_parameters = [["all", "!cov_module.phases"], ["all", "!cov_module.amplitudes_log"]]
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def axial_iteration_lr():
-        lr_scheduler_class = AxialIterationLR
-        lr_scheduler_kwargs = {
-            "axial_iteration_over": ["cov_module.amplitudes_log", "cov_module.phases"],
-            "epoch_inverse_scale": 1000,
-        }
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def scaled_rbf():
-        model_class = ScaledRBFGP
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def rff():
-        model_class = RFFGP
-        max_iter = 1000
-
-        model_kwargs = dict(
-            num_samples=2500,
-            use_ard=True,
-        )
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
-    def rfsf_single_harmonic():
-        model_class = RFSFSingleHarmonicGP
-        max_iter = 1000
-
-        model_kwargs = dict(
-            num_samples=2500,
-            num_harmonics=8,
-            half_period=np.pi,
-            optimize_amplitudes=False,
-            optimize_phases=False,
-            optimize_half_period=False,
-            use_sine_cosine_form=True,
-            use_ard=True,
-        )
-
-    # noinspection PyUnusedLocal
-    @ex.named_config
     def rfsf_random():
         model_class = RFSFRandomGP
         max_iter = 500
 
         model_kwargs = dict(
-            num_samples=1000,
+            num_samples=2500,
             num_harmonics=26,
             half_period=47.37293057942358,
-            optimize_amplitudes=True,
-            optimize_phases=True,
+            optimize_amplitudes=True,  # Ignored iff use_sine_cosine_form is `True`.
+            optimize_phases=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_half_period=True,
             use_sine_cosine_form=True,
             use_ard=True,
@@ -153,10 +91,44 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
             num_samples=2500,
             num_harmonics=27,
             half_period=7.586205337097311,
-            optimize_amplitudes=True,
-            optimize_phases=True,
+            optimize_amplitudes=True,  # Ignored iff use_sine_cosine_form is `True`.
+            optimize_phases=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_half_period=True,
-            use_sine_cosine_form=False,
+            use_sine_cosine_form=True,
+            use_ard=True,
+        )
+
+    # noinspection PyUnusedLocal
+    @ex.named_config
+    def rfsf_single_harmonic():
+        model_class = RFSFSingleHarmonicGP
+        max_iter = 1000
+
+        model_kwargs = dict(
+            num_samples=2500,
+            num_harmonics=8,
+            half_period=np.pi,
+            optimize_amplitudes=True,  # Ignored iff use_sine_cosine_form is `True`.
+            optimize_phases=True,  # Ignored iff use_sine_cosine_form is `True`.
+            optimize_half_period=True,
+            use_sine_cosine_form=True,
+            use_ard=True,
+        )
+
+    # noinspection PyUnusedLocal
+    @ex.named_config
+    def rbf():
+        model_class = RBFGP
+        model_kwargs = dict(use_ard=True)
+
+    # noinspection PyUnusedLocal
+    @ex.named_config
+    def rff():
+        model_class = RFFGP
+        max_iter = 1000
+
+        model_kwargs = dict(
+            num_samples=2500,
             use_ard=True,
         )
 

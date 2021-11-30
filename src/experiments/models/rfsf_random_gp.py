@@ -1,6 +1,5 @@
 import torch
 from gpytorch.distributions import MultivariateNormal
-from gpytorch.kernels import ScaleKernel
 from gpytorch.likelihoods import Likelihood
 from gpytorch.means import ConstantMean
 from gpytorch.models import ExactGP
@@ -26,13 +25,12 @@ class RFSFRandomGP(ExactGP):
         use_ard: bool,
     ):
         super().__init__(train_inputs, train_targets, likelihood)
-        self.mean_module = ConstantMean()
-        self.mean_module.constant.requires_grad = False
+        self.mean_module = ConstantMean().requires_grad_(False)
         self.cov_module = RFSFKernel(
             num_samples,
             RandomFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases, optimize_half_period),
             use_sine_cosine_form=use_sine_cosine_form,
-            ard_num_dims=(train_inputs.shape[1] if use_ard else None),
+            ard_num_dims=train_inputs.shape[1] if use_ard else None,
         )
 
     def forward(self, x):

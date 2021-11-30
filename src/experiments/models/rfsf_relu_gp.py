@@ -25,8 +25,7 @@ class RFSFReLUGP(ExactGP):
         use_ard: bool,
     ):
         super().__init__(train_inputs, train_targets, likelihood)
-        self.mean_module = ConstantMean()
-        self.mean_module.constant.requires_grad = False
+        self.mean_module = ConstantMean().requires_grad_(False)
         self.cov_module = RFSFKernel(
             num_samples,
             ReLUFourierSeriesInitializer(num_harmonics, half_period, optimize_amplitudes, optimize_phases, optimize_half_period),
