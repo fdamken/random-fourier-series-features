@@ -69,12 +69,11 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
     @ex.named_config
     def rfsf_random():
         model_class = RFSFRandomGP
-        max_iter = 500
 
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=26,
-            half_period=47.37293057942358,
+            num_harmonics=16,
+            half_period=50.0,
             optimize_amplitudes=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_phases=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_half_period=True,
@@ -86,12 +85,11 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
     @ex.named_config
     def rfsf_relu():
         model_class = RFSFReLUGP
-        max_iter = 1000
 
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=27,
-            half_period=7.586205337097311,
+            num_harmonics=16,
+            half_period=50.0,
             optimize_amplitudes=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_phases=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_half_period=True,
@@ -103,12 +101,11 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
     @ex.named_config
     def rfsf_single_harmonic():
         model_class = RFSFSingleHarmonicGP
-        max_iter = 1000
 
         model_kwargs = dict(
             num_samples=2500,
-            num_harmonics=8,
-            half_period=np.pi,
+            num_harmonics=16,
+            half_period=50.0,
             optimize_amplitudes=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_phases=True,  # Ignored iff use_sine_cosine_form is `True`.
             optimize_half_period=True,
@@ -126,7 +123,6 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
     @ex.named_config
     def rff():
         model_class = RFFGP
-        max_iter = 1000
 
         model_kwargs = dict(
             num_samples=2500,
