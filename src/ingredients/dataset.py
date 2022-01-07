@@ -46,7 +46,7 @@ _prefix_titles = {
 def default_config():
     name = "sine"
     dataset_directory = "data/perm"
-    uci_split_index = 0
+    split_index = 0
     double_precision = False  # Can improve accuracy and can fix failing runs, must is very GPU-memory costly!
 
 
@@ -74,7 +74,7 @@ def load_data(name: str, double_precision: bool, *, device: Optional[torch.devic
     print(f"Loading {name!r} dataset.")
     if name in (prefix + base_name for prefix in ("", _clustered_prefix) for base_name in ("sine", "cosine", "heaviside", "heavisine", "heavicosine", "discontinuous_odd_cosine")):
         func_name = name[len(_clustered_prefix) :] if name.startswith(_clustered_prefix) else name
-        data = _load_dataset_similar_func(func_name, clustered=name.startswith(_clustered_prefix))
+        data = _load_dataset_similar_func(func_name=func_name, clustered=name.startswith(_clustered_prefix))
     elif name.startswith(_uci_prefix):
         uci_dataset_name = name[len(_uci_prefix) :]
         data = _load_uci_like_dataset(uci_dataset_name, is_uci=True)
@@ -86,7 +86,10 @@ def load_data(name: str, double_precision: bool, *, device: Optional[torch.devic
     return tuple(tuple((da.double() if double_precision else da.float()).to(device) for da in dat) for dat in data)
 
 
-def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+@dataset_ingredient.capture
+def _load_dataset_similar_func(split_index: int, *, func_name: str, clustered: bool) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+    assert split_index == 0, "function-based datasets do not support different training splits"
+
     if func_name == "sine":
         func = lambda x: torch.sin(2 * math.pi * x)
     elif func_name == "cosine":
@@ -125,18 +128,18 @@ def _load_dataset_similar_func(func_name: str, clustered: bool) -> Tuple[Tuple[t
 
 
 @dataset_ingredient.capture
-def _load_uci_like_dataset(name: str, dataset_directory: str, uci_split_index: int, *, is_uci: bool) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
+def _load_uci_like_dataset(name: str, dataset_directory: str, split_index: int, *, is_uci: bool) -> Tuple[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor, torch.Tensor]]:
     data_dir = f"{dataset_directory}/uci/{name}" if is_uci else f"{dataset_directory}/{name}"
     assert osp.isdir(data_dir), f"unknown UCI-like dataset {name}"
 
     n_splits = int(np.loadtxt(f"{data_dir}/n_splits.txt"))
-    assert 0 <= uci_split_index < n_splits, f"split index {uci_split_index} out of bounds; only {n_splits} available"
+    assert 0 <= split_index < n_splits, f"split index {split_index} out of bounds; only {n_splits} available"
 
     data = np.loadtxt(f"{data_dir}/data.txt", dtype=np.float32)
     features_dims = np.loadtxt(f"{data_dir}/index_features.txt", dtype=int).reshape((-1,))
     target_dims = np.loadtxt(f"{data_dir}/index_target.txt", dtype=int).reshape((-1,))
-    train_indices = np.loadtxt(f"{data_dir}/index_train_{uci_split_index}.txt", dtype=int)
-    test_indices = np.loadtxt(f"{data_dir}/index_test_{uci_split_index}.txt", dtype=int)
+    train_indices = np.loadtxt(f"{data_dir}/index_train_{split_index}.txt", dtype=int)
+    test_indices = np.loadtxt(f"{data_dir}/index_test_{split_index}.txt", dtype=int)
 
     train_data, test_data = data[train_indices], data[test_indices]
     train_inputs = train_data[:, features_dims]
