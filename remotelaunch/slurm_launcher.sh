@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-#SBATCH --job-name run_all_seeds
+#SBATCH --job-name rfsf
 #SBATCH --array 0-19
-#SBATCH --time 06:00
+#SBATCH --time 06:00:00
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 4096
