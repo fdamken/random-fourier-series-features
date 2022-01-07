@@ -1,6 +1,6 @@
 import os
 from logging import Logger
-from typing import Any, ClassVar, List
+from typing import Any, ClassVar, List, Optional
 
 import numpy as np
 import sklearn.utils
@@ -35,7 +35,7 @@ from rfsf.util.mock_lr import MockLR
 from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, split_parameter_groups
 
 
-def make_experiment(log_to_wandb: bool, slurm_array_job_id: str, slurm_array_job_index: str) -> Experiment:
+def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm_array_job_index: Optional[str]) -> Experiment:
     ex = Experiment(ingredients=[dataset_ingredient])
     storage_dir = "data/temp/results"
     if slurm_array_job_id is not None and slurm_array_job_index is not None:
@@ -278,4 +278,4 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: str, slurm_array_job
 
 
 if __name__ == "__main__":
-    make_experiment(os.environ.get("NO_WANDB") is None, os.environ.get("slurm_array_job_id"), os.environ.get("slurm_array_task_id")).run_commandline()
+    make_experiment(os.environ.get("NO_WANDB") is None, os.environ.get("SLURM_ARRAY_JOB_ID"), os.environ.get("SLURM_ARRAY_TASK_ID")).run_commandline()
