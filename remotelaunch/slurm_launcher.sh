@@ -9,6 +9,7 @@
 #SBATCH --gres gpu
 #SBATCH -o /home/fd15hava/logs/%A_%a-out.txt
 #SBATCH -e /home/fd15hava/logs/%A_%a-err.txt
+#SBATCH --mail-type ALL
 
 set -o errexit
 set -o nounset
