@@ -16,20 +16,18 @@ from torch.optim import Adam, Optimizer
 from torch.optim.lr_scheduler import ExponentialLR
 from tqdm import tqdm
 
+from experiments.models.rbf_gp import RBFGP
 from experiments.models.rff_gp import RFFGP
 from experiments.models.rfsf_random_gp import RFSFRandomGP
 from experiments.models.rfsf_relu_gp import RFSFReLUGP
 from experiments.models.rfsf_single_harmonic_gp import RFSFSingleHarmonicGP
-from experiments.models.rbf_gp import RBFGP
 from experiments.util.sacred_util import add_pickle_artifact
 from experiments.util.wandb_observer import WandbObserver
 from ingredients import dataset
 from ingredients.dataset import dataset_ingredient
 from rfsf.kernel.rfsf_kernel import RFSFKernel
-from rfsf.pre_processing.no_op_pre_processor import NoOpPreProcessor
 from rfsf.pre_processing.pca_whitening import PCAInputWhitening
 from rfsf.pre_processing.pre_processor import PreProcessor
-from rfsf.pre_processing.standardization import Standardization
 from rfsf.util import devices
 from rfsf.util.axial_iteration_lr import AxialIterationLR
 from rfsf.util.constant_lr import ConstantLR
@@ -37,9 +35,12 @@ from rfsf.util.mock_lr import MockLR
 from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_iterator, split_parameter_groups
 
 
-def make_experiment(log_to_wandb: bool) -> Experiment:
+def make_experiment(log_to_wandb: bool, slurm_array_job_id: str, slurm_array_job_index: str) -> Experiment:
     ex = Experiment(ingredients=[dataset_ingredient])
-    ex.observers.append(FileStorageObserver("data/temp/results"))
+    storage_dir = "data/temp/results"
+    if slurm_array_job_id is not None and slurm_array_job_index is not None:
+        storage_dir += f"/slurm/{slurm_array_job_id}_{slurm_array_job_index}"
+    ex.observers.append(FileStorageObserver(storage_dir))
     if log_to_wandb:
         ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf"))
 
@@ -277,4 +278,4 @@ def make_experiment(log_to_wandb: bool) -> Experiment:
 
 
 if __name__ == "__main__":
-    make_experiment("NO_WANDB" not in os.environ).run_commandline()
+    make_experiment(os.environ.get("NO_WANDB") is None, os.environ.get("slurm_array_job_id"), os.environ.get("slurm_array_task_id")).run_commandline()
