@@ -45,7 +45,7 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
         tags.append("slurm")
     ex.observers.append(FileStorageObserver(storage_dir))
     if log_to_wandb:
-        ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf", tag=tags))
+        ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf", tags=tags))
 
     # noinspection PyUnusedLocal
     @ex.config
