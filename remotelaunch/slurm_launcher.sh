@@ -28,7 +28,6 @@ source venv/bin/activate
 
 export TMPDIR=$HPC_SCRATCH/tmp
 export PYTHONPATH="$working_dir/src"
-export NO_WANDB=y
 cmd="python src/experiments/experiment.py with $model_name dataset.name=$dataset_name dataset.split_index=$dataset_split_index dataset.double_precision=True"
-echo "Running '$cmd' with 'TMPDIR=$TMPDIR', 'PYTHONPATH=$PYTHONPATH', and 'NO_WANDB=$NO_WANDB'."
+echo "Running '$cmd' with 'TMPDIR=$TMPDIR' and 'PYTHONPATH=$PYTHONPATH'."
 $cmd
