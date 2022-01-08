@@ -36,13 +36,16 @@ from rfsf.util.tensor_util import apply_parameter_name_selector, gen_index_itera
 
 
 def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm_array_job_index: Optional[str]) -> Experiment:
+    is_slurm = slurm_array_job_id is not None and slurm_array_job_index is not None
     ex = Experiment(ingredients=[dataset_ingredient])
+    tags = []
     storage_dir = "data/temp/results"
-    if slurm_array_job_id is not None and slurm_array_job_index is not None:
+    if is_slurm:
         storage_dir += f"/slurm/{slurm_array_job_id}_{slurm_array_job_index}"
+        tags.append("slurm")
     ex.observers.append(FileStorageObserver(storage_dir))
     if log_to_wandb:
-        ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf"))
+        ex.observers.append(WandbObserver(project="random-fourier-series-features", entity="tuda-ias-rfsf", tag=tags))
 
     # noinspection PyUnusedLocal
     @ex.config
