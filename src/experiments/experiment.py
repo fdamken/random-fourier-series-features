@@ -62,7 +62,7 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
         max_iter = 1000
         batch_size = 1000
         save_model_every_n_iterations = 100
-        log_parameter_values = True
+        log_parameter_values = False
         log_parameter_grad_values = False
 
     # noinspection PyUnusedLocal
