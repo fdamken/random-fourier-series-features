@@ -16,7 +16,7 @@ set -o nounset
 
 echo "Starting Job $SLURM_JOB_ID; Array Job $SLURM_ARRAY_JOB_ID Index $SLURM_ARRAY_TASK_ID."
 
-run_index="$SLURM_ARRAY_JOB_ID"
+run_index="$SLURM_ARRAY_TASK_ID"
 
 working_dir="$HOME/rfsf"
 cd "$working_dir"
