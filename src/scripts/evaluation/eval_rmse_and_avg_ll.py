@@ -66,13 +66,16 @@ def make_eval_experiment(args=None) -> Tuple[Experiment, dict]:
             )
         )
 
+        config = load_config()
+        dataset_name = config["dataset"]["name"]
+        model_name = load_run()["meta"]["options"]["UPDATE"][0]
+
         eval_file = f"{__experiment_dir}/{osp.basename(__file__).replace('.py', '')}.csv"
         if osp.exists(eval_file):
             assert osp.isfile(eval_file), f"{eval_file = } exists, but is not a file"
             os.remove(eval_file)
         with open(eval_file, "w") as f:
-            f.write("train_posterior_rmse,test_posterior_rmse,train_posterior_ll,test_posterior_ll\n")
-            f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}\n")
+            f.write(f"{dataset_name},{model_name},{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}\n")
 
         return train_posterior_rmse, test_posterior_rmse, train_posterior_ll, test_posterior_ll
 
