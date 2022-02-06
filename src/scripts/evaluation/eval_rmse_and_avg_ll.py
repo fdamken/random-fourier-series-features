@@ -71,7 +71,8 @@ def make_eval_experiment(args=None) -> Tuple[Experiment, dict]:
             assert osp.isfile(eval_file), f"{eval_file = } exists, but is not a file"
             os.remove(eval_file)
         with open(eval_file, "w") as f:
-            f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}")
+            f.write("train_posterior_rmse,test_posterior_rmse,train_posterior_ll,test_posterior_ll\n")
+            f.write(f"{train_posterior_rmse},{test_posterior_rmse},{train_posterior_ll},{test_posterior_ll}\n")
 
         return train_posterior_rmse, test_posterior_rmse, train_posterior_ll, test_posterior_ll
 

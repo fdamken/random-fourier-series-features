@@ -83,7 +83,7 @@ def load_experiment(args=None):
     parser.add_argument("-e", "--eval_dir", default="eval")
     parser.add_argument("-d", "--experiment_id", default="<latest>")
     parser.add_argument("-D", "--load_dumped_eval", action="store_true")
-    args = parser.parse_args(args=args)
+    args = parser.parse_args(args=args)  # defaults to sys.argv if args is None
     figures_dir = f"{args.base_dir}/{args.figures_dir}"
     eval_dir = f"{args.base_dir}/{args.eval_dir}"
     experiment_dir = f"{args.base_dir}/{args.results_dir}/{args.experiment_id}"
