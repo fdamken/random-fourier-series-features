@@ -6,7 +6,7 @@
 #SBATCH --ntasks 1
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 4096
-#SBATCH --gres gpu:a100
+##SBATCH --gres gpu:a100
 #SBATCH -o /home/fd15hava/logs/%A_%a-out.txt
 #SBATCH -e /home/fd15hava/logs/%A_%a-err.txt
 #SBATCH --mail-type ALL
