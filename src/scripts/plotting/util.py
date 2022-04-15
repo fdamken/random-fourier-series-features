@@ -1,14 +1,12 @@
 import os
 from typing import Final, List, Optional
-
+import tikzplotlib
 import numpy as np
 from matplotlib import colors
 from matplotlib import pyplot as plt
 from matplotlib.collections import LineCollection
 
-
 HIDE_DEBUG_INFO: Final[bool] = os.environ.get("HIDE_DEBUG_INFO") is not None
-
 
 # noinspection PyPep8Naming,SpellCheckingInspection
 class AccumulativeNormalization(colors.Normalize):
@@ -30,9 +28,15 @@ class AccumulativeNormalization(colors.Normalize):
 
 def savefig(fig: plt.Figure, path: str, filename: str, *, formats: List[str] = None) -> plt.Figure:
     if formats is None:
-        formats = ["pdf", "pgf", "png"]
+        formats = ["pdf", "pgf", "png", "tikz"]
+    plt.tight_layout()
     for fmt in formats:
-        fig.savefig(f"{path}/{filename}.{fmt}")
+        file = f"{path}/{filename}.{fmt}"
+        if fmt == "tikz":
+            tikzplotlib.clean_figure(fig)
+            tikzplotlib.save(file, figure=fig)
+        else:
+            fig.savefig(file)
     return fig
 
 

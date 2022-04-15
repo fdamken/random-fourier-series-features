@@ -1,13 +1,15 @@
 from typing import Callable, Iterable, Optional, Tuple
 
 import gpytorch
+import scipy as sp
+import scipy.constants
 import torch
+from PIL import Image
 from gpytorch.models import GP, ExactGP
 from matplotlib import colors, cycler
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from PIL import Image
 from tqdm import tqdm
 
 from ingredients import dataset
@@ -15,7 +17,6 @@ from rfsf.pre_processing.pre_processor import PreProcessor
 from rfsf.util import devices
 from rfsf.util.tensor_util import to_numpy
 from scripts.plotting.util import savefig
-
 
 sample_color_cycler = cycler(color=["tab:orange", "tab:green", "tab:red", "tab:purple", "tab:brown", "tab:pink", "tab:gray", "tab:olive", "tab:cyan"])
 
@@ -62,7 +63,7 @@ def plot_process(
     *,
     title_suffix: str = "",
     legend: bool = True,
-    legend_loc: Optional[str] = "lower left",
+    legend_loc: Optional[str] = "lower right",
     y_lim: Optional[Tuple[float, float]] = None,
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
@@ -98,7 +99,7 @@ def plot_process(
         ax.set_ylim(y_lim)
     ax.set_title(title + title_suffix)
     if legend:
-        ax.legend(loc=legend_loc)
+        ax.legend(loc="lower left")
     return fig
 
 

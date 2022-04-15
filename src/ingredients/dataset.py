@@ -18,9 +18,9 @@ _dataset_titles = {
     # Synthetic datasets.
     "sine": "Sine",
     "cosine": "Cosine",
-    "heaviside": "Heaviside Step Function",
-    "heavisine": "Combined Heaviside and Sine",
-    "heavicosine": "Combined Heaviside and Cosine",
+    "heaviside": "Heaviside",
+    "heavisine": "Heavi-Sine",
+    "heavicosine": "Heavi-Cosine",
     "discontinuous_odd_cosine": "Discontinuous Cosine",
     # UCI datasets.
     "boston-housing": "Boston Housing",  # TODO: Find correct title and will dataset README.
@@ -36,7 +36,7 @@ _dataset_titles = {
     "cartpole": "Cart-Pole",
 }
 _prefix_titles = {
-    _clustered_prefix: "Clustered ",
+    _clustered_prefix: "Gap-",
     _uci_prefix: "UCI: ",
 }
 
