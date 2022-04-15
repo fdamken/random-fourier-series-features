@@ -1,0 +1,22 @@
+\graphicspath{{graphics}}
+\MakeOuterQuote{"}
+\mathtoolsset{showonlyrefs,showmanualtags}
+\captionsetup{singlelinecheck=on}
+\tikzset{> = { Latex[length = 2mm] }}
+
+\let\realautoref=\autoref
+\renewcommand{\autoref}[1]{\IfBeginWith{#1}{app:}{\hyperref[#1]{appendix~\ref{#1}}}{\realautoref{#1}}}
+
+\newcommand{\upperac}{\MakeUppercase\expandafter}
+
+\definecolor{pastelGreen}{HTML}{82b366}
+\definecolor{pastelBlue}{HTML}{6c8ebf}
+\definecolor{pastelOrange}{HTML}{d6b656}
+
+\newcommand{\ifdraftorelse}[2]{#1}
+
+% tikzplotlib
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+\pgfplotsset{compat=newest}

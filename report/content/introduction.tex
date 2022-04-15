@@ -1,0 +1,19 @@
+%	- Gaussian process framework (follow Rasmussen in notation)
+%	- complexity of posterior prediction with much data --> motivate sparse Gaussian processes
+%	- random Fourier features as sparse squared exponentials
+%	- limitations of the squared exponential --> motivate random Fourier _series_ features
+%	- comments
+%	    - neural linear models and kernel learning don't really work
+%   - connections to kernel learning and Bayesian networks
+
+Performing inference with a \ac{GP} usually involves computing the inverse of the Gram (or \emph{covariance}) matrix $\mat{K}$.
+That is, the evaluation of the kernel $k(\vec{x}, \vec{y})$ for all combinations of training data points.
+Hence, exact inference is cubic in the number of data points $N$, prohibiting online use for large data sets\cite{rahimiRandomFeaturesLargeScale2007}.
+
+
+\begin{figure}
+    \centering
+    \todo{add picture}%\tikzHypercube
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}

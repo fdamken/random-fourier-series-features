@@ -1,0 +1,49 @@
+\subsection{Gaussian Process Regression}
+    In supervised learning, we are concerned with modeling a function $f : \mathcal{X} \to \mathcal{Y}$ from input data $\mathcal{X}$ to labels $\mathcal{Y}$ using an (approximate) model $\hat{f} : \mathcal{X} \to \mathcal{Y}$.
+    The model is trained on a labeled dataset $\mathcal{D} = \{ (\vec{x}_i, y_i) \}_{i = 1, \dots, N} \subseteq \mathcal{X} \times \mathcal{Y}$.
+    For regression, the target labels $\mathcal{Y}$ are continuous: $\mathcal{Y} \subseteq \R$.
+    Various methods exist for tackling this problem, e.g., linear regression, \acp{SVM}, and \acp{NN}.
+    Bayesian methods take this idea one step further and not only model the mapping from inputs to targets but also quantify their epistemic uncertainty.
+    This idea can be incorporated into linear regression, for example, by placing a prior on the feature\todo{"feature" was not introduced before} weights and computing the posterior of new data given the training data.
+    Gauging the (epistemic) uncertainty is helpful in various domains such as robust \ac{MPC}, for example.
+    Incorporating uncertainty allows the controller to vary its trust in the underlying model, avoiding unknown and potentially unsafe terrain.
+    
+    \ac{GP} regression can be viewed in two fashions:
+    firstly, as an extension of linear regression to an infinite number of features.
+    This involves computing the limit when $n \to \infty$ where $n$ is the number of features.
+    Secondly, as an infinite Gaussian distribution over a function space where every finite subset of the random variables is jointly Gaussian.
+    However, both definitions (or views) yield the exact same result.
+    For the rest of this report we will stick to the former definition and will thus introduce it now in greater detail.
+    
+    Let $\vec{\phi} : \mathcal{X} \to \mathcal{Z}$ be some features of the inputs and let $\vec{w}$ be the linear regression weights such that the linear prediction is $\hat{f}(\vec{x}) = \vec{w}^\transposed \vec{\phi}(\vec{x})$.
+    \todo{introduce GPs}
+% end
+
+\subsection{Fourier Series}
+    \emph{Fourier series} are a principled way to represent any periodic function (satisfying the Dirichlet conditions\cite{oppenheimSignalsSystems1997}) as a linear combination of sine and cosine waves.
+    The resulting approximation $\hat{f}_K$ of the function $f$ can be represented in three different fashions: in sine-cosine form, amplitude-phase form, and exponential form.
+    In the sine-cosine form, the series is represented by the sum of separate sine and cosine waves with separate amplitudes,
+    \begin{equation}
+        \hat{f}_K(x) = \frac{a_0}{2} + \sum_{k = 1}^{K} a_k \cos(\pi k x / \tilde{T}) + b_k \sin(\pi k x / \tilde{T}),
+        \label{eq:sineCosineFourierSeries}
+    \end{equation}
+    where the Fourier coefficients $a_k$ and $b_k$ are given by
+    \begin{align}
+        a_k &= \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2\tilde{T}} f(x) \cos(\pi k x / \tilde{T}) \dd{x} \\
+        b_k &= \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2\tilde{T}} f(x) \sin(\pi k x / \tilde{T}) \dd{x}.
+    \end{align}
+    Here, $\tilde{T}$ is half the amplitude of $f$ (for instance, $f(x) = \sin(x)$ has the half-period $\tilde{T} = \pi$).
+    In amplitude-phase form,
+    \begin{equation}
+        \hat{f}_K(x) = \frac{A_0}{2} + \sum_{k = 1}^{K} A_k \cos(2 \pi k x / \tilde{T} - \varphi_k),
+    \end{equation}
+    the series is represented by individual cosine waves with amplitudes and phases.
+    These can be computed from the Fourier coefficients as follows:
+    \begin{align}
+        A_k &= \sqrt{a_k^2 + b_k^2} &
+        \varphi_k &= \mathrm{arctan2}(b_k, a_k).
+    \end{align}
+    For the following, we stick to the former version (sine-cosine) for practical reasons:
+    the amplitude-phase formulation introduces some ambiguity as $\varphi \equiv \varphi + 2\pi$.
+    When optimizing numerically, this can cause problems due to either having ambiguous optima or having to include constraints.
+% end

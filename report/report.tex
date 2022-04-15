@@ -1,0 +1,64 @@
+% !TeX program = pdflatex
+% !TeX language = en_US
+
+% https://www.ctan.org/tex-archive/macros/latex/contrib/IEEEtran/IEEEtran_HOWTO.pdf
+\documentclass[11pt, a4paper, conference, romanappendices, twocolumn]{IEEEtran}
+
+\input{preamble/packages}
+\input{preamble/draft}
+\input{preamble/style}
+\input{preamble/math-macros}
+\input{preamble/acronyms}
+
+\input{graphics/drawings}
+
+% This is not allowed in the poster as the poster uses biblatex.
+\usepackage[nobreak]{cite}
+
+\begin{document}
+    \title{Random Fourier Series Features}
+    \author{
+        \IEEEauthorblockN{Fabian~Damken}
+        \IEEEauthorblockA{fabian.damken@stud.tu-darmstadt.de}
+        \and
+        \IEEEauthorblockN{Joe~Watson}
+        \IEEEauthorblockA{joe.watson@tu-darmstadt.de}
+        \and
+        \IEEEauthorblockN{Jan~Peters}
+        \IEEEauthorblockA{jan.peters@tu-darmstadt.de}
+    }
+    \date{\today}
+    
+    \maketitle
+    
+    \begin{abstract}
+        \input{meta/abstract}
+    \end{abstract}
+    
+    \section{Introduction}
+    \input{content/introduction}
+    
+    \section{Related Work}
+    \input{content/related-work}
+    
+    \section{Preliminaries}
+    \input{content/preliminaries}
+    
+    \section{Methods}
+    \input{content/methods}
+    
+    \section{Evaluation}
+    \input{content/evaluation}
+    
+    \section{Conclusion}
+    \input{content/conclusion}
+    
+    \FloatBarrier
+    \bibliographystyle{IEEEtran}
+    \bibliography{IEEEabrv,literature}
+    \FloatBarrier
+    
+    \appendix
+    \subsection{Fourier Series of the Periodic ReLU}  \label{app:perelu}
+    \input{content/perelu}
+\end{document}

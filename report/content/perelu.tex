@@ -1,0 +1,22 @@
+Using the ReLU, we define the \emph{Periodic} \ac{ReLU} (\acsu{PeReLU}) $\PeReLU(x) \coloneqq \ReLU\bigl([x + \tilde{T}]_{2\tilde{T}} - \tilde{T}\bigr)$, where $[\cdot]_U$ is the modulus operator w.r.t. $U$ defined as $[\cdot]_U : \R \to \R^+ : u \mapsto \min\bigl\{ u + zU \,:\, u + zU \geq 0,\, z \in \Z \bigr\}$.
+The $\pm \tilde{T}$ in the \ac{PeReLU} definition ensures that the \ac{PeReLU} still has the usual \ac{ReLU} properties in a region around zero, i.e., that $\PeReLU(x) = 0$ for $x < 0$ and $\PeReLU(x) = x$ for $x > 0$.
+The coefficients of the Fourier series $a_m$ and $b_m$ for $m > 0$ are then given as
+\begin{align}
+    a_m &= \frac{1}{\tilde{T}} \int_{-\tilde{T}}^{\tilde{T}}\! \PeReLU(x) \cos(m \pi x / \tilde{T}) \dd{x} \\
+        &= \frac{1}{\tilde{T}} \int_{-\tilde{T}}^{\tilde{T}}\! \ReLU(x) \cos(m \pi x / \tilde{T}) \dd{x} \\
+        &= \frac{1}{\tilde{T}} \int_{0}^{\tilde{T}}\! x \cos(m \pi x / \tilde{T}) \dd{x} \\
+        %&= \frac{1}{m \pi} \bigl[ x \sin(m \pi x / \tilde{T}) \bigr]_{x \,=\, 0}^{x \,=\,\tilde{T}} - \frac{1}{m \pi} \int_0^{\tilde{T}}\! \sin(m \pi x / \tilde{T}) \dd{x} \\
+        %&= \frac{1}{m \pi} \bigl[ x \sin(m \pi x / \tilde{T}) \bigr]_{x \,=\, 0}^{x \,=\,\tilde{T}} + \frac{\tilde{T}}{m^2\pi^2} \bigl[ \cos(m \pi x / \tilde{T}) \bigr]_{x \,=\, 0}^{x \,=\,\tilde{T}} \\
+        %&= \frac{\tilde{T}}{m \pi} \sin(m \pi) + \frac{\tilde{T}}{m^2\pi^2} \cos(m \pi) - \frac{\tilde{T}}{m^2\pi^2} \\
+        %&= \frac{\tilde{T} (-1)^m }{m^2\pi^2} - \frac{\tilde{T}}{m^2\pi^2} \\
+        &= \frac{\tilde{T} (-1)^m - \tilde{T}}{m^2\pi^2} \\
+    b_m &= \frac{1}{\tilde{T}} \int_{-\tilde{T}}^{\tilde{T}}\! \PeReLU(x) \sin(m \pi x / \tilde{T}) \dd{x} \\
+        &= \frac{1}{\tilde{T}} \int_{-\tilde{T}}^{\tilde{T}}\! \ReLU(x) \sin(m \pi x / \tilde{T}) \dd{x} \\
+        &= \frac{1}{\tilde{T}} \int_{0}^{\tilde{T}}\! x \sin(m \pi x / \tilde{T}) \dd{x} \\
+        %&= -\frac{1}{m \pi} \bigl[ x \cos(m \pi x / \tilde{T}) \bigr]_{x \,=\, 0}^{x \,=\,\tilde{T}} + \frac{1}{m \pi} \int_0^{\tilde{T}}\! \cos(m \pi x / \tilde{T}) \dd{x} \\
+        %&= -\frac{1}{m \pi} \bigl[ x \cos(m \pi x / \tilde{T}) \bigr]_{x \,=\, 0}^{x \,=\,\tilde{T}} + \frac{\tilde{T}}{m^2\pi^2} \bigl[ \sin(m \pi x / \tilde{T}) \bigr]_{x \,=\, 0}^{x \,=\,\tilde{T}} \\
+        %&= -\frac{\tilde{T}}{m \pi} \cos(m \pi) + \frac{\tilde{T}}{m^2\pi^2} \sin(m \pi) \\
+        &= -\frac{\tilde{T} (-1)^m}{m \pi}
+\end{align}
+where the remaining integrals can be solved by partial integration.
+For $m = 0$, the coefficients are simply $a_0 = \tilde{T}/2$ and $b_0 = 0$.

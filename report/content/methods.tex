@@ -1,0 +1,98 @@
+%	- random Fourier features in a more formal way
+%	- highlight extension done by random Fourier _series_ features
+%	- maybe do a bit of theoretical elaboration
+%	- describe process of finding the hyper-parameters (empirical Bayes)
+%	- transition to empirical evaluation
+
+\subsection{Random Fourier Features}
+By explicitly modeling the features, the inversion of the Gram matrix can be avoided by resorting to computing the distribution over the weights explicitly.
+A well-known approach for this are \acp{RFF}\cite{rahimiRandomFeaturesLargeScale2007} which approximate the \ac{SE} kernel.
+A single \ac{RFF} is given by
+\begin{equation}
+    \vec{z}_{\vec{\omega}}(\vec{x}) =
+        \begin{bmatrix}
+            \cos(\vec{\omega} \dotproduct \vec{x}) \\
+            \sin(\vec{\omega} \dotproduct \vec{x})
+        \end{bmatrix}\!.
+    \label{eq:rffFeature}
+\end{equation}
+This definition is based on the observation that
+\begin{equation}
+    k(\vec{x} - \vec{y}) = \E_{\vec{\omega} \sim p(\cdot)}\bigl[ \vec{z}_{\vec{\omega}}(\vec{x}) \dotproduct \vec{z}_{\vec{\omega}}(\vec{y}) \bigr]
+    \label{eq:rffExpectation}
+\end{equation}
+where $k(\vec{x} - \vec{y})$ is a stationary kernel and $p(\vec{\omega})$ is its Fourier transform (which is a proper probability distribution due to Bochner's theorem\cite{steinInterpolationSpatialData1999}).
+For the \ac{SE} kernel, $p(\omega)$ is tractable and is equal to a standard normal distribution\cite{rasmussenGaussianProcessesMachine2006}.
+As the integral \eqref{eq:rffExpectation} is intractable, it is usually approximated using Monte-Carlo estimation over $\vec{\omega}$ (another methods for evaluation the integral are, for example, quadrature methods\cite{daoGaussianQuadratureKernel2017}).
+Let ${\vec{w}_j}_{j = 1}^{D}$ be the particles sampled from $p(\vec{\omega})$.
+The corresponding feature particles, $\vec{z}_{\vec{\omega}_j}(\cdot)$ are then concatenated, forming the complete feature $\vec{z}(\cdot)$ which is scaled by $1/\sqrt{D}$ such that the inner product yields the usual Monte Carlo approximation of an expectation.
+
+
+\subsection{Random Fourier Series Features}
+We extend \acp{RFF} to Random Fourier \emph{Series} Features (\acsu{RFSF}) by splitting up \eqref{eq:rffFeature} further into sub-features with separate amplitudes for the sine/cosine component and adding the respective scaling factors for $\vec{x}$:
+\begin{equation}
+    \tilde{\vec{z}}_{\vec{\omega}}^{\,(k)}(\vec{x}) =
+        \begin{bmatrix}
+            a_k \cos(\pi k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}} / \tilde{T}) \\
+            b_k \sin(\pi k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}} / \tilde{T})
+        \end{bmatrix}\!.
+\end{equation}
+which are then summed over $k = 1, 2, \dots, M$.
+The matrix $\mat{\Lambda}$ represents the length-scales which can be either isotropic for a single length-scale but also different for the input dimensions, leading to \ac{ARD}.
+This formulation is inspired by the sine-cosine formulation of a Fourier series \eqref{eq:sineCosineFourierSeries}, motivating the name.
+Note that the half-period $\tilde{T}$ has the function of a "secondary" length-scale and applied equally to all input dimensions.
+
+To find the optimal hyper-parameters $\vec{a}_{0:M}$, $\vec{b}_{0:M}$, and $\mat{\Lambda}$, we use the empirical Bayes approximation\cite[p.\,165]{bishopPatternRecognitionMachine2006}, i.e., maximize the marginal log-likelihood over the training data.
+As will be seen in the evaluation section, the result is highly dependent on the half-period $\tilde{T}$, hence it will be treated as an additional hyper-parameter.  \todo{did we see this in evaluation?}
+Beyond the kernel's parameters, the data is assumed to have Gaussian aleatoric noise with zero mean and variance $\sigma_n^2$ which is again an additional hyper-parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%\begin{comment}
+\begin{figure*}
+\begin{align}
+    \tilde{k}(\vec{x}, \vec{y})
+        &= \ip{\tilde{\vec{z}}_{\vec{\omega}}(\vec{x})}{\tilde{\vec{z}}_{\vec{\omega}}(\vec{y})} \\
+        &= \ip{\sum_{m = 1}^{M} \tilde{\vec{z}}_{\vec{\omega}}^{\,(m)}(\vec{x})}{\sum_{m = 1}^{M} \tilde{\vec{z}}_{\vec{\omega}}^{\,(m)}(\vec{y})} \\
+        &= \ip{\sum_{m = 1}^{M}  \begin{bmatrix} a_m \cos(x_m) \\ b_m \sin(x_m) \end{bmatrix}}{\sum_{m = 1}^{M} \begin{bmatrix} a_m \cos(y_m) \\ b_m \sin(y_m) \end{bmatrix}} \\
+        &= \ip{\begin{bmatrix} \sum_{m = 1}^{M} a_m \cos(x_m) \\ \sum_{m = 1}^{M} b_m \sin(x_m) \end{bmatrix}}{\begin{bmatrix} \sum_{m = 1}^{M} a_m \cos(y_m) \\ \sum_{m = 1}^{M} b_m \sin(y_m) \end{bmatrix}} \\
+        &= \Biggl(\, \sum_{m = 1}^{M} a_m \cos(x_m) \Biggr) \Biggl(\, \sum_{m = 1}^{M} a_m \cos(y_m) \Biggr) + \Biggl(\, \sum_{m = 1}^{M} b_m \sin(x_m) \Biggr) \Biggl(\, \sum_{m = 1}^{M} b_m \sin(y_m) \Biggr) \\
+        &= \sum_{m = 1}^{M} \sum_{n = 1}^{M} a_m a_n \cos(x_m) \cos(y_n) + \sum_{m = 1}^{M} \sum_{n = 1}^{M} b_m b_n \sin(x_m) \sin(y_n) \\
+        &= \sum_{m = 1}^{M} \sum_{n = 1}^{M} a_m a_n \cos(x_m) \cos(y_n) + b_m b_n \sin(x_m) \sin(y_n) \\
+        &= \frac{1}{2} \sum_{m = 1}^{M} \sum_{n = 1}^{M} (a_m a_n + b_m b_n) \cos(x_m - y_n) + (a_m a_n - b_m b_n) \cos(x_m + y_n) \\
+\end{align}
+
+\begin{align}
+    \E_{\vec{\omega}}\Bigl[ \tilde{k}(\vec{x}, \vec{y}) \Bigr]
+        &= \frac{1}{2} \sum_{m = 1}^{M} \sum_{n = 1}^{M} (a_m a_n + b_m b_n) \E_{\vec{\omega}}\bigl[ \cos(x_m - y_n) \bigr] + (a_m a_n - b_m b_n) \E_{\vec{\omega}}\bigl[ \cos(x_m + y_n) \bigr] \\
+        &= \frac{1}{2} \sum_{m = 1}^{M} \sum_{n = 1}^{M} (a_m a_n + b_m b_n) \, k_\mathrm{SE}\bigl( m \vec{x} - n \vec{y}; \pi^{-1} \tilde{T} \ell^2 \bigr) + (a_m a_n - b_m b_n) \, k_\mathrm{SE}\bigl( m \vec{x} - (-n \vec{y}); \pi^{-1} \tilde{T} \ell^2 \bigr) \\
+\end{align}
+
+\begin{equation}
+    \E_{\vec{\omega}}\bigl[ \cos(x_m - y_n) \bigr]
+        = \E_{\vec{\omega}}\biggl[ \cos\biggl( \frac{\pi}{\tilde{T} \ell^2} \ip{\vec{\omega}}{m \vec{x} - n \vec{y}} \biggr) \biggr]
+        = k_\mathrm{SE}\bigl( m \vec{x} - n \vec{y}; \pi^{-1} \tilde{T} \ell^2 \bigr)
+\end{equation}
+\begin{equation}
+    \E_{\vec{\omega}}\bigl[ \cos(x_m + y_n) \bigr]
+        = k_\mathrm{SE}\bigl( m \vec{x} - (-n \vec{y}); \pi^{-1} \tilde{T} \ell^2 \bigr)
+\end{equation}
+
+\begin{align}
+    x_m \pm y_n &= \frac{\pi}{\tilde{T} \ell^2} \ip{\vec{\omega}}{m \vec{x} \pm n \vec{y}}
+\end{align}
+
+    \caption{Some derivations that are likely to not make sense.}
+\end{figure*}
+%\end{comment}
