@@ -1,11 +1,8 @@
 \graphicspath{{graphics}}
 \MakeOuterQuote{"}
-\mathtoolsset{showonlyrefs,showmanualtags}
+%\mathtoolsset{showonlyrefs,showmanualtags}
 \captionsetup{singlelinecheck=on}
 \tikzset{> = { Latex[length = 2mm] }}
-
-\let\realautoref=\autoref
-\renewcommand{\autoref}[1]{\IfBeginWith{#1}{app:}{\hyperref[#1]{appendix~\ref{#1}}}{\realautoref{#1}}}
 
 \newcommand{\upperac}{\MakeUppercase\expandafter}
 
@@ -20,3 +17,5 @@
 \usepgfplotslibrary{groupplots,dateplot}
 \usetikzlibrary{patterns,shapes.arrows}
 \pgfplotsset{compat=newest}
+
+\newtheorem{hypothesis}{Hypothesis}

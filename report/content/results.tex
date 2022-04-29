@@ -1,0 +1,74 @@
+\newcommand{\tabResultsSynthetic}{
+	\begin{tabular}{c|cc|ccccc}
+		\toprule
+		& & & \multicolumn{5}{c}{\textbf{Data Set}} \\[1pt]
+		& \multicolumn{2}{c|}{\textbf{Model}}         & Cosine                 & Heaviside              & Heavi-Cosine            & Gap-Cosine             & Cartpole                          \\
+		\midrule \multirow{5}{*}{\rotatebox{90}{\textbf{Log-Lik.}}}
+		& \multirow[t]{3}{*}{\acs{RFSF}} & Random     & \textbf{\texttt{2.43}} & \texttt{0.11}          & \texttt{-1.66}          & \texttt{1.27}          & \texttt{~-9.88\,±\,1.86}          \\
+		&                                & \acs{ReLU} & \texttt{2.34}          & \textbf{\texttt{0.80}} & \texttt{-0.90}          & \texttt{1.50}          & \texttt{-12.30\,±\,2.31}          \\
+		&                                & \acs{SH}   & \texttt{2.37}          & \textbf{\texttt{0.21}} & \texttt{-1.23}          & \texttt{1.52}          & \texttt{~-9.73\,±\,2.10}          \\
+		& \multirow[t]{2}{*}{\acs{GP}}   & \acs{SE}   & \textbf{\texttt{2.44}} & \texttt{0.73}          & \textbf{\texttt{~0.77}} & \textbf{\texttt{2.58}} & \textbf{\texttt{~-3.21\,±\,1.64}} \\
+		&                                & \acs{RFF}  & \textbf{\texttt{2.44}} & \texttt{0.73}          & \textbf{\texttt{~0.78}} & \textbf{\texttt{2.59}} & \texttt{~-7.38\,±\,1.94}          \\
+		\midrule \multirow{5}{*}{\rotatebox{90}{\textbf{\acs{RMSE}}}}
+		& \multirow[t]{3}{*}{\acs{RFSF}} & Random     & \texttt{0.45}          & \texttt{0.35}          & \texttt{~0.55}          & \texttt{0.91}          & \texttt{~~0.91\,±\,0.08}          \\
+		&                                & \acs{ReLU} & \textbf{\texttt{0.39}} & \texttt{1.06}          & \texttt{~3.55}          & \texttt{1.62}          & \texttt{~~1.01\,±\,0.10}          \\
+		&                                & \acs{SH}   & \texttt{0.70}          & \texttt{0.35}          & \texttt{~0.48}          & \texttt{0.75}          & \texttt{~~0.98\,±\,0.11}          \\
+		& \multirow[t]{2}{*}{\acs{GP}}   & \acs{SE}   & \texttt{0.45}          & \textbf{\texttt{0.30}} & \textbf{\texttt{~0.29}} & \textbf{\texttt{0.40}} & \textbf{\texttt{~~0.77\,±\,0.07}} \\
+		&                                & \acs{RFF}  & \texttt{0.45}          & \textbf{\texttt{0.31}} & \textbf{\texttt{~0.30}} & \texttt{0.42}          & \texttt{~~1.26\,±\,0.10}          \\
+		\bottomrule
+	\end{tabular}
+}
+
+\newcommand{\tabResultsUciJoe}{
+	\begin{tabular}{c|cc|cccc}
+		\toprule
+		& & & \multicolumn{4}{c}{\textbf{Data Set}} \\[1pt]
+		& \multicolumn{2}{c|}{\textbf{Model}}                               & Boston                           & Concrete                         & Power                            & Yacht                            \\
+		\midrule \multirow{11}{*}{\rotatebox{90}{\textbf{Log-Lik.}}}
+		& \multirow[t]{3}{*}{\acs{RFSF}}             & Random           & \texttt{-2.40\,±\,0.05}          & \textbf{\texttt{-2.94\,±\,0.05}} & \texttt{-2.78\,±\,0.01}          & \texttt{-0.80\,±\,0.02}          \\
+		&                                            & \acs{ReLU}       & \texttt{-2.39\,±\,0.05}          & \textbf{\texttt{-2.93\,±\,0.04}} & \texttt{-2.80\,±\,0.01}          & \texttt{-0.86\,±\,0.02}          \\
+		&                                            & \acs{SH}         & \texttt{-2.44\,±\,0.06}          & \textbf{\texttt{-2.94\,±\,0.05}} & \texttt{-2.78\,±\,0.01}          & \texttt{-0.83\,±\,0.02}          \\
+		& \multirow[t]{2}{*}{\acs{GP}}               & \acs{SE}         & \textbf{\texttt{-2.38\,±\,0.05}} & \textbf{\texttt{-2.98\,±\,0.06}} & \texttt{-2.82\,±\,0.01}          & \texttt{-0.80\,±\,0.02}          \\
+		&                                            & \acs{RFF}        & \texttt{-2.40\,±\,0.06}          & \textbf{\texttt{-3.01\,±\,0.05}} & \texttt{-2.84\,±\,0.01}          & \texttt{-0.80\,±\,0.02}          \\
+		& \multirow[t]{2}{*}{\acs{GBLL}}\superdagger & Leaky \acs{ReLU} & \texttt{-2.90\,±\,0.05}          & \texttt{-3.09\,±\,0.03}          & \texttt{-2.77\,±\,0.01}          & \texttt{-1.67\,±\,0.11}          \\
+		&                                            & Tanh             & \texttt{-3.06\,±\,0.03}          & \texttt{-3.21\,±\,0.03}          & \texttt{-2.83\,±\,0.01}          & \texttt{-0.70\,±\,0.10}          \\
+		& \multirow[t]{2}{*}{Ensemble}\superdagger   & Leaky \acs{ReLU} & \texttt{-2.48\,±\,0.09}          & \textbf{\texttt{-3.04\,±\,0.08}} & \textbf{\texttt{-2.70\,±\,0.01}} & \texttt{-0.35\,±\,0.07}          \\
+		&                                            & Tanh             & \texttt{-2.48\,±\,0.08}          & \textbf{\texttt{-3.03\,±\,0.07}} & \textbf{\texttt{-2.72\,±\,0.01}} & \textbf{\texttt{-0.03\,±\,0.05}} \\
+		& \multirow[t]{2}{*}{\acs{MAP}}\superdagger  & Leaky \acs{ReLU} & \texttt{-2.60\,±\,0.07}          & \texttt{-3.04\,±\,0.04}          & \texttt{-2.77\,±\,0.01}          & \texttt{-5.14\,±\,1.62}          \\
+		&                                            & Tanh             & \texttt{-2.59\,±\,0.06}          & \texttt{-3.11\,±\,0.04}          & \texttt{-2.76\,±\,0.01}          & \texttt{-1.77\,±\,0.53}          \\
+		\midrule \multirow{11}{*}{\rotatebox{90}{\textbf{\acs{RMSE}}}}
+		& \multirow[t]{3}{*}{\acs{RFSF}}             & Random           & \textbf{\texttt{~2.95\,±\,0.15}} & \textbf{\texttt{~4.70\,±\,0.14}} & \texttt{~3.90\,±\,0.03}          & \texttt{~0.51\,±\,0.03}          \\
+		&                                            & \acs{ReLU}       & \texttt{~3.51\,±\,0.44}          & \texttt{~4.77\,±\,0.15}          & \texttt{~3.95\,±\,0.04}          & \texttt{~0.53\,±\,0.03}          \\
+		&                                            & \acs{SH}         & \texttt{~3.17\,±\,0.17}          & \textbf{\texttt{~4.66\,±\,0.15}} & \texttt{~3.88\,±\,0.03}          & \texttt{~0.52\,±\,0.03}          \\
+		& \multirow[t]{2}{*}{\acs{GP}}               & \acs{SE}         & \textbf{\texttt{~2.81\,±\,0.12}} & \texttt{~4.98\,±\,0.15}          & \texttt{~4.03\,±\,0.03}          & \texttt{~0.51\,±\,0.04}          \\
+		&                                            & \acs{RFF}        & \texttt{~2.98\,±\,0.13}          & \texttt{~5.08\,±\,0.15}          & \texttt{~4.11\,±\,0.03}          & \texttt{~0.52\,±\,0.04}          \\
+		& \multirow[t]{2}{*}{\acs{GBLL}}\superdagger & Leaky \acs{ReLU} & \texttt{~4.19\,±\,0.17}          & \texttt{~5.01\,±\,0.18}          & \texttt{~3.85\,±\,0.03}          & \texttt{~1.09\,±\,0.09}          \\
+		&                                            & Tanh             & \texttt{~4.61\,±\,0.23}          & \texttt{~5.50\,±\,0.23}          & \texttt{~4.09\,±\,0.04}          & \texttt{~0.43\,±\,0.03}          \\
+		& \multirow[t]{2}{*}{Ensemble}\superdagger   & Leaky \acs{ReLU} & \textbf{\texttt{~2.79\,±\,0.17}} & \textbf{\texttt{~4.55\,±\,0.12}} & \textbf{\texttt{~3.59\,±\,0.04}} & \texttt{~0.83\,±\,0.08}          \\
+		&                                            & Tanh             & \textbf{\texttt{~2.71\,±\,0.13}} & \textbf{\texttt{~4.51\,±\,0.13}} & \textbf{\texttt{~3.66\,±\,0.04}} & \textbf{\texttt{~0.38\,±\,0.03}} \\
+		& \multirow[t]{2}{*}{\acs{MAP}}\superdagger  & Leaky \acs{ReLU} & \texttt{~3.02\,±\,0.17}          & \textbf{\texttt{~4.75\,±\,0.12}} & \texttt{~3.81\,±\,0.04}          & \texttt{~0.94\,±\,0.09}          \\
+		&                                            & Tanh             & \textbf{\texttt{~3.01\,±\,0.17}} & \texttt{~5.15\,±\,0.13}          & \texttt{~3.78\,±\,0.04}          & \textbf{\texttt{~0.39\,±\,0.04}} \\
+		\bottomrule
+	\end{tabular}
+}
+
+\newcommand{\tabResultsUciRest}{
+	\begin{tabular}{c|cc|ccccc}
+		\toprule
+		& & & \multicolumn{5}{c}{\textbf{Data Set}} \\[1pt]
+		& \multicolumn{2}{c|}{\textbf{Model}}             & Energy                           & Kin8nm                           & Naval                                 & Protein                              & Wine                             \\
+		\midrule \multirow{5}{*}{\rotatebox{90}{\textbf{Log-Lik.}}}
+		& \multirow[t]{3}{*}{\acs{RFSF}} & Random         & \textbf{\texttt{-0.70\,±\,0.02}} & \texttt{~0.68\,±\,0.05}          & \texttt{~~-78.19\,±\,~69.72}          & \texttt{~~-2.94\,±\,~~0.03}          & \texttt{-0.11\,±\,0.07}          \\
+		&                                & \acs{ReLU}     & \texttt{-0.74\,±\,0.02}          & \textbf{\texttt{~0.97\,±\,0.03}} & \texttt{~-172.57\,±\,104.83}          & \texttt{-629.05\,±\,384.60}          & \texttt{-0.11\,±\,0.06}          \\
+		&                                & \acs{SH}       & \texttt{-0.74\,±\,0.02}          & \texttt{~0.52\,±\,0.07}          & \texttt{~~-62.69\,±\,~55.40}          & \texttt{~~-2.96\,±\,~~0.03}          & \textbf{\texttt{ 0.01\,±\,0.06}} \\
+		& \multirow[t]{2}{*}{\acs{GP}}   & \acs{SE}       & \textbf{\texttt{-0.68\,±\,0.02}} & \texttt{-0.22\,±\,0.24}          & \textbf{\texttt{~~~~6.91\,±\,~~0.15}} & \textbf{\texttt{~~-2.89\,±\,~~0.00}} & \texttt{-0.84\,±\,0.05}          \\
+		&                                & \acs{RFF}      & \textbf{\texttt{-0.69\,±\,0.02}} & \texttt{~0.75\,±\,0.04}          & \texttt{-1941.56\,±\,248.64}          & \texttt{~~-2.90\,±\,~~0.00}          & \texttt{-0.89\,±\,0.04}          \\
+		\midrule \multirow{5}{*}{\rotatebox{90}{\textbf{\acs{RMSE}}}}
+		& \multirow[t]{3}{*}{\acs{RFSF}} & Random         & \textbf{\texttt{~0.48\,±\,0.02}} & \textbf{\texttt{~0.07\,±\,0.00}} & \texttt{~~~~0.01\,±\,0.00~~}          & \textbf{\texttt{~~~3.97\,±\,0.02~~}} & \textbf{\texttt{~0.64\,±\,0.01}} \\
+		&                                & \acs{ReLU}     & \textbf{\texttt{~0.49\,±\,0.02}} & \textbf{\texttt{~0.07\,±\,0.00}} & \texttt{~~~~0.01\,±\,0.00~~}          & \textbf{\texttt{~~~4.00\,±\,0.03~~}} & \texttt{~0.66\,±\,0.01}          \\
+		&                                & \acs{SH}       & \textbf{\texttt{~0.49\,±\,0.02}} & \texttt{~0.08\,±\,0.00}          & \texttt{~~~~0.01\,±\,0.00~~}          & \textbf{\texttt{~~~3.97\,±\,0.02~~}} & \texttt{~0.65\,±\,0.01}          \\
+		& \multirow[t]{2}{*}{\acs{GP}}   & \acs{SE}       & \textbf{\texttt{~0.48\,±\,0.02}} & \texttt{~0.08\,±\,0.00}          & \textbf{\texttt{~~~~0.00\,±\,0.00~~}} & \texttt{~~~4.34\,±\,0.01~~}          & \textbf{\texttt{~0.63\,±\,0.01}} \\
+		&                                & \acs{RFF}      & \textbf{\texttt{~0.48\,±\,0.01}} & \textbf{\texttt{~0.07\,±\,0.00}} & \texttt{~~~~0.02\,±\,0.00~~}          & \texttt{~~~4.42\,±\,0.01~~}          & \textbf{\texttt{~0.63\,±\,0.01}} \\
+		\bottomrule
+	\end{tabular}
+}

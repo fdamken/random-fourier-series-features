@@ -1,0 +1,51 @@
+\begin{tikzpicture}[
+            ->,
+            corner/.style = {
+                draw,
+                rectangle,
+                minimum height = 0.75cm,
+                minimum width  = 2.25cm,
+            },
+            arrow/.style = {
+                > = { Latex[length = 8pt] },
+                line width = 2pt,
+            },
+            nonstationary/.style = { arrow, color = pastelGreen  },
+            feature/.style       = { arrow, color = pastelBlue   },
+            learning/.style      = { arrow, color = pastelOrange },
+        ]
+    \def\spread{4}
+    \node [corner] (stationary-kernel-design)       at (      0,        0,        0) {\small SE};
+    \node [corner] (stationary-kernel-learning)     at (\spread,        0,        0) {\small Manifold GPs};
+    \node [corner] (stationary-feature-design)      at (      0, -\spread,        0) {\small RFF};
+    \node [corner] (stationary-feature-learning)    at (\spread, -\spread,        0) {\small RFSF};
+    \node [corner] (nonstationary-kernel-design)    at (      0,        0, -\spread) {\small ArcSine};
+    \node [corner] (nonstationary-kernel-learning)  at (\spread,        0, -\spread) {\small NTK};
+    \node [corner] (nonstationary-feature-design)   at (      0, -\spread, -\spread) {\small Polynomial};
+    \node [corner] (nonstationary-feature-learning) at (\spread, -\spread, -\spread) {\small RFSF, NLM};
+    \draw [nonstationary] (stationary-kernel-design) -- (nonstationary-kernel-design);
+    \draw [nonstationary] (stationary-kernel-learning) -- (nonstationary-kernel-learning);
+    \draw [nonstationary] (stationary-feature-design) -- (nonstationary-feature-design);
+    \draw [nonstationary] (stationary-feature-learning) -- (nonstationary-feature-learning);
+    \draw [learning] (nonstationary-feature-design) -- (nonstationary-feature-learning);  % Up here such that the right downward arrow overlays this one.
+    \draw [feature] (stationary-kernel-design) -- (stationary-feature-design);
+    \draw [feature] (stationary-kernel-learning) -- (stationary-feature-learning);
+    \draw [feature] (nonstationary-kernel-design) -- (nonstationary-feature-design);
+    \draw [feature] (nonstationary-kernel-learning) -- (nonstationary-feature-learning);
+    \draw [learning] (stationary-kernel-design) -- (stationary-kernel-learning);
+    \draw [learning] (stationary-feature-design) -- (stationary-feature-learning);
+    \draw [learning] (nonstationary-kernel-design) -- (nonstationary-kernel-learning);
+
+    \begin{scope}[xshift = -0.5cm, yshift = 2.5cm]
+        \coordinate (origin) at (0, 0, 0);
+        \coordinate [above right = 1 of origin] (nonstationary);
+        \coordinate [below       = 1 of origin] (feature);
+        \coordinate [right       = 1 of origin] (learning);
+        \node [nonstationary, above = 0 of nonstationary] {Non-Stationary};
+        \node [feature,       below = 0 of feature]       {Features};
+        \node [learning,      right = 0 of learning]      {Learning};
+        \draw [nonstationary] (origin) -- (nonstationary);
+        \draw [feature] (origin) -- (feature);
+        \draw [learning] (origin) -- (learning);
+    \end{scope}
+\end{tikzpicture}

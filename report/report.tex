@@ -10,7 +10,7 @@
 \input{preamble/math-macros}
 \input{preamble/acronyms}
 
-\input{graphics/drawings}
+\input{content/results}
 
 % This is not allowed in the poster as the poster uses biblatex.
 \usepackage[nobreak]{cite}
@@ -28,37 +28,48 @@
         \IEEEauthorblockA{jan.peters@tu-darmstadt.de}
     }
     \date{\today}
-    
+
     \maketitle
-    
+
     \begin{abstract}
         \input{meta/abstract}
     \end{abstract}
-    
+
     \section{Introduction}
     \input{content/introduction}
-    
+
     \section{Related Work}
     \input{content/related-work}
-    
+
     \section{Preliminaries}
     \input{content/preliminaries}
-    
+
     \section{Methods}
     \input{content/methods}
-    
+
     \section{Evaluation}
     \input{content/evaluation}
-    
+
     \section{Conclusion}
     \input{content/conclusion}
-    
+
     \FloatBarrier
     \bibliographystyle{IEEEtran}
     \bibliography{IEEEabrv,literature}
     \FloatBarrier
-    
+
     \appendix
     \subsection{Fourier Series of the Periodic ReLU}  \label{app:perelu}
     \input{content/perelu}
+
+    \subsection{Result for the Remaining \acs{UCI} Data Sets}  \label{app:remainingResults}
+    The results for the remaining \ac{UCI} data sets not covered in \cref{tab:results} are given in \cref{tab:resultsUciRest}.
+    \begin{table*}
+    	\centering
+    	\tabResultsUciRest
+    	\caption{
+    		Refer to \cref{tab:results} for a description of the provided values.
+    	}
+    	\label{tab:resultsUciRest}
+    \end{table*}
 \end{document}

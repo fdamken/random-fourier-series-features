@@ -1,49 +1,67 @@
-\subsection{Gaussian Process Regression}
-    In supervised learning, we are concerned with modeling a function $f : \mathcal{X} \to \mathcal{Y}$ from input data $\mathcal{X}$ to labels $\mathcal{Y}$ using an (approximate) model $\hat{f} : \mathcal{X} \to \mathcal{Y}$.
-    The model is trained on a labeled dataset $\mathcal{D} = \{ (\vec{x}_i, y_i) \}_{i = 1, \dots, N} \subseteq \mathcal{X} \times \mathcal{Y}$.
-    For regression, the target labels $\mathcal{Y}$ are continuous: $\mathcal{Y} \subseteq \R$.
-    Various methods exist for tackling this problem, e.g., linear regression, \acp{SVM}, and \acp{NN}.
-    Bayesian methods take this idea one step further and not only model the mapping from inputs to targets but also quantify their epistemic uncertainty.
-    This idea can be incorporated into linear regression, for example, by placing a prior on the feature\todo{"feature" was not introduced before} weights and computing the posterior of new data given the training data.
-    Gauging the (epistemic) uncertainty is helpful in various domains such as robust \ac{MPC}, for example.
-    Incorporating uncertainty allows the controller to vary its trust in the underlying model, avoiding unknown and potentially unsafe terrain.
-    
-    \ac{GP} regression can be viewed in two fashions:
-    firstly, as an extension of linear regression to an infinite number of features.
-    This involves computing the limit when $n \to \infty$ where $n$ is the number of features.
-    Secondly, as an infinite Gaussian distribution over a function space where every finite subset of the random variables is jointly Gaussian.
-    However, both definitions (or views) yield the exact same result.
-    For the rest of this report we will stick to the former definition and will thus introduce it now in greater detail.
-    
-    Let $\vec{\phi} : \mathcal{X} \to \mathcal{Z}$ be some features of the inputs and let $\vec{w}$ be the linear regression weights such that the linear prediction is $\hat{f}(\vec{x}) = \vec{w}^\transposed \vec{\phi}(\vec{x})$.
-    \todo{introduce GPs}
+\subsection{Fourier Series}
+	\emph{Fourier series} are a principled way to represent any periodic function (satisfying the Dirichlet conditions\cite{oppenheimSignalsSystems1997}) as a linear combination of sine and cosine waves.
+	The resulting approximation $\hat{f}_K$ of the function $f$ can be represented in three different fashions: in sine-cosine form, amplitude-phase form, and exponential form.
+	In the sine-cosine form, the series is represented by the sum of separate sine and cosine waves with separate amplitudes,
+	\begin{equation}
+		\hat{f}_K(x) = \frac{a_0}{2} + \sum_{k = 1}^{K} a_k \cos(\pi k x / \tilde{T}) + b_k \sin(\pi k x / \tilde{T}),
+		\label{eq:sineCosineFourierSeries}
+	\end{equation}
+	where the Fourier coefficients $a_k$ and $b_k$ are given by
+	\begin{align}
+		a_k &= \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2\tilde{T}} f(x) \cos(\pi k x / \tilde{T}) \dd{x} \\
+		b_k &= \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2\tilde{T}} f(x) \sin(\pi k x / \tilde{T}) \dd{x}.
+	\end{align}
+	Here, $\tilde{T}$ is half the period of $f$ (for instance, $f(x) = \sin(x)$ has the half-period $\tilde{T} = \pi$).
+	In amplitude-phase form,
+	\begin{equation}
+		\hat{f}_K(x) = \frac{A_0}{2} + \sum_{k = 1}^{K} A_k \cos(2 \pi k x / \tilde{T} - \varphi_k),
+	\end{equation}
+	the series is represented by individual cosine waves with amplitudes and phases.
+	These can be computed from the Fourier coefficients as follows:
+	\begin{align}
+		A_k &= \sqrt{a_k^2 + b_k^2} &
+		\varphi_k &= \mathrm{arctan2}(b_k, a_k).
+	\end{align}
+	For the following, we stick to the former version (sine-cosine) for practical reasons:
+	the amplitude-phase formulation introduces some ambiguity as $\varphi \equiv \varphi + 2\pi$.
+	When optimizing numerically, this can cause problems due to either having ambiguous optima or having to include constraints.
 % end
 
-\subsection{Fourier Series}
-    \emph{Fourier series} are a principled way to represent any periodic function (satisfying the Dirichlet conditions\cite{oppenheimSignalsSystems1997}) as a linear combination of sine and cosine waves.
-    The resulting approximation $\hat{f}_K$ of the function $f$ can be represented in three different fashions: in sine-cosine form, amplitude-phase form, and exponential form.
-    In the sine-cosine form, the series is represented by the sum of separate sine and cosine waves with separate amplitudes,
-    \begin{equation}
-        \hat{f}_K(x) = \frac{a_0}{2} + \sum_{k = 1}^{K} a_k \cos(\pi k x / \tilde{T}) + b_k \sin(\pi k x / \tilde{T}),
-        \label{eq:sineCosineFourierSeries}
-    \end{equation}
-    where the Fourier coefficients $a_k$ and $b_k$ are given by
-    \begin{align}
-        a_k &= \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2\tilde{T}} f(x) \cos(\pi k x / \tilde{T}) \dd{x} \\
-        b_k &= \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2\tilde{T}} f(x) \sin(\pi k x / \tilde{T}) \dd{x}.
-    \end{align}
-    Here, $\tilde{T}$ is half the amplitude of $f$ (for instance, $f(x) = \sin(x)$ has the half-period $\tilde{T} = \pi$).
-    In amplitude-phase form,
-    \begin{equation}
-        \hat{f}_K(x) = \frac{A_0}{2} + \sum_{k = 1}^{K} A_k \cos(2 \pi k x / \tilde{T} - \varphi_k),
-    \end{equation}
-    the series is represented by individual cosine waves with amplitudes and phases.
-    These can be computed from the Fourier coefficients as follows:
-    \begin{align}
-        A_k &= \sqrt{a_k^2 + b_k^2} &
-        \varphi_k &= \mathrm{arctan2}(b_k, a_k).
-    \end{align}
-    For the following, we stick to the former version (sine-cosine) for practical reasons:
-    the amplitude-phase formulation introduces some ambiguity as $\varphi \equiv \varphi + 2\pi$.
-    When optimizing numerically, this can cause problems due to either having ambiguous optima or having to include constraints.
+\subsection{Gaussian Process Regression}
+	In supervised learning, we are concerned with modeling a function $f : \mathcal{X} \to \mathcal{Y}$ from input data $\mathcal{X}$ to labels $\mathcal{Y}$ using an (approximate) model $\hat{f} : \mathcal{X} \to \mathcal{Y}$.
+	The model is trained on a labeled dataset $\mathcal{D} = \{ (\vec{x}_i, y_i) \}_{i = 1, \dots, N} \subseteq \mathcal{X} \times \mathcal{Y}$.
+	For regression, the target labels $\mathcal{Y}$ are continuous: $\mathcal{Y} \subseteq \R$.
+	Various methods exist for tackling this problem, e.g., linear regression, \acp{SVM}, and \acp{NN}.
+	Bayesian methods take this idea one step further and not only model the mapping from inputs to targets but also quantify their epistemic uncertainty.
+	This idea can be incorporated into linear regression, for example, by placing a prior on the feature weights and computing the posterior of new data given the training data.
+	Gauging the (epistemic) uncertainty is helpful in various domains such as robust \ac{MPC}.
+	Incorporating uncertainty allows the controller to vary its trust in the underlying model, avoiding unknown and potentially unsafe terrain.
+
+	\ac{GP} regression can be viewed in two fashions:
+	firstly, as an extension of linear regression to an infinite number of features.
+	This involves computing the limit $n \to \infty$ where $n$ is the number of features.
+	Secondly, as an infinite Gaussian distribution over a function space where every finite subset of the random variables is jointly Gaussian.
+	However, both definitions (or views) yield the exact same result.
+	For the rest of this report we will stick to the former definition.
+
+	We closely follow\cite{rasmussenGaussianProcessesMachine2006} in terms of notation, refer to them for a more thorough treatment of \ac{GP} regression and its derivation, and will give a brief overview over the used notation.
+	Let \(\vec{x}_\ast\) and \(y_\ast\) be a test input and target\footnote{When predicting, the target is not known and the \ac{GP} defines a Gaussian distribution over it.}, respectively, then the \ac{GP} regression posterior is a Gaussian distribution with the following mean and variance:
+	\begin{equation}
+		\begin{aligned}
+			\E[y_\ast] &= \vec{k}_\ast^\transposed \mat{K}^{-1} \vec{y} &
+			\V[y_\ast] &= k_\ast - \vec{k}_\ast^\transposed \mat{K}^{-1} \vec{k}_\ast
+		\end{aligned}
+		\label{eq:gp}
+	\end{equation}
+	Here, \( \mat{K} \) denotes the Gram matrix on the training inputs, \(\vec{k}_\ast\) denotes the evaluation of the kernel between the test input and train inputs organized into a column vector, and \(k_\ast\) is the kernel evaluation of the test input \(\vec{x}_\ast\); train targets are organized into \(\vec{y}\).
+
+	An exemplary kernel is the \ac{SE} kernel \( k_\mathrm{SE}(\vec{x} - \vec{y}) = \exp{ -\lVert \vec{x} - \vec{y} \rVert_2^2 / (2 \ell^2) } \) with the length-scale\footnote{The length-scale determines the "roughness" of the function samples\cite[p.\,15]{rasmussenGaussianProcessesMachine2006}.} \(\ell^2\).
+	However, it has been shown that this kernel often exhibits extremely smooth functions (as it is infinitely differentiable) often unrealistic for real-world data\cite{steinInterpolationSpatialData1999}.
+	% TODO: When at the ULB before submitting this thing: search specific page in Stein's book.
+	Despite its drawbacks, the \ac{SE} kernel remains one of the most widely used kernels due to its simplicity and applicability\cite[p.\,83]{rasmussenGaussianProcessesMachine2006}.
+
+	While employing the "kernel trick" allows great flexibility with (potentially) infinite-dimensional feature spaces, it introduces major computational challenges due to the inversion of the Gram matrix in \cref{eq:gp}.
+	That is, the inversion has time complexity \( \mathcal{O}(N^3) \), where \(N\) is the number of data points in the training data set.
+%	One approach for tackling this problem are \acl{RFF} that resort to Bayesian regression by choosing appropriate features that approximate a desired kernel.
+	One approach for tackling this problem are \acl{RFF}.
 % end
