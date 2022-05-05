@@ -1,4 +1,22 @@
 
+@inproceedings{akibaOptunaNextgenerationHyperparameter2019,
+  title = {Optuna: {{A Next-generation Hyperparameter Optimization Framework}}},
+  shorttitle = {Optuna},
+  booktitle = {Proceedings of the 25th {{ACM SIGKDD International Conference}} on {{Knowledge Discovery}} \& {{Data Mining}}},
+  author = {Akiba, Takuya and Sano, Shotaro and Yanase, Toshihiko and Ohta, Takeru and Koyama, Masanori},
+  year = {2019},
+  month = jul,
+  series = {{{KDD}} '19},
+  pages = {2623--2631},
+  publisher = {{Association for Computing Machinery}},
+  address = {{New York, NY, USA}},
+  doi = {10.1145/3292500.3330701},
+  abstract = {The purpose of this study is to introduce new design-criteria for next-generation hyperparameter optimization software. The criteria we propose include (1) define-by-run API that allows users to construct the parameter search space dynamically, (2) efficient implementation of both searching and pruning strategies, and (3) easy-to-setup, versatile architecture that can be deployed for various purposes, ranging from scalable distributed computing to light-weight experiment conducted via interactive interface. In order to prove our point, we will introduce Optuna, an optimization software which is a culmination of our effort in the development of a next generation optimization software. As an optimization software designed with define-by-run principle, Optuna is particularly the first of its kind. We will present the design-techniques that became necessary in the development of the software that meets the above criteria, and demonstrate the power of our new design through experimental results and real world applications. Our software is available under the MIT license (https://github.com/pfnet/optuna/).},
+  isbn = {978-1-4503-6201-6},
+  keywords = {Bayesian optimization,black-box optimization,hyperparameter optimization,machine learning system},
+  file = {/Users/fdamken/Zotero/storage/86K458N2/Akiba et al. - 2019 - Optuna A Next-generation Hyperparameter Optimizat.pdf}
+}
+
 @article{alemohammadRecurrentNeuralTangent2020,
   title = {The {{Recurrent Neural Tangent Kernel}}},
   author = {Alemohammad, Sina and Wang, Zichao and Balestriero, Randall and Baraniuk, Richard},
@@ -11,7 +29,7 @@
   abstract = {The study of deep neural networks (DNNs) in the infinite-width limit, via the so-called neural tangent kernel (NTK) approach, has provided new insights into the dynamics of learning, generalization, and the impact of initialization. One key DNN architecture remains to be kernelized, namely, the recurrent neural network (RNN). In this paper we introduce and study the Recurrent Neural Tangent Kernel (RNTK), which provides new insights into the behavior of overparametrized RNNs, including how different time steps are weighted by the RNTK to form the output under different initialization parameters and nonlinearity choices, and how inputs of different lengths are treated. The ability to compare inputs of different length is a property of RNTK that should greatly benefit practitioners. We demonstrate via a synthetic and 56 real-world data experiments that the RNTK offers significant performance gains over other kernels, including standard NTKs, across a wide array of data sets.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/RNEKKI6P/Alemohammad et al. - 2020 - The Recurrent Neural Tangent Kernel.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/8UZE2QE6/2006.html}
+  file = {/Users/fdamken/Zotero/storage/RNEKKI6P/Alemohammad et al. - 2020 - The Recurrent Neural Tangent Kernel.pdf;/Users/fdamken/Zotero/storage/8UZE2QE6/2006.html}
 }
 
 @book{bishopPatternRecognitionMachine2006,
@@ -21,7 +39,7 @@
   month = jan,
   publisher = {{Springer}},
   isbn = {978-0-387-31073-2},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/FFBNT6XK/prml-errata-3rd-20110921.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/HPQQIX4K/Bishop - 2006 - Pattern Recognition and Machine Learning.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/QUV2FUE5/prml-web-sol-2009-09-08.pdf}
+  file = {/Users/fdamken/Zotero/storage/FFBNT6XK/prml-errata-3rd-20110921.pdf;/Users/fdamken/Zotero/storage/HPQQIX4K/Bishop - 2006 - Pattern Recognition and Machine Learning.pdf;/Users/fdamken/Zotero/storage/QUV2FUE5/prml-web-sol-2009-09-08.pdf}
 }
 
 @inproceedings{blundellWeightUncertaintyNeural2015,
@@ -35,7 +53,23 @@
   issn = {1938-7228},
   abstract = {We introduce a new, efficient, principled and backpropagation-compatible algorithm for learning a probability distribution on the weights of a neural network, called Bayes by Backprop. It regularises the weights by minimising a compression cost, known as the variational free energy or the expected lower bound on the marginal likelihood. We show that this principled kind of regularisation yields comparable performance to dropout on MNIST classification. We then demonstrate how the learnt uncertainty in the weights can be used to improve generalisation in non-linear regression problems, and how this weight uncertainty can be used to drive the exploration-exploitation trade-off in reinforcement learning.},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/LP46YDL6/Blundell et al. - 2015 - Weight Uncertainty in Neural Network.pdf}
+  file = {/Users/fdamken/Zotero/storage/LP46YDL6/Blundell et al. - 2015 - Weight Uncertainty in Neural Network.pdf}
+}
+
+@article{bradfordStochasticDatadrivenModel2020,
+  title = {Stochastic Data-Driven Model Predictive Control Using Gaussian Processes},
+  author = {Bradford, Eric and Imsland, Lars and Zhang, Dongda and {del Rio Chanona}, Ehecatl Antonio},
+  year = {2020},
+  month = aug,
+  journal = {Computers \& Chemical Engineering},
+  volume = {139},
+  pages = {106844},
+  issn = {0098-1354},
+  doi = {10.1016/j.compchemeng.2020.106844},
+  abstract = {Nonlinear model predictive control (NMPC) is one of the few control methods that can handle multivariable nonlinear control systems with constraints. Gaussian processes (GPs) present a powerful tool to identify the required plant model and quantify the residual uncertainty of the plant-model mismatch. It is crucial to consider this uncertainty, since it may lead to worse control performance and constraint violations. In this paper we propose a new method to design a GP-based NMPC algorithm for finite horizon control problems. The method generates Monte Carlo samples of the GP offline for constraint tightening using back-offs. The tightened constraints then guarantee the satisfaction of chance constraints online. Advantages of our proposed approach over existing methods include fast online evaluation, consideration of closed-loop behaviour, and the possibility to alleviate conservativeness by considering both online learning and state dependency of the uncertainty. The algorithm is verified on a challenging semi-batch bioprocess case study.},
+  langid = {english},
+  keywords = {Machine learning,Model-based nonlinear control,Probabilistic constraints,Robust control,State space,Uncertain dynamic systems},
+  file = {/Users/fdamken/Zotero/storage/EYM9X4MT/Bradford et al. - 2020 - Stochastic data-driven model predictive control us.pdf;/Users/fdamken/Zotero/storage/6X3F3J8B/S0098135419313080.html}
 }
 
 @inproceedings{buiDeepGaussianProcesses2016,
@@ -49,7 +83,21 @@
   issn = {1938-7228},
   abstract = {Deep Gaussian processes (DGPs) are multi-layer hierarchical generalisations of Gaussian processes (GPs) and are formally equivalent to neural networks with multiple, infinitely wide hidden layers. ...},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/E5NY44KQ/Bui et al. - 2016 - Deep Gaussian Processes for Regression using Appro.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/6ZLSD878/bui16.html}
+  file = {/Users/fdamken/Zotero/storage/E5NY44KQ/Bui et al. - 2016 - Deep Gaussian Processes for Regression using Appro.pdf;/Users/fdamken/Zotero/storage/6ZLSD878/bui16.html}
+}
+
+@inproceedings{calandraManifoldGaussianProcesses2016,
+  title = {Manifold {{Gaussian Processes}} for Regression},
+  booktitle = {2016 {{International Joint Conference}} on {{Neural Networks}} ({{IJCNN}})},
+  author = {Calandra, Roberto and Peters, Jan and Rasmussen, Carl Edward and Deisenroth, Marc Peter},
+  year = {2016},
+  month = jul,
+  pages = {3338--3345},
+  issn = {2161-4407},
+  doi = {10.1109/IJCNN.2016.7727626},
+  abstract = {Off-the-shelf Gaussian Process (GP) covariance functions encode smoothness assumptions on the structure of the function to be modeled. To model complex and non-differentiable functions, these smoothness assumptions are often too restrictive. One way to alleviate this limitation is to find a different representation of the data by introducing a feature space. This feature space is often learned in an unsupervised way, which might lead to data representations that are not useful for the overall regression task. In this paper, we propose Manifold Gaussian Processes, a novel supervised method that jointly learns a transformation of the data into a feature space and a GP regression from the feature space to observed space. The Manifold GP is a full GP and allows to learn data representations, which are useful for the overall regression task. As a proof-of-concept, we evaluate our approach on complex non-smooth functions where standard GPs perform poorly, such as step functions and robotics tasks with contacts.},
+  keywords = {Bayes methods,Computational modeling,Gaussian processes,Manifolds,Standards,Supervised learning,Training},
+  file = {/Users/fdamken/Zotero/storage/Q3HRMW27/Calandra et al. - 2016 - Manifold Gaussian Processes for regression.pdf;/Users/fdamken/Zotero/storage/Y2Y7KD9X/7727626.html}
 }
 
 @article{coradduMachineLearningApproaches2016,
@@ -61,7 +109,7 @@
   number = {1},
   pages = {136--153},
   publisher = {{SAGE Publications Sage UK: London, England}},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/8G7HAP4G/Coraddu et al. - 2016 - Machine learning approaches for improving conditio.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/R39FIDDI/1475090214540874.html}
+  file = {/Users/fdamken/Zotero/storage/8G7HAP4G/Coraddu et al. - 2016 - Machine learning approaches for improving conditio.pdf;/Users/fdamken/Zotero/storage/R39FIDDI/1475090214540874.html}
 }
 
 @article{cortezModelingWinePreferences2009,
@@ -79,7 +127,7 @@
   abstract = {We propose a data mining approach to predict human wine taste preferences that is based on easily available analytical tests at the certification step. A large dataset (when compared to other studies in this domain) is considered, with white and red vinho verde samples (from Portugal). Three regression techniques were applied, under a computationally efficient procedure that performs simultaneous variable and model selection. The support vector machine achieved promising results, outperforming the multiple regression and neural network methods. Such model is useful to support the oenologist wine tasting evaluations and improve wine production. Furthermore, similar techniques can help in target marketing by modeling consumer tastes from niche markets.},
   langid = {english},
   keywords = {Model selection,Neural networks,Regression,Sensory preferences,Support vector machines,Variable selection},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/4JWCNZFM/Cortez et al. - 2009 - Modeling wine preferences by data mining from phys.pdf}
+  file = {/Users/fdamken/Zotero/storage/4JWCNZFM/Cortez et al. - 2009 - Modeling wine preferences by data mining from phys.pdf}
 }
 
 @article{daiScalableKernelMethods2015,
@@ -94,7 +142,7 @@
   abstract = {The general perception is that kernel methods are not scalable, and neural nets are the methods of choice for nonlinear learning problems. Or have we simply not tried hard enough for kernel methods? Here we propose an approach that scales up kernel methods using a novel concept called "doubly stochastic functional gradients". Our approach relies on the fact that many kernel methods can be expressed as convex optimization problems, and we solve the problems by making two unbiased stochastic approximations to the functional gradient, one using random training points and another using random functions associated with the kernel, and then descending using this noisy functional gradient. We show that a function produced by this procedure after \$t\$ iterations converges to the optimal function in the reproducing kernel Hilbert space in rate \$O(1/t)\$, and achieves a generalization performance of \$O(1/\textbackslash sqrt\{t\})\$. This doubly stochasticity also allows us to avoid keeping the support vectors and to implement the algorithm in a small memory footprint, which is linear in number of iterations and independent of data dimension. Our approach can readily scale kernel methods up to the regimes which are dominated by neural nets. We show that our method can achieve competitive performance to neural nets in datasets such as 8 million handwritten digits from MNIST, 2.3 million energy materials from MolecularSpace, and 1 million photos from ImageNet.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/IBHYI2MK/Dai et al. - 2015 - Scalable Kernel Methods via Doubly Stochastic Grad.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/P87H6AVG/1407.html}
+  file = {/Users/fdamken/Zotero/storage/IBHYI2MK/Dai et al. - 2015 - Scalable Kernel Methods via Doubly Stochastic Grad.pdf;/Users/fdamken/Zotero/storage/P87H6AVG/1407.html}
 }
 
 @inproceedings{damianouDeepGaussianProcesses2013,
@@ -108,7 +156,7 @@
   issn = {1938-7228},
   abstract = {In this paper we introduce deep Gaussian process (GP) models. Deep GPs are a deep belief network based on Gaussian process mappings. The data is modeled as the output of a multivariate GP. The inpu...},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/DJRDHHMW/Damianou and Lawrence - 2013 - Deep Gaussian Processes.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/TUJ493L4/damianou13a.html}
+  file = {/Users/fdamken/Zotero/storage/DJRDHHMW/Damianou and Lawrence - 2013 - Deep Gaussian Processes.pdf;/Users/fdamken/Zotero/storage/TUJ493L4/damianou13a.html}
 }
 
 @inproceedings{daoGaussianQuadratureKernel2017,
@@ -118,7 +166,18 @@
   year = {2017},
   volume = {30},
   publisher = {{Curran Associates, Inc.}},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/2UXXLD74/Dao et al. - 2017 - Gaussian Quadrature for Kernel Features.pdf}
+  file = {/Users/fdamken/Zotero/storage/2UXXLD74/Dao et al. - 2017 - Gaussian Quadrature for Kernel Features.pdf}
+}
+
+@inproceedings{denkerTransformingNeuralNetOutput1990,
+  title = {Transforming {{Neural-Net Output Levels}} to {{Probability Distributions}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Denker, John and LeCun, Yann},
+  year = {1990},
+  volume = {3},
+  publisher = {{Morgan-Kaufmann}},
+  abstract = {(1)  The  outputs  of a  typical  multi-output  classification  network  do  not  satisfy the axioms of probability; probabilities should be positive and sum  to one.  This problem  can  be solved  by  treating  the trained  network  as  a  preprocessor that produces  a  feature  vector that can be further  processed,  for instance by classical statistical estimation techniques.  (2) We present a  method for computing the first two moments ofthe probability distribution  indicating the range of outputs that are  consistent  with the input and the  training  data.  It is  particularly  useful  to  combine  these  two  ideas:  we  implement the  ideas  of section  1 using  Parzen  windows,  where  the  shape  and relative size  of each  window  is  computed  using the ideas of section  2.  This  allows  us  to make  contact  between  important  theoretical ideas  (e.g.  the  ensemble  formalism)  and  practical  techniques  (e.g.  back-prop).  Our  results  also  shed  new  light  on  and  generalize  the  well-known  "soft max"  scheme.},
+  file = {/Users/fdamken/Zotero/storage/HCLF24N9/Denker and LeCun - 1990 - Transforming Neural-Net Output Levels to Probabili.pdf}
 }
 
 @misc{duaUCIMachineLearning2017,
@@ -141,7 +200,49 @@
   abstract = {Deep Gaussian processes (DGPs) have struggled for relevance in applications due to the challenges and cost associated with Bayesian inference. In this paper we propose a sparse variational approximation for DGPs for which the approximate posterior mean has the same mathematical structure as a Deep Neural Network (DNN). We make the forward pass through a DGP equivalent to a ReLU DNN by finding an interdomain transformation that represents the GP posterior mean as a sum of ReLU basis functions. This unification enables the initialisation and training of the DGP as a neural network, leveraging the well established practice in the deep learning community, and so greatly aiding the inference task. The experiments demonstrate improved accuracy and faster training compared to current DGP methods, while retaining favourable predictive uncertainties.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/H49E9T5R/Dutordoir et al. - 2021 - Deep Neural Networks as Point Estimates for Deep G.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/72L7NS92/2105.html}
+  file = {/Users/fdamken/Zotero/storage/H49E9T5R/Dutordoir et al. - 2021 - Deep Neural Networks as Point Estimates for Deep G.pdf;/Users/fdamken/Zotero/storage/72L7NS92/2105.html}
+}
+
+@phdthesis{duvenaudAutomaticModelConstruction2014,
+  type = {Thesis},
+  title = {Automatic Model Construction with {{Gaussian}} Processes},
+  author = {Duvenaud, David},
+  year = {2014},
+  month = nov,
+  doi = {10.17863/CAM.14087},
+  abstract = {This thesis develops a method for automatically constructing, visualizing and describing  a large class of models, useful for forecasting and finding structure in domains such  as time series, geological formations, and physical dynamics. These models, based on  Gaussian processes, can capture many types of statistical structure, such as periodicity,  changepoints, additivity, and symmetries. Such structure can be encoded through kernels,  which have historically been hand-chosen by experts. We show how to automate  this task, creating a system that explores an open-ended space of models and reports  the structures discovered.    To automatically construct Gaussian process models, we search over sums and products  of kernels, maximizing the approximate marginal likelihood. We show how any  model in this class can be automatically decomposed into qualitatively different parts,  and how each component can be visualized and described through text. We combine  these results into a procedure that, given a dataset, automatically constructs a model  along with a detailed report containing plots and generated text that illustrate the  structure discovered in the data.    The introductory chapters contain a tutorial showing how to express many types of  structure through kernels, and how adding and multiplying different kernels combines  their properties. Examples also show how symmetric kernels can produce priors over  topological manifolds such as cylinders, toruses, and M\"obius strips, as well as their  higher-dimensional generalizations.    This thesis also explores several extensions to Gaussian process models. First, building  on existing work that relates Gaussian processes and neural nets, we analyze natural  extensions of these models to deep kernels and deep Gaussian processes. Second, we examine  additive Gaussian processes, showing their relation to the regularization method  of dropout. Third, we combine Gaussian processes with the Dirichlet process to produce  the warped mixture model: a Bayesian clustering model having nonparametric cluster  shapes, and a corresponding latent space in which each cluster has an interpretable  parametric form.},
+  copyright = {Attribution-ShareAlike 2.0 UK: England \& Wales},
+  langid = {english},
+  school = {University of Cambridge},
+  annotation = {Accepted: 2015-04-08T08:37:46Z},
+  file = {/Users/fdamken/Zotero/storage/A7X49JA9/Duvenaud - 2014 - Automatic model construction with Gaussian process.pdf;/Users/fdamken/Zotero/storage/TAX8EC77/247281.html}
+}
+
+@inproceedings{foongExpressivenessApproximateInference2020,
+  title = {On the {{Expressiveness}} of {{Approximate Inference}} in {{Bayesian Neural Networks}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Foong, Andrew and Burt, David and Li, Yingzhen and Turner, Richard},
+  year = {2020},
+  volume = {33},
+  pages = {15897--15908},
+  publisher = {{Curran Associates, Inc.}},
+  abstract = {While Bayesian neural networks (BNNs) hold the promise of being flexible, well-calibrated statistical models, inference often requires approximations whose consequences are poorly understood. We study the quality of common variational methods in approximating the Bayesian predictive distribution. For single-hidden layer ReLU BNNs, we prove a fundamental limitation in function-space of two of the most commonly used distributions defined in weight-space: mean-field Gaussian and Monte Carlo dropout. We find there are simple cases where neither method can have substantially increased uncertainty in between well-separated regions of low uncertainty. We provide strong empirical evidence that exact inference does not have this pathology, hence it is due to the approximation and not the model. In contrast, for deep networks, we prove a universality result showing that there exist approximate posteriors in the above classes which provide flexible uncertainty estimates. However, we find empirically that pathologies of a similar form as in the single-hidden layer case can persist when performing variational inference in deeper networks. Our results motivate careful consideration of the implications of approximate inference methods in BNNs.},
+  file = {/Users/fdamken/Zotero/storage/EQLRYD6R/Foong et al. - 2020 - On the Expressiveness of Approximate Inference in .pdf}
+}
+
+@article{foongInBetweenUncertaintyBayesian2019,
+  title = {'{{In-Between}}' {{Uncertainty}} in {{Bayesian Neural Networks}}},
+  author = {Foong, Andrew Y. K. and Li, Yingzhen and {Hern{\'a}ndez-Lobato}, Jos{\'e} Miguel and Turner, Richard E.},
+  year = {2019},
+  month = jun,
+  journal = {arXiv:1906.11537 [cs, stat]},
+  eprint = {1906.11537},
+  eprinttype = {arxiv},
+  primaryclass = {cs, stat},
+  abstract = {We describe a limitation in the expressiveness of the predictive uncertainty estimate given by mean-field variational inference (MFVI), a popular approximate inference method for Bayesian neural networks. In particular, MFVI fails to give calibrated uncertainty estimates in between separated regions of observations. This can lead to catastrophically overconfident predictions when testing on out-of-distribution data. Avoiding such overconfidence is critical for active learning, Bayesian optimisation and out-of-distribution robustness. We instead find that a classical technique, the linearised Laplace approximation, can handle 'in-between' uncertainty much better for small network architectures.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/Users/fdamken/Zotero/storage/4TWCNUJK/Foong et al. - 2019 - 'In-Between' Uncertainty in Bayesian Neural Networ.pdf;/Users/fdamken/Zotero/storage/5PHI4EBA/1906.html}
 }
 
 @inproceedings{galDropoutBayesianApproximation2016,
@@ -156,22 +257,7 @@
   issn = {1938-7228},
   abstract = {Deep learning tools have gained tremendous attention in applied machine learning. However such tools for regression and classification do not capture model uncertainty. In comparison, Bayesian models offer a mathematically grounded framework to reason about model uncertainty, but usually come with a prohibitive computational cost. In this paper we develop a new theoretical framework casting dropout training in deep neural networks (NNs) as approximate Bayesian inference in deep Gaussian processes. A direct result of this theory gives us tools to model uncertainty with dropout NNs \textendash{} extracting information from existing models that has been thrown away so far. This mitigates the problem of representing uncertainty in deep learning without sacrificing either computational complexity or test accuracy. We perform an extensive study of the properties of dropout's uncertainty. Various network architectures and non-linearities are assessed on tasks of regression and classification, using MNIST as an example. We show a considerable improvement in predictive log-likelihood and RMSE compared to existing state-of-the-art methods, and finish by using dropout's uncertainty in deep reinforcement learning.},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/MBJMZ3ZR/Gal and Ghahramani - 2016 - Dropout as a Bayesian Approximation Representing .pdf}
-}
-
-@inproceedings{galDropoutBayesianApproximation2016a,
-  title = {Dropout as a {{Bayesian Approximation}}: {{Representing Model Uncertainty}} in {{Deep Learning}}},
-  shorttitle = {Dropout as a {{Bayesian Approximation}}},
-  booktitle = {Proceedings of {{The}} 33rd {{International Conference}} on {{Machine Learning}}},
-  author = {Gal, Yarin and Ghahramani, Zoubin},
-  year = {2016},
-  month = jun,
-  pages = {1050--1059},
-  publisher = {{PMLR}},
-  issn = {1938-7228},
-  abstract = {Deep learning tools have gained tremendous attention in applied machine learning. However such tools for regression and classification do not capture model uncertainty. In comparison, Bayesian models offer a mathematically grounded framework to reason about model uncertainty, but usually come with a prohibitive computational cost. In this paper we develop a new theoretical framework casting dropout training in deep neural networks (NNs) as approximate Bayesian inference in deep Gaussian processes. A direct result of this theory gives us tools to model uncertainty with dropout NNs \textendash{} extracting information from existing models that has been thrown away so far. This mitigates the problem of representing uncertainty in deep learning without sacrificing either computational complexity or test accuracy. We perform an extensive study of the properties of dropout's uncertainty. Various network architectures and non-linearities are assessed on tasks of regression and classification, using MNIST as an example. We show a considerable improvement in predictive log-likelihood and RMSE compared to existing state-of-the-art methods, and finish by using dropout's uncertainty in deep reinforcement learning.},
-  langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/VXHI7RYB/Gal and Ghahramani - 2016 - Dropout as a Bayesian Approximation Representing .pdf}
+  file = {/Users/fdamken/Zotero/storage/MBJMZ3ZR/Gal and Ghahramani - 2016 - Dropout as a Bayesian Approximation Representing .pdf}
 }
 
 @inproceedings{gardnerGPyTorchBlackboxMatrixMatrix2018,
@@ -183,7 +269,49 @@
   volume = {31},
   publisher = {{Curran Associates, Inc.}},
   abstract = {Despite advances in scalable models, the inference tools used for Gaussian processes (GPs) have yet to fully capitalize on developments in computing hardware. We present an efficient and general approach to GP inference based on Blackbox Matrix-Matrix multiplication (BBMM). BBMM inference uses a modified batched version of the conjugate gradients algorithm to derive all terms for training and inference in a single call. BBMM reduces the asymptotic complexity of exact GP inference from O(n\^3) to O(n\^2). Adapting this algorithm to scalable approximations and complex GP models simply requires a routine for efficient matrix-matrix multiplication with the kernel and its derivative. In addition, BBMM uses a specialized preconditioner to substantially speed up convergence. In experiments we show that BBMM effectively uses GPU hardware to dramatically accelerate both exact GP inference and scalable approximations. Additionally, we provide GPyTorch, a software platform for scalable GP inference via BBMM, built on PyTorch.},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/J8AX7JS5/Gardner et al. - 2018 - GPyTorch Blackbox Matrix-Matrix Gaussian Process .pdf}
+  file = {/Users/fdamken/Zotero/storage/J8AX7JS5/Gardner et al. - 2018 - GPyTorch Blackbox Matrix-Matrix Gaussian Process .pdf}
+}
+
+@inproceedings{hernandez-lobatoProbabilisticBackpropagationScalable2015,
+  title = {Probabilistic {{Backpropagation}} for {{Scalable Learning}} of {{Bayesian Neural Networks}}},
+  booktitle = {Proceedings of the 32nd {{International Conference}} on {{Machine Learning}}},
+  author = {{Hernandez-Lobato}, Jose Miguel and Adams, Ryan},
+  year = {2015},
+  month = jun,
+  pages = {1861--1869},
+  publisher = {{PMLR}},
+  issn = {1938-7228},
+  abstract = {Large multilayer neural networks trained with backpropagation have recently achieved state-of-the-art results in a wide range of problems. However, using backprop for neural net learning still has some disadvantages, e.g., having to tune a large number of hyperparameters to the data, lack of calibrated probabilistic predictions, and a tendency to overfit the training data. In principle, the Bayesian approach to learning neural networks does not have these problems. However, existing Bayesian techniques lack scalability to large dataset and network sizes. In this work we present a novel scalable method for learning Bayesian neural networks, called probabilistic backpropagation (PBP). Similar to classical backpropagation, PBP works by computing a forward propagation of probabilities through the network and then doing a backward computation of gradients. A series of experiments on ten real-world datasets show that PBP is significantly faster than other techniques, while offering competitive predictive abilities. Our experiments also show that PBP provides accurate estimates of the posterior variance on the network weights.},
+  langid = {english},
+  file = {/Users/fdamken/Zotero/storage/9IDEGTPN/Hernandez-Lobato and Adams - 2015 - Probabilistic Backpropagation for Scalable Learnin.pdf}
+}
+
+@article{hewingLearningBasedModelPredictive2020,
+  title = {Learning-{{Based Model Predictive Control}}: {{Toward Safe Learning}} in {{Control}}},
+  shorttitle = {Learning-{{Based Model Predictive Control}}},
+  author = {Hewing, Lukas and Wabersich, Kim P. and Menner, Marcel and Zeilinger, Melanie N.},
+  year = {2020},
+  journal = {Annual Review of Control, Robotics, and Autonomous Systems},
+  volume = {3},
+  number = {1},
+  pages = {269--296},
+  doi = {10.1146/annurev-control-090419-075625},
+  abstract = {Recent successes in the field of machine learning, as well as the availability of increased sensing and computational capabilities in modern control systems, have led to a growing interest in learning and data-driven control techniques. Model predictive control (MPC), as the prime methodology for constrained control, offers a significant opportunity to exploit the abundance of data in a reliable manner, particularly while taking safety constraints into account. This review aims at summarizing and categorizing previous research on learning-based MPC, i.e., the integration or combination of MPC with learning methods, for which we consider three main categories. Most of the research addresses learning for automatic improvement of the prediction model from recorded data. There is, however, also an increasing interest in techniques to infer the parameterization of the MPC controller, i.e., the cost and constraints, that lead to the best closed-loop performance. Finally, we discuss concepts that leverage MPC to augment learning-based controllers with constraint satisfaction properties.},
+  keywords = {adaptive control,autonomous systems,learning-based control,model predictive control,safe learning},
+  annotation = {\_eprint: https://doi.org/10.1146/annurev-control-090419-075625},
+  file = {/Users/fdamken/Zotero/storage/TD97Z2KH/Hewing et al. - 2020 - Learning-Based Model Predictive Control Toward Sa.pdf}
+}
+
+@inproceedings{jacotNeuralTangentKernel2018,
+  title = {Neural {{Tangent Kernel}}: {{Convergence}} and {{Generalization}} in {{Neural Networks}}},
+  shorttitle = {Neural {{Tangent Kernel}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Jacot, Arthur and Gabriel, Franck and Hongler, Clement},
+  year = {2018},
+  volume = {31},
+  publisher = {{Curran Associates, Inc.}},
+  abstract = {At initialization, artificial neural networks (ANNs) are equivalent to Gaussian processes in the infinite-width limit, thus connecting them to kernel methods. We prove that the evolution of an ANN during training can also be described by a kernel: during gradient descent on the parameters of an ANN, the network function (which maps input vectors to output vectors) follows the so-called kernel gradient associated with a new object, which we call the Neural Tangent Kernel (NTK). This kernel is central to describe the generalization features of ANNs. While the NTK is random at initialization and varies during training, in the infinite-width limit it converges to an explicit limiting kernel and stays constant during training. This makes it possible to study the training of ANNs in function space instead of parameter space. Convergence of the training can then be related to the positive-definiteness of the limiting NTK.},
+  file = {/Users/fdamken/Zotero/storage/PNA28IKS/Jacot et al. - 2018 - Neural Tangent Kernel Convergence and Generalizat.pdf}
 }
 
 @article{jacotNeuralTangentKernel2020,
@@ -199,7 +327,7 @@
   abstract = {At initialization, artificial neural networks (ANNs) are equivalent to Gaussian processes in the infinite-width limit, thus connecting them to kernel methods. We prove that the evolution of an ANN during training can also be described by a kernel: during gradient descent on the parameters of an ANN, the network function \$f\_\textbackslash theta\$ (which maps input vectors to output vectors) follows the kernel gradient of the functional cost (which is convex, in contrast to the parameter cost) w.r.t. a new kernel: the Neural Tangent Kernel (NTK). This kernel is central to describe the generalization features of ANNs. While the NTK is random at initialization and varies during training, in the infinite-width limit it converges to an explicit limiting kernel and it stays constant during training. This makes it possible to study the training of ANNs in function space instead of parameter space. Convergence of the training can then be related to the positive-definiteness of the limiting NTK. We prove the positive-definiteness of the limiting NTK when the data is supported on the sphere and the non-linearity is non-polynomial. We then focus on the setting of least-squares regression and show that in the infinite-width limit, the network function \$f\_\textbackslash theta\$ follows a linear differential equation during training. The convergence is fastest along the largest kernel principal components of the input data with respect to the NTK, hence suggesting a theoretical motivation for early stopping. Finally we study the NTK numerically, observe its behavior for wide networks, and compare it to the infinite-width limit.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Computer Science - Neural and Evolutionary Computing,Mathematics - Probability,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/Y8Z8SA8H/Jacot et al. - 2020 - Neural Tangent Kernel Convergence and Generalizat.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/IBK6NWNA/1806.html}
+  file = {/Users/fdamken/Zotero/storage/Y8Z8SA8H/Jacot et al. - 2020 - Neural Tangent Kernel Convergence and Generalizat.pdf;/Users/fdamken/Zotero/storage/IBK6NWNA/1806.html}
 }
 
 @inproceedings{kayaLocalGlobalLearning2012,
@@ -223,7 +351,18 @@
   abstract = {We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss AdaMax, a variant of Adam based on the infinity norm.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/EZMQ3NZW/Kingma and Ba - 2017 - Adam A Method for Stochastic Optimization.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/MU2U6R87/1412.html}
+  file = {/Users/fdamken/Zotero/storage/EZMQ3NZW/Kingma and Ba - 2017 - Adam A Method for Stochastic Optimization.pdf;/Users/fdamken/Zotero/storage/MU2U6R87/1412.html}
+}
+
+@inproceedings{krizhevskyImageNetClassificationDeep2012,
+  title = {{{ImageNet Classification}} with {{Deep Convolutional Neural Networks}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Krizhevsky, Alex and Sutskever, Ilya and Hinton, Geoffrey E},
+  year = {2012},
+  volume = {25},
+  publisher = {{Curran Associates, Inc.}},
+  abstract = {We trained a large, deep convolutional neural network to classify the 1.3 million high-resolution images in the LSVRC-2010 ImageNet training set into the 1000 different classes. On the test data, we achieved top-1 and top-5 error rates of 39.7\textbackslash\% and 18.9\textbackslash\% which is considerably better than the previous state-of-the-art results. The neural network, which has 60 million parameters and 500,000 neurons, consists of five convolutional layers, some of which are followed by max-pooling layers, and two globally connected layers with a final 1000-way softmax. To make training faster, we used non-saturating neurons and a very efficient GPU implementation of convolutional nets. To reduce overfitting in the globally connected layers we employed a new regularization method that proved to be very effective.},
+  file = {/Users/fdamken/Zotero/storage/5I7PD37J/Krizhevsky et al. - 2012 - ImageNet Classification with Deep Convolutional Ne.pdf}
 }
 
 @inproceedings{lakshminarayananSimpleScalablePredictive2017,
@@ -234,7 +373,7 @@
   volume = {30},
   publisher = {{Curran Associates, Inc.}},
   abstract = {Deep neural networks (NNs) are powerful black box predictors that have recently achieved impressive performance on a wide spectrum of tasks. Quantifying predictive uncertainty in NNs is a challenging and yet unsolved problem.  Bayesian NNs, which learn a distribution over weights, are currently the state-of-the-art for estimating predictive uncertainty; however these require significant modifications to the training procedure and are computationally expensive compared to standard (non-Bayesian)  NNs.  We propose an alternative to Bayesian NNs that is simple to implement, readily parallelizable, requires very little hyperparameter tuning, and yields high quality predictive uncertainty estimates. Through a series of experiments on classification and regression benchmarks, we demonstrate that our method produces well-calibrated uncertainty estimates which are as good or better than approximate Bayesian NNs. To assess robustness to dataset shift, we evaluate the predictive uncertainty on test examples from known and unknown distributions, and show that our method is able to express higher uncertainty on out-of-distribution examples. We demonstrate the scalability of our method by evaluating predictive uncertainty estimates on ImageNet.},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/TQJ39TB9/Lakshminarayanan et al. - 2017 - Simple and Scalable Predictive Uncertainty Estimat.pdf}
+  file = {/Users/fdamken/Zotero/storage/TQJ39TB9/Lakshminarayanan et al. - 2017 - Simple and Scalable Predictive Uncertainty Estimat.pdf}
 }
 
 @article{leeDeepNeuralNetworks2018,
@@ -249,7 +388,7 @@
   abstract = {It has long been known that a single-layer fully-connected neural network with an i.i.d. prior over its parameters is equivalent to a Gaussian process (GP), in the limit of infinite network width. This correspondence enables exact Bayesian inference for infinite width neural networks on regression tasks by means of evaluating the corresponding GP. Recently, kernel functions which mimic multi-layer random neural networks have been developed, but only outside of a Bayesian framework. As such, previous work has not identified that these kernels can be used as covariance functions for GPs and allow fully Bayesian prediction with a deep neural network. In this work, we derive the exact equivalence between infinitely wide deep networks and GPs. We further develop a computationally efficient pipeline to compute the covariance function for these GPs. We then use the resulting GPs to perform Bayesian inference for wide deep neural networks on MNIST and CIFAR-10. We observe that trained neural network accuracy approaches that of the corresponding GP with increasing layer width, and that the GP uncertainty is strongly correlated with trained network prediction error. We further find that test performance increases as finite-width trained networks are made wider and more similar to a GP, and thus that GP predictions typically outperform those of finite-width networks. Finally we connect the performance of these GPs to the recent theory of signal propagation in random neural networks.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/5VXY6VCJ/Lee et al. - 2018 - Deep Neural Networks as Gaussian Processes.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/VYD8BZAH/1711.html}
+  file = {/Users/fdamken/Zotero/storage/5VXY6VCJ/Lee et al. - 2018 - Deep Neural Networks as Gaussian Processes.pdf;/Users/fdamken/Zotero/storage/VYD8BZAH/1711.html}
 }
 
 @article{leibfriedTutorialSparseGaussian2021,
@@ -264,7 +403,22 @@
   abstract = {Gaussian processes (GPs) provide a framework for Bayesian inference that can offer principled uncertainty estimates for a large range of problems. For example, if we consider regression problems with Gaussian likelihoods, a GP model enjoys a posterior in closed form. However, identifying the posterior GP scales cubically with the number of training examples and requires to store all examples in memory. In order to overcome these obstacles, sparse GPs have been proposed that approximate the true posterior GP with pseudo-training examples. Importantly, the number of pseudo-training examples is user-defined and enables control over computational and memory complexity. In the general case, sparse GPs do not enjoy closed-form solutions and one has to resort to approximate inference. In this context, a convenient choice for approximate inference is variational inference (VI), where the problem of Bayesian inference is cast as an optimization problem -- namely, to maximize a lower bound of the log marginal likelihood. This paves the way for a powerful and versatile framework, where pseudo-training examples are treated as optimization arguments of the approximate posterior that are jointly identified together with hyperparameters of the generative model (i.e. prior and likelihood). The framework can naturally handle a wide scope of supervised learning problems, ranging from regression with heteroscedastic and non-Gaussian likelihoods to classification problems with discrete labels, but also multilabel problems. The purpose of this tutorial is to provide access to the basic matter for readers without prior knowledge in both GPs and VI. A proper exposition to the subject enables also access to more recent advances (like importance-weighted VI as well as interdomain, multioutput and deep GPs) that can serve as an inspiration for new research ideas.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/GDSKS9F5/Leibfried et al. - 2021 - A Tutorial on Sparse Gaussian Processes and Variat.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/DJKEPICV/2012.html}
+  file = {/Users/fdamken/Zotero/storage/GDSKS9F5/Leibfried et al. - 2021 - A Tutorial on Sparse Gaussian Processes and Variat.pdf;/Users/fdamken/Zotero/storage/DJKEPICV/2012.html}
+}
+
+@article{mackayPracticalBayesianFramework1992,
+  title = {A {{Practical Bayesian Framework}} for {{Backpropagation Networks}}},
+  author = {MacKay, David J. C.},
+  year = {1992},
+  month = may,
+  journal = {Neural Computation},
+  volume = {4},
+  number = {3},
+  pages = {448--472},
+  issn = {0899-7667},
+  doi = {10.1162/neco.1992.4.3.448},
+  abstract = {A quantitative and practical Bayesian framework is described for learning of mappings in feedforward networks. The framework makes possible (1) objective comparisons between solutions using alternative network architectures, (2) objective stopping rules for network pruning or growing procedures, (3) objective choice of magnitude and type of weight decay terms or additive regularizers (for penalizing large weights, etc.), (4) a measure of the effective number of well-determined parameters in a model, (5) quantified estimates of the error bars on network parameters and on network output, and (6) objective comparisons with alternative learning and interpolation models such as splines and radial basis functions. The Bayesian "evidence" automatically embodies "Occam's razor," penalizing overflexible and overcomplex models. The Bayesian approach helps detect poor underlying assumptions in learning models. For learning models well matched to a problem, a good correlation between generalization ability and the Bayesian evidence is obtained.},
+  file = {/Users/fdamken/Zotero/storage/APH73G5M/MacKay - 1992 - A Practical Bayesian Framework for Backpropagation.pdf;/Users/fdamken/Zotero/storage/SX3GPYR5/A-Practical-Bayesian-Framework-for-Backpropagation.html}
 }
 
 @article{malachQuantifyingBenefitUsing2021,
@@ -279,7 +433,36 @@
   abstract = {We study the relative power of learning with gradient descent on differentiable models, such as neural networks, versus using the corresponding tangent kernels. We show that under certain conditions, gradient descent achieves small error only if a related tangent kernel method achieves a non-trivial advantage over random guessing (a.k.a. weak learning), though this advantage might be very small even when gradient descent can achieve arbitrarily high accuracy. Complementing this, we show that without these conditions, gradient descent can in fact learn with small error even when no kernel method, in particular using the tangent kernel, can achieve a non-trivial advantage over random guessing.},
   archiveprefix = {arXiv},
   keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/WILP3HUZ/Malach et al. - 2021 - Quantifying the Benefit of Using Differentiable Le.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/2MH7GJ2L/2103.html}
+  file = {/Users/fdamken/Zotero/storage/WILP3HUZ/Malach et al. - 2021 - Quantifying the Benefit of Using Differentiable Le.pdf;/Users/fdamken/Zotero/storage/2MH7GJ2L/2103.html}
+}
+
+@book{nealBayesianLearningNeural2012,
+  title = {Bayesian {{Learning}} for {{Neural Networks}}},
+  author = {Neal, Radford M.},
+  year = {2012},
+  month = dec,
+  publisher = {{Springer Science \& Business Media}},
+  abstract = {Artificial "neural networks" are widely used as flexible models for classification and regression applications, but questions remain about how the power of these models can be safely exploited when training data is limited. This book demonstrates how Bayesian methods allow complex neural network models to be used without fear of the "overfitting" that can occur with traditional training methods. Insight into the nature of these complex Bayesian models is provided by a theoretical investigation of the priors over functions that underlie them. A practical implementation of Bayesian neural network learning using Markov chain Monte Carlo methods is also described, and software for it is freely available over the Internet. Presupposing only basic knowledge of probability and statistics, this book should be of interest to researchers in statistics, engineering, and artificial intelligence.},
+  googlebooks = {LHHrBwAAQBAJ},
+  isbn = {978-1-4612-0745-0},
+  langid = {english},
+  keywords = {Computers / Artificial Intelligence / General,Computers / Computer Simulation,Mathematics / Probability \& Statistics / General,Mathematics / Probability \& Statistics / Stochastic Processes}
+}
+
+@article{nystromUberPraktischeAuflosung1930,
+  title = {\"Uber {{Die Praktische Aufl\"osung}} von {{Integralgleichungen}} Mit {{Anwendungen}} Auf {{Randwertaufgaben}}},
+  author = {Nystr{\"o}m, E. J.},
+  year = {1930},
+  month = jan,
+  journal = {Acta Mathematica},
+  volume = {54},
+  number = {none},
+  pages = {185--204},
+  publisher = {{Institut Mittag-Leffler}},
+  issn = {0001-5962, 1871-2509},
+  doi = {10.1007/BF02547521},
+  abstract = {Acta Mathematica},
+  file = {/Users/fdamken/Zotero/storage/TI3GNPW8/Nyström - 1930 - Über Die Praktische Auflösung von Integralgleichun.pdf;/Users/fdamken/Zotero/storage/7YLAM4M2/BF02547521.html}
 }
 
 @book{oppenheimSignalsSystems1997,
@@ -294,6 +477,29 @@
   keywords = {Computers / Software Development \& Engineering / Systems Analysis \& Design}
 }
 
+@inproceedings{osbandRandomizedPriorFunctions2018,
+  title = {Randomized {{Prior Functions}} for {{Deep Reinforcement Learning}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Osband, Ian and Aslanides, John and Cassirer, Albin},
+  year = {2018},
+  volume = {31},
+  publisher = {{Curran Associates, Inc.}},
+  abstract = {Dealing with uncertainty is essential for efficient reinforcement learning. There is a growing literature on uncertainty estimation for deep learning from fixed datasets, but many of the most popular approaches are poorly-suited to sequential decision problems. Other methods, such as bootstrap sampling, have no mechanism for uncertainty that does not come from the observed data. We highlight why this can be a crucial shortcoming and propose a simple remedy through addition of a randomized untrainable `prior' network to each ensemble member. We prove that this approach is efficient with linear representations, provide simple illustrations of its efficacy with nonlinear representations and show that this approach scales to large-scale problems far better than previous attempts.},
+  file = {/Users/fdamken/Zotero/storage/MCVIZ6G6/Osband et al. - 2018 - Randomized Prior Functions for Deep Reinforcement .pdf}
+}
+
+@inproceedings{ovadiaCanYouTrust2019,
+  title = {Can You Trust Your Model' s Uncertainty? {{Evaluating}} Predictive Uncertainty under Dataset Shift},
+  shorttitle = {Can You Trust Your Model' s Uncertainty?},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Ovadia, Yaniv and Fertig, Emily and Ren, Jie and Nado, Zachary and Sculley, D. and Nowozin, Sebastian and Dillon, Joshua and Lakshminarayanan, Balaji and Snoek, Jasper},
+  year = {2019},
+  volume = {32},
+  publisher = {{Curran Associates, Inc.}},
+  abstract = {Modern machine learning methods including deep learning have achieved great success in predictive accuracy for supervised learning tasks, but may still fall short in giving useful estimates of their predictive uncertainty. Quantifying uncertainty is especially critical in real-world settings, which often involve input distributions that are shifted from the training distribution due to a variety of factors including sample bias and non-stationarity.  In such settings, well calibrated uncertainty estimates convey information about when a model's output should (or should not) be trusted.  Many probabilistic deep learning methods, including Bayesian-and non-Bayesian methods, have been proposed in the literature for quantifying predictive uncertainty, but to our knowledge there has not previously been a rigorous large-scale empirical comparison of these methods under dataset shift. We present a large-scale benchmark of existing state-of-the-art methods on classification problems and investigate the effect of dataset shift on accuracy and calibration.  We find that traditional post-hoc calibration does indeed fall short, as do several other previous methods.  However, some methods that marginalize over models give surprisingly strong results across a broad spectrum of tasks.},
+  file = {/Users/fdamken/Zotero/storage/TLHYMT4K/Ovadia et al. - 2019 - Can you trust your model' s uncertainty Evaluatin.pdf}
+}
+
 @inproceedings{rahimiRandomFeaturesLargeScale2007,
   title = {Random {{Features}} for {{Large-Scale Kernel Machines}}},
   booktitle = {Advances in {{Neural Information Processing Systems}}},
@@ -302,7 +508,7 @@
   volume = {20},
   publisher = {{Curran Associates, Inc.}},
   abstract = {To accelerate the training of kernel machines, we propose to map the input data to a randomized low-dimensional feature space and then apply existing fast linear methods. The features are designed so that the inner products of the transformed data are approximately equal to those in the feature space of a user specified shift- invariant kernel. We explore two sets of random features, provide convergence bounds on their ability to approximate various radial basis kernels, and show that in large-scale classification and regression tasks linear machine learning al- gorithms applied to these features outperform state-of-the-art large-scale kernel machines.},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/UAKIA8P6/Rahimi and Recht - 2007 - Random Features for Large-Scale Kernel Machines.pdf}
+  file = {/Users/fdamken/Zotero/storage/UAKIA8P6/Rahimi and Recht - 2007 - Random Features for Large-Scale Kernel Machines.pdf}
 }
 
 @book{rasmussenGaussianProcessesMachine2006,
@@ -313,7 +519,7 @@
   publisher = {{MIT Press}},
   isbn = {978-0-262-18253-9},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/QC6GCIVE/Rasmussen and Williams - 2006 - Gaussian Processes for Machine Learning.pdf}
+  file = {/Users/fdamken/Zotero/storage/QC6GCIVE/Rasmussen and Williams - 2006 - Gaussian Processes for Machine Learning.pdf}
 }
 
 @inproceedings{shankarNeuralKernelsTangents2020,
@@ -327,7 +533,18 @@
   issn = {2640-3498},
   abstract = {We investigate the connections between neural networks and simple building blocks in kernel space. In particular, using well established feature space tools such as direct sum, averaging, and momen...},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/5ZKI4NA3/Shankar et al. - 2020 - Neural Kernels Without Tangents.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/KV2YRMHL/shankar20a.html}
+  file = {/Users/fdamken/Zotero/storage/5ZKI4NA3/Shankar et al. - 2020 - Neural Kernels Without Tangents.pdf;/Users/fdamken/Zotero/storage/KV2YRMHL/shankar20a.html}
+}
+
+@inproceedings{snelsonSparseGaussianProcesses2005,
+  title = {Sparse {{Gaussian Processes}} Using {{Pseudo-inputs}}},
+  booktitle = {Advances in {{Neural Information Processing Systems}}},
+  author = {Snelson, Edward and Ghahramani, Zoubin},
+  year = {2005},
+  volume = {18},
+  publisher = {{MIT Press}},
+  abstract = {We present a new Gaussian process (GP) regression model whose covariance is parameterized by the the locations of M pseudo-input points, which we learn by a gradient based optimization. We take M N, where N is the number of real data points, and hence obtain a sparse regression method which has O(M 2 N ) training cost and O(M 2 ) prediction cost per test case. We also find hyperparameters of the covariance function in the same joint optimization. The method can be viewed as a Bayesian regression model with particular input dependent noise. The method turns out to be closely related to several other sparse GP approaches, and we discuss the relation in detail. We finally demonstrate its performance on some large data sets, and make a direct comparison to other sparse GP methods. We show that our method can match full GP performance with small M , i.e. very sparse solutions, and it significantly outperforms other approaches in this regime.},
+  file = {/Users/fdamken/Zotero/storage/RLWNN8DE/Snelson and Ghahramani - 2005 - Sparse Gaussian Processes using Pseudo-inputs.pdf}
 }
 
 @book{steinInterpolationSpatialData1999,
@@ -344,6 +561,22 @@
   keywords = {Mathematics / Probability \& Statistics / General,Mathematics / Probability \& Statistics / Stochastic Processes,Science / Earth Sciences / General,Science / Earth Sciences / Geography,Science / Earth Sciences / Geology,Technology \& Engineering / Mining}
 }
 
+@article{sunReviewNystromMethods2015,
+  title = {A Review of {{Nystr\"om}} Methods for Large-Scale Machine Learning},
+  author = {Sun, Shiliang and Zhao, Jing and Zhu, Jiang},
+  year = {2015},
+  month = nov,
+  journal = {Information Fusion},
+  volume = {26},
+  pages = {36--48},
+  issn = {1566-2535},
+  doi = {10.1016/j.inffus.2015.03.001},
+  abstract = {Generating a low-rank matrix approximation is very important in large-scale machine learning applications. The standard Nystr\"om method is one of the state-of-the-art techniques to generate such an approximation. It has got rapid developments since being applied to Gaussian process regression. Several enhanced Nystr\"om methods such as ensemble Nystr\"om, modified Nystr\"om and SS-Nystr\"om have been proposed. In addition, many sampling methods have been developed. In this paper, we review the Nystr\"om methods for large-scale machine learning. First, we introduce various Nystr\"om methods. Second, we review different sampling methods for the Nystr\"om methods and summarize them from the perspectives of both theoretical analysis and practical performance. Then, we list several typical machine learning applications that utilize the Nystr\"om methods. Finally, we make our conclusions after discussing some open machine learning problems related to Nystr\"om methods.},
+  langid = {english},
+  keywords = {Low-rank approximation,Machine learning,Nyström method,Sampling method},
+  file = {/Users/fdamken/Zotero/storage/A58W2BDT/S1566253515000317.html}
+}
+
 @article{tsanasAccurateQuantitativeEstimation2012,
   title = {Accurate Quantitative Estimation of Energy Performance of Residential Buildings Using Statistical Machine Learning Tools},
   author = {Tsanas, Athanasios and Xifara, Angeliki},
@@ -357,7 +590,7 @@
   abstract = {We develop a statistical machine learning framework to study the effect of eight input variables (relative compactness, surface area, wall area, roof area, overall height, orientation, glazing area, glazing area distribution) on two output variables, namely heating load (HL) and cooling load (CL), of residential buildings. We systematically investigate the association strength of each input variable with each of the output variables using a variety of classical and non-parametric statistical analysis tools, in order to identify the most strongly related input variables. Then, we compare a classical linear regression approach against a powerful state of the art nonlinear non-parametric method, random forests, to estimate HL and CL. Extensive simulations on 768 diverse residential buildings show that we can predict HL and CL with low mean absolute error deviations from the ground truth which is established using Ecotect (0.51 and 1.42, respectively). The results of this study support the feasibility of using machine learning tools to estimate building parameters as a convenient and accurate approach, as long as the requested query bears resemblance to the data actually used to train the mathematical model in the first place.},
   langid = {english},
   keywords = {Building energy evaluation,Cooling load,Heating load,Non-parametric statistics,Statistical machine learning},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/GY5WB7XX/S037877881200151X.html}
+  file = {/Users/fdamken/Zotero/storage/GY5WB7XX/S037877881200151X.html}
 }
 
 @article{tufekciPredictionFullLoad2014,
@@ -373,7 +606,7 @@
   abstract = {Predicting full load electrical power output of a base load power plant is important in order to maximize the profit from the available megawatt hours. This paper examines and compares some machine learning regression methods to develop a predictive model, which can predict hourly full load electrical power output of a combined cycle power plant. The base load operation of a power plant is influenced by four main parameters, which are used as input variables in the dataset, such as ambient temperature, atmospheric pressure, relative humidity, and exhaust steam pressure. These parameters affect electrical power output, which is considered as the target variable. The dataset, which consists of these input and target variables, was collected over a six-year period. First, based on these variables the best subset of the dataset is explored among all feature subsets in the experiments. Then, the most successful machine learning regression method is sought for predicting full load electrical power output. Thus, the best performance of the best subset, which contains a complete set of input variables, has been observed using the most successful method, which is Bagging algorithm with REPTree, with a mean absolute error of 2.818 and a Root Mean-Squared Error of 3.787.},
   langid = {english},
   keywords = {Combined cycle power plants,Machine learning methods,Prediction of electrical power output},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/MWRIQFT7/S0142061514000908.html}
+  file = {/Users/fdamken/Zotero/storage/MWRIQFT7/S0142061514000908.html}
 }
 
 @inproceedings{watsonLatentDerivativeBayesian2021,
@@ -387,7 +620,51 @@
   issn = {2640-3498},
   abstract = {Bayesian neural networks (BNN) are powerful parametric models for nonlinear regression with uncertainty quantification. However, the approximate inference techniques for weight space priors suffer from several drawbacks. The `Bayesian last layer' (BLL) is an alternative BNN approach that learns the feature space for an exact Bayesian linear model with explicit predictive distributions. However, its predictions outside of the data distribution (OOD) are typically overconfident, as the marginal likelihood objective results in a learned feature space that overfits to the data. We overcome this weakness by introducing a functional prior on the model's derivatives w.r.t. the inputs. Treating these Jacobians as latent variables, we incorporate the prior into the objective to influence the smoothness and diversity of the features, which enables greater predictive uncertainty. For the BLL, the Jacobians can be computed directly using forward mode automatic differentiation, and the distribution over Jacobians may be obtained in closed-form. We demonstrate this method enhances the BLL to Gaussian process-like performance on tasks where calibrated uncertainty is critical: OOD regression, Bayesian optimization and active learning, which include high-dimensional real-world datasets.},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/7PLNXH28/Watson et al. - 2021 - Latent Derivative Bayesian Last Layer Networks.pdf;/home/fdamken/snap/zotero-snap/common/Zotero/storage/ZSEQ4TPJ/Watson et al. - 2021 - Latent Derivative Bayesian Last Layer Networks.pdf}
+  file = {/Users/fdamken/Zotero/storage/7PLNXH28/Watson et al. - 2021 - Latent Derivative Bayesian Last Layer Networks.pdf;/Users/fdamken/Zotero/storage/ZSEQ4TPJ/Watson et al. - 2021 - Latent Derivative Bayesian Last Layer Networks.pdf}
+}
+
+@article{wenzelHowGoodBayes2020,
+  title = {How {{Good}} Is the {{Bayes Posterior}} in {{Deep Neural Networks Really}}?},
+  author = {Wenzel, Florian and Roth, Kevin and Veeling, Bastiaan S. and {\'S}wi{\k{a}}tkowski, Jakub and Tran, Linh and Mandt, Stephan and Snoek, Jasper and Salimans, Tim and Jenatton, Rodolphe and Nowozin, Sebastian},
+  year = {2020},
+  month = jul,
+  journal = {arXiv:2002.02405 [cs, stat]},
+  eprint = {2002.02405},
+  eprinttype = {arxiv},
+  primaryclass = {cs, stat},
+  abstract = {During the past five years the Bayesian deep learning community has developed increasingly accurate and efficient approximate inference procedures that allow for Bayesian inference in deep neural networks. However, despite this algorithmic progress and the promise of improved uncertainty quantification and sample efficiency there are---as of early 2020---no publicized deployments of Bayesian neural networks in industrial practice. In this work we cast doubt on the current understanding of Bayes posteriors in popular deep neural networks: we demonstrate through careful MCMC sampling that the posterior predictive induced by the Bayes posterior yields systematically worse predictions compared to simpler methods including point estimates obtained from SGD. Furthermore, we demonstrate that predictive performance is improved significantly through the use of a "cold posterior" that overcounts evidence. Such cold posteriors sharply deviate from the Bayesian paradigm but are commonly used as heuristic in Bayesian deep learning papers. We put forward several hypotheses that could explain cold posteriors and evaluate the hypotheses through experiments. Our work questions the goal of accurate posterior approximations in Bayesian deep learning: If the true Bayes posterior is poor, what is the use of more accurate approximations? Instead, we argue that it is timely to focus on understanding the origin of the improved performance of cold posteriors.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning,Statistics - Computation,Statistics - Machine Learning},
+  file = {/Users/fdamken/Zotero/storage/GMDRX62L/Wenzel et al. - 2020 - How Good is the Bayes Posterior in Deep Neural Net.pdf;/Users/fdamken/Zotero/storage/GMFQAIZX/2002.html}
+}
+
+@inproceedings{wilsonDeepKernelLearning2016,
+  title = {Deep {{Kernel Learning}}},
+  booktitle = {Proceedings of the 19th {{International Conference}} on {{Artificial Intelligence}} and {{Statistics}}},
+  author = {Wilson, Andrew Gordon and Hu, Zhiting and Salakhutdinov, Ruslan and Xing, Eric P.},
+  year = {2016},
+  month = may,
+  pages = {370--378},
+  publisher = {{PMLR}},
+  issn = {1938-7228},
+  abstract = {We introduce scalable deep kernels, which combine the structural properties of deep learning architectures with the non-parametric flexibility of kernel methods.  Specifically, we transform the inputs of a spectral mixture base kernel with a deep architecture, using local kernel interpolation, inducing points, and structure exploiting (Kronecker and Toeplitz) algebra for a scalable kernel representation.  These closed-form kernels can be used as drop-in replacements for standard kernels, with benefits in expressive power and scalability.  We jointly learn the properties of these kernels through the marginal likelihood of a Gaussian process.  Inference and learning cost O(n) for n training points, and predictions cost O(1) per test point.  On a large and diverse collection of applications, including a dataset with 2 million examples, we show improved performance over scalable Gaussian processes with flexible kernel learning models, and stand-alone deep architectures.},
+  langid = {english},
+  file = {/Users/fdamken/Zotero/storage/NDDSVJGM/Wilson et al. - 2016 - Deep Kernel Learning.pdf}
+}
+
+@article{yaoQualityUncertaintyQuantification2019,
+  title = {Quality of {{Uncertainty Quantification}} for {{Bayesian Neural Network Inference}}},
+  author = {Yao, Jiayu and Pan, Weiwei and Ghosh, Soumya and {Doshi-Velez}, Finale},
+  year = {2019},
+  month = jun,
+  journal = {arXiv:1906.09686 [cs, stat]},
+  eprint = {1906.09686},
+  eprinttype = {arxiv},
+  primaryclass = {cs, stat},
+  abstract = {Bayesian Neural Networks (BNNs) place priors over the parameters in a neural network. Inference in BNNs, however, is difficult; all inference methods for BNNs are approximate. In this work, we empirically compare the quality of predictive uncertainty estimates for 10 common inference methods on both regression and classification tasks. Our experiments demonstrate that commonly used metrics (e.g. test log-likelihood) can be misleading. Our experiments also indicate that inference innovations designed to capture structure in the posterior do not necessarily produce high quality posterior approximations.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/Users/fdamken/Zotero/storage/DYZG5L6H/Yao et al. - 2019 - Quality of Uncertainty Quantification for Bayesian.pdf;/Users/fdamken/Zotero/storage/77NL44IB/1906.html}
 }
 
 @article{yehModelingStrengthHighperformance1998,
@@ -403,7 +680,7 @@
   doi = {10.1016/S0008-8846(98)00165-3},
   abstract = {Several studies independently have shown that concrete strength development is determined not only by the water-to-cement ratio, but that it also is influenced by the content of other concrete ingredients. High-performance concrete is a highly complex material, which makes modeling its behavior a very difficult task. This paper is aimed at demonstrating the possibilities of adapting artificial neural networks (ANN) to predict the compressive strength of high-performance concrete. A set of trial batches of HPC was produced in the laboratory and demonstrated satisfactory experimental results. This study led to the following conclusions: 1) A strength model based on ANN is more accurate than a model based on regression analysis; and 2) It is convenient and easy to use ANN models for numerical experiments to review the effects of the proportions of each variable on the concrete mix.},
   langid = {english},
-  file = {/home/fdamken/snap/zotero-snap/common/Zotero/storage/YTC8VNSK/S0008884698001653.html}
+  file = {/Users/fdamken/Zotero/storage/YTC8VNSK/S0008884698001653.html}
 }
 
 

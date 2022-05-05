@@ -34,23 +34,24 @@
     \begin{abstract}
         \input{meta/abstract}
     \end{abstract}
+	\acresetall
 
     \section{Introduction}
     \input{content/introduction}
 
-    \section{Related Work}
+    \section{Related Work}  \label{sec:relatedWork}
     \input{content/related-work}
 
-    \section{Preliminaries}
+    \section{Preliminaries}  \label{sec:preliminaries}
     \input{content/preliminaries}
 
-    \section{Methods}
+    \section{Methods}  \label{sec:methods}
     \input{content/methods}
 
-    \section{Evaluation}
+    \section{Evaluation}  \label{sec:eval}
     \input{content/evaluation}
 
-    \section{Conclusion}
+    \section{Conclusion}  \label{sec:conclusion}
     \input{content/conclusion}
 
     \FloatBarrier
@@ -58,18 +59,21 @@
     \bibliography{IEEEabrv,literature}
     \FloatBarrier
 
-    \appendix
-    \subsection{Fourier Series of the Periodic ReLU}  \label{app:perelu}
-    \input{content/perelu}
 
-    \subsection{Result for the Remaining \acs{UCI} Data Sets}  \label{app:remainingResults}
-    The results for the remaining \ac{UCI} data sets not covered in \cref{tab:results} are given in \cref{tab:resultsUciRest}.
-    \begin{table*}
-    	\centering
-    	\tabResultsUciRest
-    	\caption{
-    		Refer to \cref{tab:results} for a description of the provided values.
-    	}
-    	\label{tab:resultsUciRest}
-    \end{table*}
+	\appendix
+
+	\subsection{Fourier Series of the Periodic \acs{ReLU}}  \label{app:perelu}
+	\input{content/perelu}
+
+	\subsection{Result for the Remaining \acs{UCI} Data Sets}  \label{app:remainingResults}
+	The results for the remaining \ac{UCI} data sets not covered in \cref{tab:results} are given in \cref{tab:resultsUciRest}.
+	\begin{table*}
+		\centering
+		\tabResultsUciRest
+		\caption{Refer to \cref{tab:results} for a description of the provided values.}
+		\label{tab:resultsUciRest}
+	\end{table*}
+
+	\subsection{Influence of the Half-Period}  \label{app:halfPeriodInfluence}
+	\input{content/half-period-influence}
 \end{document}

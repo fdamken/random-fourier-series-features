@@ -1,9 +1,3 @@
-%	- random Fourier features in a more formal way
-%	- highlight extension done by random Fourier _series_ features
-%	- maybe do a bit of theoretical elaboration
-%	- describe process of finding the hyper-parameters (empirical Bayes)
-%	- transition to empirical evaluation
-
 \subsection{Random Fourier Features}
 	By explicitly modeling the features, the inversion of the Gram matrix can be avoided by resorting to computing the distribution over the weights explicitly, i.e., "switching back" to Bayesian linear regression.
 	A well-known approach for this are \acp{RFF}\cite{rahimiRandomFeaturesLargeScale2007} which approximate the \ac{SE} kernel.
@@ -36,6 +30,7 @@
 				a_k \cos(\pi k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}} / \tilde{T}) \\
 				b_k \sin(\pi k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}} / \tilde{T})
 			\end{bmatrix}\!.
+		\label{eq:rfsf}
 	\end{equation}
 	which are then summed over $k = 1, 2, \dots, M$.
 	The matrix $\mat{\Lambda}$ represents the length-scales which can be either isotropic for a single length-scale but also different for the input dimensions, leading to \ac{ARD}.
@@ -43,10 +38,11 @@
 	Note that the half-period $\tilde{T}$ has the function of a "secondary" length-scale applied equally to all input dimensions.
 
 	To find the optimal hyper-parameters $\vec{a}_{0:M}$, $\vec{b}_{0:M}$, and $\mat{\Lambda}$, we use the empirical Bayes approximation\cite[p.\,165]{bishopPatternRecognitionMachine2006}, i.e., maximize the marginal log-likelihood over the training data.
-	As will be seen in the evaluation section, the result is highly dependent on the half-period $\tilde{T}$, hence it will be treated as an additional hyper-parameter.  \todo{did we see this in evaluation?}
+	As will be seen in the evaluation section, the result is highly dependent on the half-period $\tilde{T}$, hence it will be treated as an additional hyper-parameter (see \cref{app:halfPeriodInfluence}).
 	Beyond the kernel's parameters, the data is assumed to have Gaussian aleatoric noise with zero mean and variance $\sigma_n^2$ which is again an additional hyper-parameter.
 
-	% TODO: Transition to evaluation.
+	As said in the introduction, theoretical analysis is up to future work.
+	We will therefore directly move to empirical evaluation in the next section.
 % end
 
 

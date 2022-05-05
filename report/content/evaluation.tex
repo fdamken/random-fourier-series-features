@@ -1,7 +1,3 @@
-%	- present toy examples and what they are testing
-%		- these should be quite good
-%	- refer to UCI datasets as well-known evaluation platforms for regression
-
 In this section, we will empirically evaluate the proposed \acp{RFSF}.
 We aim to assess the following central hypothesis:
 \begin{hypothesis}
@@ -44,11 +40,14 @@ In the following, we will first present some implementation details (\cref{subse
 	For some data sets (\ac{UCI} Boston, concrete, power, and yacht), we also compare to popular approaches for \acp{BNN}:
 	\begin{itemize}
 		\item \emph{\ac{GBLL}:}
-			A \ac{BLL} \ac{NN} with Gaussian conjugate prior on the weight. With $\vec{\phi}_{\vec{\theta}}(\vec{x})$ being the parameterized features induced by the \ac{NN} and $\mat{\Lambda}_0$ being the covariance of the prior, this is equivalent to a \ac{GP} with kernel $k_{\vec{\theta}}(\vec{x}, \vec{y}) = \vec{\phi}_{\vec{\theta}}(\vec{x})^\transposed \mat{\Lambda}_0^{-1} \vec{\phi}_{\vec{\theta}}(\vec{y})$\cite{rasmussenGaussianProcessesMachine2006}.
+			A \ac{BLL} \ac{NN} with Gaussian conjugate prior on the weight.
+			With $\vec{\phi}_{\vec{\theta}}(\vec{x})$ being the parameterized features induced by the \ac{NN} and $\mat{\Lambda}_0$ being the covariance of the prior, this is equivalent to a \ac{GP} with kernel $k_{\vec{\theta}}(\vec{x}, \vec{y}) = \vec{\phi}_{\vec{\theta}}(\vec{x})^\transposed \mat{\Lambda}_0^{-1} \vec{\phi}_{\vec{\theta}}(\vec{y})$\cite{rasmussenGaussianProcessesMachine2006}.
 		\item \emph{Ensemble}\cite{lakshminarayananSimpleScalablePredictive2017}
-			\todo{describe}
+			An ensemble of \acp{NN} all of which provide mean and variance of the target.
+			Using some neat tricks during training, Ensemble provides predictions along with uncertainty quantification.
 		\item \emph{\ac{MAP}}
-			\todo{describe}
+			A regularized neural network.
+			\todo{extend this description...}
 	\end{itemize}
 	We include results for this models for a broader comparison, however, we did not implement them ourselves and took the results from\cite{watsonLatentDerivativeBayesian2021} (with permission).
 
@@ -128,51 +127,51 @@ In the following, we will first present some implementation details (\cref{subse
 		\centering
 %		\begin{subfigure}{0.49\linewidth}
 %			\centering
-%			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-cosine-rfsf.png}  % TODO: Replace PNG with TikZ
+%			\imageResultsGpCosineRfsf
 %			\caption{\acs{RFSF} Kernel on Cosine}
 %		\end{subfigure}
 %		\begin{subfigure}{0.49\linewidth}
 %			\centering
-%			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-cosine-rbf.png}  % TODO: Replace PNG with TikZ
+%			\imageResultsGpCosineRbf
 %			\caption{\acs{SE} Kernel on Cosine}
 %		\end{subfigure}
 %		\\[0.5cm]
 		\begin{subfigure}{0.49\linewidth}
 			\centering
-			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-heaviside-rfsf.png}  % TODO: Replace PNG with TikZ
+			\imageResultsGpHeavisideRfsf
 			\caption{\acs{RFSF} Kernel on Heaviside}
 		\end{subfigure}
 		~
 		\begin{subfigure}{0.49\linewidth}
 			\centering
-			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-heaviside-rbf.png}  % TODO: Replace PNG with TikZ
+			\imageResultsGpHeavisideRbf
 			\caption{\acs{SE} Kernel on Heaviside}
 			\label{fig:syntheticResultPlotSeHeaviside}
 		\end{subfigure}
 		\\[0.5cm]
 		\begin{subfigure}{0.49\linewidth}
 			\centering
-			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-heavicosine-rfsf.png}  % TODO: Replace PNG with TikZ
+			\imageResultsGpHeavicosineRfsf
 			\caption{\acs{RFSF} Kernel on Heavi-Cosine}
 		\end{subfigure}
 		~
 		\begin{subfigure}{0.49\linewidth}
 			\centering
-			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-heavicosine-rbf.png}  % TODO: Replace PNG with TikZ
+			\imageResultsGpHeavicosineRbf
 			\caption{\acs{SE} Kernel on Heavi-Cosine}
 			\label{fig:syntheticResultPlotSeHeaviCosine}
 		\end{subfigure}
 		\\[0.5cm]
 		\begin{subfigure}{0.49\linewidth}
 			\centering
-			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-gapcosine-rfsf.png}  % TODO: Replace PNG with TikZ
+			\imageResultsGpGapcosineRfsf
 			\caption{\acs{RFSF} Kernel on Gap-Cosine}
 			\label{fig:syntheticResultPlotRfsfGapCosine}
 		\end{subfigure}
 		~
 		\begin{subfigure}{0.49\linewidth}
 			\centering
-			\includegraphics[width=\linewidth, height=0.618033988749895\linewidth]{graphics/generated/gp-gapcosine-rbf.png}  % TODO: Replace PNG with TikZ
+			\imageResultsGpGapcosineRbf
 			\caption{\acs{SE} Kernel on Gap-Cosine}
 			\label{fig:syntheticResultPlotSeGapCosine}
 		\end{subfigure}
@@ -190,7 +189,7 @@ In the following, we will first present some implementation details (\cref{subse
 		\begin{subtable}{\linewidth}
 			\centering
 			\tabResultsSynthetic
-			\caption{Results for the synthetic data sets.}
+			\caption{Results for the synthetic and robotics data sets.}
 			\label{tab:resultsSynthetic}
 		\end{subtable}
 		\\[0.5cm]

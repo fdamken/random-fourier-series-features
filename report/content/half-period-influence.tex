@@ -1,0 +1,16 @@
+We noticed a major influence of the half-period during hyper-parameter optimization using Optuna\cite{akibaOptunaNextgenerationHyperparameter2019}.
+That is, the higher the (initial) value of \(\tilde{T}\), the higher the objective (see \cref{fig:optunaParallelCoordinates}).
+As a reaction we included the half-period into the set of (hyper-) parameter that are optimized using empirical Bayes, however, this phenomenon is still in place.
+This was also reflected in Optuna's importance rating of \num{0.86}.
+
+\begin{figure}
+	\centering
+	\resizebox{\linewidth}{!}{\input{graphics/optuna-study-parallel-coordinates.pgf}}
+	\caption{
+		Parallel coordinates plot of the hyper-parameter's values connecting specific Optuna\cite{akibaOptunaNextgenerationHyperparameter2019} trials.
+		It can be seen that the half-period value has a major influence on the object (leftmost axis).
+		Trial was run on the UCI\cite{duaUCIMachineLearning2017} Boston Housing data set with random \ac{RFSF} initialization.
+		Objective is the negative log-likelihood on the test data.
+	}
+	\label{fig:optunaParallelCoordinates}
+\end{figure}

@@ -1,0 +1,820 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{burlywood247176147}{RGB}{247,176,147}
+\definecolor{coral22911288}{RGB}{229,112,88}
+\definecolor{coral23211892}{RGB}{232,118,92}
+\definecolor{coral23312093}{RGB}{233,120,93}
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{darksalmon243148117}{RGB}{243,148,117}
+\definecolor{darksalmon244152122}{RGB}{244,152,122}
+\definecolor{firebrick180438}{RGB}{180,4,38}
+\definecolor{firebrick1831340}{RGB}{183,13,40}
+\definecolor{firebrick1862243}{RGB}{186,22,43}
+\definecolor{firebrick1872744}{RGB}{187,27,44}
+\definecolor{firebrick1893145}{RGB}{189,31,45}
+\definecolor{firebrick1903646}{RGB}{190,36,46}
+\definecolor{firebrick1934348}{RGB}{193,43,48}
+\definecolor{firebrick1954649}{RGB}{195,46,49}
+\definecolor{firebrick1975152}{RGB}{197,51,52}
+\definecolor{firebrick2005654}{RGB}{200,56,54}
+\definecolor{firebrick2025955}{RGB}{202,59,55}
+\definecolor{firebrick2036256}{RGB}{203,62,56}
+\definecolor{gainsboro202216239}{RGB}{202,216,239}
+\definecolor{gainsboro217220225}{RGB}{217,220,225}
+\definecolor{gainsboro234213201}{RGB}{234,213,201}
+\definecolor{indianred2056659}{RGB}{205,66,59}
+\definecolor{indianred2087161}{RGB}{208,71,61}
+\definecolor{indianred2219575}{RGB}{221,95,75}
+\definecolor{indianred22510381}{RGB}{225,103,81}
+\definecolor{indianred22610582}{RGB}{226,105,82}
+\definecolor{indianred22710784}{RGB}{227,107,84}
+\definecolor{indianred22811086}{RGB}{228,110,86}
+\definecolor{lightblue171200253}{RGB}{171,200,253}
+\definecolor{lightblue178204251}{RGB}{178,204,251}
+\definecolor{lightblue181205250}{RGB}{181,205,250}
+\definecolor{lightblue186208248}{RGB}{186,208,248}
+\definecolor{lightblue192212245}{RGB}{192,212,245}
+\definecolor{lightpink245193169}{RGB}{245,193,169}
+\definecolor{lightsalmon245156125}{RGB}{245,156,125}
+\definecolor{lightsalmon245159128}{RGB}{245,159,128}
+\definecolor{lightskyblue137172253}{RGB}{137,172,253}
+\definecolor{lightskyblue141176254}{RGB}{141,176,254}
+\definecolor{lightskyblue165195254}{RGB}{165,195,254}
+\definecolor{royalblue5976192}{RGB}{59,76,192}
+\definecolor{salmon23312295}{RGB}{233,122,95}
+\definecolor{salmon23512598}{RGB}{235,125,98}
+\definecolor{salmon236129101}{RGB}{236,129,101}
+\definecolor{salmon238134105}{RGB}{238,134,105}
+\definecolor{wheat235211198}{RGB}{235,211,198}
+\definecolor{wheat236211197}{RGB}{236,211,197}
+\definecolor{wheat237210195}{RGB}{237,210,195}
+\definecolor{wheat238208192}{RGB}{238,208,192}
+\definecolor{wheat242201180}{RGB}{242,201,180}
+\definecolor{wheat242203183}{RGB}{242,203,183}
+\definecolor{wheat243200178}{RGB}{243,200,178}
+\definecolor{wheat244197173}{RGB}{244,197,173}
+
+\begin{groupplot}[group style={group size=4 by 1}]
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=0, xmax=1,
+xtick style={color=black},
+xtick={0},
+xticklabels={Objective},
+y grid style={darkgray176},
+ymin=0, ymax=1,
+ytick style={color=black},
+ytick={0,0.245112393093542,0.490224786187083,0.735337179280625,0.980449572374166},
+yticklabels={-8.0,-6.7,-5.4,-4.1,-2.8}
+]
+\addplot [semithick, wheat236211197]
+table {%
+0 0.565096914768219
+1 0.737400591373444
+};
+\addplot [semithick, lightblue171200253]
+table {%
+0 0.339356452226639
+1 0.106063611805439
+};
+\addplot [semithick, lightblue192212245]
+table {%
+0 0.400009542703629
+1 0.262523382902145
+};
+\addplot [semithick, indianred22710784]
+table {%
+0 0.855172455310822
+1 0.963961601257324
+};
+\addplot [semithick, coral23211892]
+table {%
+0 0.830123126506805
+1 0.627265453338623
+};
+\addplot [semithick, salmon23312295]
+table {%
+0 0.821741342544556
+1 0.584062039852142
+};
+\addplot [semithick, indianred2219575]
+table {%
+0 0.876386106014252
+1 0.514935076236725
+};
+\addplot [semithick, wheat236211197]
+table {%
+0 0.563298225402832
+1 0.363630533218384
+};
+\addplot [semithick, firebrick1975152]
+table {%
+0 0.951888740062714
+1 0.841563522815704
+};
+\addplot [semithick, coral23312093]
+table {%
+0 0.824966549873352
+1 0.43316838145256
+};
+\addplot [semithick, salmon238134105]
+table {%
+0 0.793632924556732
+1 0.979008138179779
+};
+\addplot [semithick, indianred2087161]
+table {%
+0 0.919957518577576
+1 0.781864821910858
+};
+\addplot [semithick, indianred22510381]
+table {%
+0 0.860392212867737
+1 0.790432095527649
+};
+\addplot [semithick, indianred2056659]
+table {%
+0 0.927332639694214
+1 0.826217234134674
+};
+\addplot [semithick, firebrick2005654]
+table {%
+0 0.943230986595154
+1 0.901984989643097
+};
+\addplot [semithick, indianred2056659]
+table {%
+0 0.929164171218872
+1 0.90301102399826
+};
+\addplot [semithick, burlywood247176147]
+table {%
+0 0.688530027866364
+1 0.663014948368073
+};
+\addplot [semithick, indianred22610582]
+table {%
+0 0.855474054813385
+1 0.885308384895325
+};
+\addplot [semithick, salmon23512598]
+table {%
+0 0.812539994716644
+1 0.708317041397095
+};
+\addplot [semithick, indianred2056659]
+table {%
+0 0.929327309131622
+1 0.889736771583557
+};
+\addplot [semithick, darksalmon244152122]
+table {%
+0 0.751313745975494
+1 0.566824376583099
+};
+\addplot [semithick, firebrick1934348]
+table {%
+0 0.962993323802948
+1 0.996283888816833
+};
+\addplot [semithick, lightpink245193169]
+table {%
+0 0.63350248336792
+1 0.999149858951569
+};
+\addplot [semithick, firebrick1934348]
+table {%
+0 0.962249636650085
+1 0.862271428108215
+};
+\addplot [semithick, firebrick1954649]
+table {%
+0 0.957321047782898
+1 0.844971656799316
+};
+\addplot [semithick, wheat242201180]
+table {%
+0 0.608637869358063
+1 0.714545130729675
+};
+\addplot [semithick, firebrick1975152]
+table {%
+0 0.951002359390259
+1 0.938274502754211
+};
+\addplot [semithick, firebrick1903646]
+table {%
+0 0.968795359134674
+1 0.821275234222412
+};
+\addplot [semithick, lightskyblue141176254]
+table {%
+0 0.25315049290657
+1 0.0929224416613579
+};
+\addplot [semithick, wheat237210195]
+table {%
+0 0.569525122642517
+1 0.755443751811981
+};
+\addplot [semithick, wheat238208192]
+table {%
+0 0.574762046337128
+1 0.686899244785309
+};
+\addplot [semithick, wheat242203183]
+table {%
+0 0.598656535148621
+1 0.872321009635925
+};
+\addplot [semithick, wheat243200178]
+table {%
+0 0.610628128051758
+1 0.792446732521057
+};
+\addplot [semithick, lightblue181205250]
+table {%
+0 0.365735501050949
+1 0.191197469830513
+};
+\addplot [semithick, wheat243200178]
+table {%
+0 0.609455704689026
+1 0.999589443206787
+};
+\addplot [semithick, royalblue5976192]
+table {%
+0 0.00363553036004305
+1 0.0109632331877947
+};
+\addplot [semithick, gainsboro234213201]
+table {%
+0 0.553412735462189
+1 0.829423248767853
+};
+\addplot [semithick, wheat242201180]
+table {%
+0 0.606692671775818
+1 0.943498909473419
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.998111188411713
+1 0.642402529716492
+};
+\addplot [semithick, firebrick2036256]
+table {%
+0 0.935692310333252
+1 0.614681780338287
+};
+\addplot [semithick, salmon23512598]
+table {%
+0 0.8150674700737
+1 0.431643068790436
+};
+\addplot [semithick, firebrick1893145]
+table {%
+0 0.975144863128662
+1 0.742287516593933
+};
+\addplot [semithick, lightskyblue165195254]
+table {%
+0 0.318417996168137
+1 0.744310796260834
+};
+\addplot [semithick, firebrick2025955]
+table {%
+0 0.93942528963089
+1 0.636900365352631
+};
+\addplot [semithick, gainsboro202216239]
+table {%
+0 0.431981414556503
+1 0.52142071723938
+};
+\addplot [semithick, darksalmon243148117]
+table {%
+0 0.762752950191498
+1 0.938750565052032
+};
+\addplot [semithick, indianred22811086]
+table {%
+0 0.847416520118713
+1 0.574317574501038
+};
+\addplot [semithick, firebrick1831340]
+table {%
+0 0.990151822566986
+1 0.775770366191864
+};
+\addplot [semithick, lightblue186208248]
+table {%
+0 0.379515618085861
+1 0.668534159660339
+};
+\addplot [semithick, firebrick1862243]
+table {%
+0 0.983753323554993
+1 0.75912481546402
+};
+\addplot [semithick, indianred22610582]
+table {%
+0 0.857923805713654
+1 0.777193605899811
+};
+\addplot [semithick, lightsalmon245159128]
+table {%
+0 0.737680375576019
+1 0.728326559066772
+};
+\addplot [semithick, firebrick1862243]
+table {%
+0 0.983065485954285
+1 0.797821760177612
+};
+\addplot [semithick, gainsboro217220225]
+table {%
+0 0.487430036067963
+1 0.634264647960663
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.996800243854523
+1 0.806173980236053
+};
+\addplot [semithick, lightblue178204251]
+table {%
+0 0.3566053211689
+1 0.693825542926788
+};
+\addplot [semithick, firebrick1831340]
+table {%
+0 0.988414347171783
+1 0.764120876789093
+};
+\addplot [semithick, firebrick1872744]
+table {%
+0 0.976770639419556
+1 0.778097033500671
+};
+\addplot [semithick, wheat235211198]
+table {%
+0 0.559780955314636
+1 0.807287752628326
+};
+\addplot [semithick, coral22911288]
+table {%
+0 0.842324078083038
+1 0.474424928426743
+};
+\addplot [semithick, lightsalmon245156125]
+table {%
+0 0.745079398155212
+1 0.611627340316772
+};
+\addplot [semithick, firebrick1831340]
+table {%
+0 0.989481627941132
+1 0.782686293125153
+};
+\addplot [semithick, lightskyblue137172253]
+table {%
+0 0.241723567247391
+1 0.759205996990204
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.999539434909821
+1 0.713853120803833
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 1
+1 0.65308403968811
+};
+\addplot [semithick, lightblue181205250]
+table {%
+0 0.363983571529388
+1 0.680054366588593
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.998510599136353
+1 0.644068479537964
+};
+\addplot [semithick, salmon236129101]
+table {%
+0 0.807156026363373
+1 0.653960347175598
+};
+\addplot [semithick, wheat244197173]
+table {%
+0 0.624779045581818
+1 0.595662832260132
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.996288239955902
+1 0.701666593551636
+};
+
+\nextgroupplot[
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=0, xmax=1,
+xtick style={color=black},
+xtick={0},
+xticklabels={Half-Period},
+y grid style={darkgray176},
+ymin=0, ymax=1,
+ytick style={color=black},
+ytick={0,0.25,0.5,0.75,1},
+yticklabels={0.0,2.5,5.0,7.5,10.0}
+]
+\addplot [semithick, wheat236211197]
+table {%
+0 0.737400591373444
+1 0.451612889766693
+};
+\addplot [semithick, lightblue171200253]
+table {%
+0 0.106063611805439
+1 0.387096762657166
+};
+\addplot [semithick, lightblue192212245]
+table {%
+0 0.262523382902145
+1 1
+};
+\addplot [semithick, indianred22710784]
+table {%
+0 0.963961601257324
+1 0.774193525314331
+};
+\addplot [semithick, coral23211892]
+table {%
+0 0.627265453338623
+1 0.290322571992874
+};
+\addplot [semithick, salmon23312295]
+table {%
+0 0.584062039852142
+1 0.838709652423859
+};
+\addplot [semithick, indianred2219575]
+table {%
+0 0.514935076236725
+1 0.0645161271095276
+};
+\addplot [semithick, wheat236211197]
+table {%
+0 0.363630533218384
+1 0.74193549156189
+};
+\addplot [semithick, firebrick1975152]
+table {%
+0 0.841563522815704
+1 0.838709652423859
+};
+\addplot [semithick, coral23312093]
+table {%
+0 0.43316838145256
+1 0.0967741906642914
+};
+\addplot [semithick, salmon238134105]
+table {%
+0 0.979008138179779
+1 0.645161271095276
+};
+\addplot [semithick, indianred2087161]
+table {%
+0 0.781864821910858
+1 0
+};
+\addplot [semithick, indianred22510381]
+table {%
+0 0.790432095527649
+1 0.25806450843811
+};
+\addplot [semithick, indianred2056659]
+table {%
+0 0.826217234134674
+1 0.580645143985748
+};
+\addplot [semithick, firebrick2005654]
+table {%
+0 0.901984989643097
+1 0.580645143985748
+};
+\addplot [semithick, indianred2056659]
+table {%
+0 0.90301102399826
+1 1
+};
+\addplot [semithick, burlywood247176147]
+table {%
+0 0.663014948368073
+1 0.870967745780945
+};
+\addplot [semithick, indianred22610582]
+table {%
+0 0.885308384895325
+1 0.612903237342834
+};
+\addplot [semithick, salmon23512598]
+table {%
+0 0.708317041397095
+1 0.516129016876221
+};
+\addplot [semithick, indianred2056659]
+table {%
+0 0.889736771583557
+1 0.709677398204803
+};
+\addplot [semithick, darksalmon244152122]
+table {%
+0 0.566824376583099
+1 0.903225779533386
+};
+\addplot [semithick, firebrick1934348]
+table {%
+0 0.996283888816833
+1 0.709677398204803
+};
+\addplot [semithick, lightpink245193169]
+table {%
+0 0.999149858951569
+1 0.677419364452362
+};
+\addplot [semithick, firebrick1934348]
+table {%
+0 0.862271428108215
+1 0.516129016876221
+};
+\addplot [semithick, firebrick1954649]
+table {%
+0 0.844971656799316
+1 0.483870953321457
+};
+\addplot [semithick, wheat242201180]
+table {%
+0 0.714545130729675
+1 0.387096762657166
+};
+\addplot [semithick, firebrick1975152]
+table {%
+0 0.938274502754211
+1 0.516129016876221
+};
+\addplot [semithick, firebrick1903646]
+table {%
+0 0.821275234222412
+1 0.290322571992874
+};
+\addplot [semithick, lightskyblue141176254]
+table {%
+0 0.0929224416613579
+1 0.225806444883347
+};
+\addplot [semithick, wheat237210195]
+table {%
+0 0.755443751811981
+1 0.387096762657166
+};
+\addplot [semithick, wheat238208192]
+table {%
+0 0.686899244785309
+1 0.193548381328583
+};
+\addplot [semithick, wheat242203183]
+table {%
+0 0.872321009635925
+1 0.451612889766693
+};
+\addplot [semithick, wheat243200178]
+table {%
+0 0.792446732521057
+1 0.322580635547638
+};
+\addplot [semithick, lightblue181205250]
+table {%
+0 0.191197469830513
+1 0.451612889766693
+};
+\addplot [semithick, wheat243200178]
+table {%
+0 0.999589443206787
+1 0.354838699102402
+};
+\addplot [semithick, royalblue5976192]
+table {%
+0 0.0109632331877947
+1 0.548387110233307
+};
+\addplot [semithick, gainsboro234213201]
+table {%
+0 0.829423248767853
+1 0.451612889766693
+};
+\addplot [semithick, wheat242201180]
+table {%
+0 0.943498909473419
+1 0.645161271095276
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.642402529716492
+1 0.161290317773819
+};
+\addplot [semithick, firebrick2036256]
+table {%
+0 0.614681780338287
+1 0.161290317773819
+};
+\addplot [semithick, salmon23512598]
+table {%
+0 0.431643068790436
+1 0.161290317773819
+};
+\addplot [semithick, firebrick1893145]
+table {%
+0 0.742287516593933
+1 0.290322571992874
+};
+\addplot [semithick, lightskyblue165195254]
+table {%
+0 0.744310796260834
+1 0.0645161271095276
+};
+\addplot [semithick, firebrick2025955]
+table {%
+0 0.636900365352631
+1 0.290322571992874
+};
+\addplot [semithick, gainsboro202216239]
+table {%
+0 0.52142071723938
+1 0.0967741906642914
+};
+\addplot [semithick, darksalmon243148117]
+table {%
+0 0.938750565052032
+1 0.806451618671417
+};
+\addplot [semithick, indianred22811086]
+table {%
+0 0.574317574501038
+1 0.290322571992874
+};
+\addplot [semithick, firebrick1831340]
+table {%
+0 0.775770366191864
+1 0.225806444883347
+};
+\addplot [semithick, lightblue186208248]
+table {%
+0 0.668534159660339
+1 0.129032254219055
+};
+\addplot [semithick, firebrick1862243]
+table {%
+0 0.75912481546402
+1 0.225806444883347
+};
+\addplot [semithick, indianred22610582]
+table {%
+0 0.777193605899811
+1 0
+};
+\addplot [semithick, lightsalmon245159128]
+table {%
+0 0.728326559066772
+1 0.225806444883347
+};
+\addplot [semithick, firebrick1862243]
+table {%
+0 0.797821760177612
+1 0.225806444883347
+};
+\addplot [semithick, gainsboro217220225]
+table {%
+0 0.634264647960663
+1 0.25806450843811
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.806173980236053
+1 0.193548381328583
+};
+\addplot [semithick, lightblue178204251]
+table {%
+0 0.693825542926788
+1 0.0645161271095276
+};
+\addplot [semithick, firebrick1831340]
+table {%
+0 0.764120876789093
+1 0.193548381328583
+};
+\addplot [semithick, firebrick1872744]
+table {%
+0 0.778097033500671
+1 0.193548381328583
+};
+\addplot [semithick, wheat235211198]
+table {%
+0 0.807287752628326
+1 0.129032254219055
+};
+\addplot [semithick, coral22911288]
+table {%
+0 0.474424928426743
+1 0.225806444883347
+};
+\addplot [semithick, lightsalmon245156125]
+table {%
+0 0.611627340316772
+1 0.354838699102402
+};
+\addplot [semithick, firebrick1831340]
+table {%
+0 0.782686293125153
+1 0.193548381328583
+};
+\addplot [semithick, lightskyblue137172253]
+table {%
+0 0.759205996990204
+1 0.0322580635547638
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.713853120803833
+1 0.161290317773819
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.65308403968811
+1 0.161290317773819
+};
+\addplot [semithick, lightblue181205250]
+table {%
+0 0.680054366588593
+1 0.129032254219055
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.644068479537964
+1 0.161290317773819
+};
+\addplot [semithick, salmon236129101]
+table {%
+0 0.653960347175598
+1 0.0967741906642914
+};
+\addplot [semithick, wheat244197173]
+table {%
+0 0.595662832260132
+1 0.0322580635547638
+};
+\addplot [semithick, firebrick180438]
+table {%
+0 0.701666593551636
+1 0.161290317773819
+};
+
+\nextgroupplot[
+tick align=outside,
+x grid style={darkgray176},
+xmin=0, xmax=1,
+xtick pos=left,
+xtick style={color=black},
+xtick={0},
+xticklabels={Number of Harmonics},
+y grid style={darkgray176},
+ymin=0, ymax=1,
+ytick pos=right,
+ytick style={color=black},
+ytick={0,0.225806451612903,0.483870967741935,0.741935483870968,1},
+yticklabel style={anchor=west},
+yticklabels={1,8,16,24,32}
+]
+
+\nextgroupplot[
+hide x axis,
+hide y axis,
+tick align=outside,
+tick pos=left,
+x grid style={darkgray176},
+xmin=0, xmax=1,
+xtick style={color=black},
+y grid style={darkgray176},
+ymin=0, ymax=1,
+ytick style={color=black}
+]
+\end{groupplot}
+
+\end{tikzpicture}

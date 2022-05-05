@@ -28,14 +28,14 @@
 % end
 
 \subsection{Gaussian Process Regression}
-	In supervised learning, we are concerned with modeling a function $f : \mathcal{X} \to \mathcal{Y}$ from input data $\mathcal{X}$ to labels $\mathcal{Y}$ using an (approximate) model $\hat{f} : \mathcal{X} \to \mathcal{Y}$.
-	The model is trained on a labeled dataset $\mathcal{D} = \{ (\vec{x}_i, y_i) \}_{i = 1, \dots, N} \subseteq \mathcal{X} \times \mathcal{Y}$.
-	For regression, the target labels $\mathcal{Y}$ are continuous: $\mathcal{Y} \subseteq \R$.
-	Various methods exist for tackling this problem, e.g., linear regression, \acp{SVM}, and \acp{NN}.
-	Bayesian methods take this idea one step further and not only model the mapping from inputs to targets but also quantify their epistemic uncertainty.
-	This idea can be incorporated into linear regression, for example, by placing a prior on the feature weights and computing the posterior of new data given the training data.
-	Gauging the (epistemic) uncertainty is helpful in various domains such as robust \ac{MPC}.
-	Incorporating uncertainty allows the controller to vary its trust in the underlying model, avoiding unknown and potentially unsafe terrain.
+%	In supervised learning, we are concerned with modeling a function $f : \mathcal{X} \to \mathcal{Y}$ from input data $\mathcal{X}$ to labels $\mathcal{Y}$ using an (approximate) model $\hat{f} : \mathcal{X} \to \mathcal{Y}$.
+%	The model is trained on a labeled dataset $\mathcal{D} = \{ (\vec{x}_i, y_i) \}_{i = 1, \dots, N} \subseteq \mathcal{X} \times \mathcal{Y}$.
+%	For regression, the target labels $\mathcal{Y}$ are continuous: $\mathcal{Y} \subseteq \R$.
+%	Various methods exist for tackling this problem, e.g., linear regression, \acp{SVM}, and \acp{NN}.
+%	Bayesian methods take this idea one step further and not only model the mapping from inputs to targets but also quantify their epistemic uncertainty.
+%	This idea can be incorporated into linear regression, for example, by placing a prior on the feature weights and computing the posterior of new data given the training data.
+%	Gauging the (epistemic) uncertainty is helpful in various domains such as robust \ac{MPC}.
+%	Incorporating uncertainty allows the controller to vary its trust in the underlying model, avoiding unknown and potentially unsafe terrain.
 
 	\ac{GP} regression can be viewed in two fashions:
 	firstly, as an extension of linear regression to an infinite number of features.

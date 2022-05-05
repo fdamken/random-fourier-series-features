@@ -1,19 +1,44 @@
-%	- Gaussian process framework (follow Rasmussen in notation)
-%	- complexity of posterior prediction with much data --> motivate sparse Gaussian processes
-%	- random Fourier features as sparse squared exponentials
-%	- limitations of the squared exponential --> motivate random Fourier _series_ features
-%	- comments
-%	    - neural linear models and kernel learning don't really work
-%   - connections to kernel learning and Bayesian networks
-
-Performing inference with a \ac{GP} usually involves computing the inverse of the Gram (or \emph{covariance}) matrix $\mat{K}$.
-That is, the evaluation of the kernel $k(\vec{x}, \vec{y})$ for all combinations of training data points.
-Hence, exact inference is cubic in the number of data points $N$, prohibiting online use for large data sets\cite{rahimiRandomFeaturesLargeScale2007}.
-
+(Deep) \acp{NN} are extremely powerful and expressive machine learning models dominating the current landscape of artificial intelligence\cite{krizhevskyImageNetClassificationDeep2012}.
+While they have great predictive power, \acp{NN} usually lack uncertainty estimation and a Bayesian treatment.
+In Bayesian machine learning, we not only seek models that predict some value, but that also gauge their uncertainty about the prediction.
+While frequentistic models are capable of estimating aleatoric (i.e., noise-induced) uncertainty, Bayesian models include epistemic uncertainty that quantifies the model's trust "in itself."
+Quantification of the uncertainty is useful in a variety of domains such as \ac{MPC}\cite{hewingLearningBasedModelPredictive2020,bradfordStochasticDatadrivenModel2020}.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\linewidth]{graphics/hypercube.tikz}
-	\caption{Caption}
+	\caption{
+		Connections between various (Bayesian) regression models.
+		The three axis distinct them between using kernels vs. features (blue), relying on manually designing vs. learning (yellow), and stationary vs. non-stationary behavior (green).
+		\acsp{RFSF} (our method) are not clearly stationary or non-stationary and theoretical analysis is up to future research.
+	}
 	\label{fig:hypercube}
 \end{figure}
+
+A proposed class of extensions for \acp{NN} are \acp{BNN}\cite{mackayPracticalBayesianFramework1992,nealBayesianLearningNeural2012} combining the expressiveness of \acp{NN} with uncertainty quantification.
+However, exact inference is intractable, so these methods have to resort to approximate inference approaches\cite{nealBayesianLearningNeural2012,hernandez-lobatoProbabilisticBackpropagationScalable2015,denkerTransformingNeuralNetOutput1990,galDropoutBayesianApproximation2016,lakshminarayananSimpleScalablePredictive2017,blundellWeightUncertaintyNeural2015}.
+Also, \acp{BNN} suffer from various drawbacks such as expensive and complicated training, inaccurate posteriors, and unreliable uncertainty quantification\cite{foongExpressivenessApproximateInference2020,foongInBetweenUncertaintyBayesian2019,osbandRandomizedPriorFunctions2018,ovadiaCanYouTrust2019,wenzelHowGoodBayes2020,yaoQualityUncertaintyQuantification2019}.
+Hence, they are not suitable for application in high-stakes domains such as medical diagnosis where accurate uncertainty quantification is necessary\cite{watsonLatentDerivativeBayesian2021}.
+
+A well-known alternative approach for Bayesian machine learning are \acp{GP}.
+\aclp{GP} allow exact inference leveraging linear regression.
+Using a kernel for lifting the inputs into a high- and possible infinite-dimensional feature space allows for great flexibility.
+Despite the great uncertainty estimation of \acp{GP}, their raw prediction power is limited and highly dependent on the kernel.
+This dependence is reflected in the amount of kernels that have been studied throughout the years\cite[ch.\,2]{duvenaudAutomaticModelConstruction2014}.
+Motivated by this limitation, methods for (deep) kernel learning (\acsu{DKL}) have been developed\cite{wilsonDeepKernelLearning2016,calandraManifoldGaussianProcesses2016,jacotNeuralTangentKernel2020}.
+However, exact inference with kernels is a tedious task requiring inversion of an \(N \times N\)-matrix (the Gram matrix) where \(N\) is the number of data points.
+The computational complexity of this is cubic, prohibiting online use of \acp{GP} for large data sets\cite{rahimiRandomFeaturesLargeScale2007}.
+Approaches for reducing the computational complexity have been proposed such as inducing points\cite{snelsonSparseGaussianProcesses2005} or the Nyström method\cite{nystromUberPraktischeAuflosung1930,sunReviewNystromMethods2015}.
+
+Alternatively, one can resort to Bayesian linear regression with features.
+To mimic \ac{GP} regression, these features are chosen to approximate a kernel, e.g., the \ac{SE} kernel.
+A well-known choice are \acp{RFF} that can approximate arbitrary kernels and are usually configured for the \ac{SE} kernel as this is possible in closed form\cite{rahimiRandomFeaturesLargeScale2007}.
+However, the \ac{SE} kernel usually produces results that are too smooth\cite{steinInterpolationSpatialData1999} and is, by design, not able to capture functions with non-stationary length-scale.
+
+\emph{Contribution:} We propose an extension of \acp{RFF}, \acp{RFSF}, that build a bridge between \acp{RFF}, \ac{DKL}, \acp{BNN}, and  by reducing the computational complexity of \ac{GP} regression due to working with features, enrich the capacity of \acp{GP} by adding more parameters and reducing the need of (manually) designed kernels, and using classical training methods known from \acp{NN} for optimizing the hyper-parameters.
+\Cref{fig:hypercube} illustrates these connections on three axis: kernels vs. features, designing vs. learning, and stationary vs. non-stationary length-scales.
+As theoretical analysis of \acp{RFSF} are up to future work, it is open whether they belong to the stationary or non-stationary category.
+Nonetheless, out empirical results suggest that they are non-stationary.
+
+We will now highlight connections to related work (\cref{sec:relatedWork}).
+Subsequently, we will lay out some preliminaries (\cref{sec:preliminaries}), present the methodology of \acp{RFSF} in \cref{sec:methods}, and finally empirically evaluate and summarize our findings as well as provide direction for future research (\cref{sec:eval,sec:conclusion}).

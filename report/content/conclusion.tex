@@ -1,1 +1,23 @@
-\lipsum{1}
+From the evaluation in \cref{sec:eval}, we conclude that there is no advantage of extending \acp{RFF} to \acp{RFSF} compared on a variety of data sets.
+In the following subsections we explore our experimental hypothesis in greater detail and lay out how we came to this conclusion.
+Finally, in \cref{subsec:future}, we propose some directions for future research and highlight some peculiarities we found.
+
+\subsection{Hypothesis 1}
+	\Cref{hyp:rfsfAreBetter} was that "\acp{RFSF} outperform \acp{RFF} (due to their increased parameter capacity)."
+	We tested this hypothesis by comparing \acp{RFSF} to \acp{RFF} and a \ac{SE} kernel on a variety of data sets and train/test splits.
+	As we saw in \cref{subsec:results}, \acp{RFSF} are competitive on some data sets, but their advantage is not consistent and they fall short in lots of cases compared to \acp{RFF}.
+	Hence, we conclude that even though \acp{RFSF} have a greater capacity than \acp{RFF}, they hardly gain any performance from the added complexity.
+	We want to highlight that this is also true w.r.t. to the \ac{SH} initialization, i.e., initializing \acp{RFSF} such that they mimic \acp{RFF} in the initial phase.
+% end
+
+\subsection{Hypothesis 2}
+	In the second \cref{hyp:initialValues} we asked how "different initial values of the features' amplitudes affect the performance."
+	We investigated this by testing three different initializations: random, \ac{ReLU}, and \ac{SH}.
+	The results presented in \cref{subsec:results} show that we did not saw a trend in these initializations.
+% end
+
+\subsection{Future Work}  \label{subsec:future}
+	We investigated various reasons why \acp{RFSF} perform worse than \acp{RFF}.
+	For future work and to tackle this question, theoretical analysis of what kernel is approximated by \cref{eq:rfsf} can be insightful.
+	Additionally, a better understanding of the effect of the initial half-period value on the performance is desired (we put some foreshadowing for future research on this in \cref{app:halfPeriodInfluence}).
+% end
