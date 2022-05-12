@@ -1,12 +1,12 @@
 In this section, we will empirically evaluate the proposed \acp{RFSF}.
-We aim to assess the following central hypothesis:
+We aim to assess the following central hypotheses:
 \begin{hypothesis}
 	"Do \acp{RFSF} outperform \acp{RFF} (due to their increased parameter capacity)?"
 	\label{hyp:rfsfAreBetter}
 \end{hypothesis}
 Additionally, we try to answer:
 \begin{hypothesis}
-	How do different initial values of the features' amplitudes affect the performance?
+	How do different initial values of the feature's amplitudes affect the performance?
 	\label{hyp:initialValues}
 \end{hypothesis}
 In the following, we will first present some implementation details (\cref{subsec:impl}) and subsequently present the experiment setup (\cref{subsec:setup}) and results (\cref{subsec:results}).
@@ -15,8 +15,8 @@ In the following, we will first present some implementation details (\cref{subse
 \subsection{Implementation}  \label{subsec:impl}
 	We implemented \acp{RFSF} using GPyTorch\cite{jacotNeuralTangentKernel2020} and used Adam\cite{kingmaAdamMethodStochastic2017a} for maximizing the marginal log-likelihood.
 	Despite the computational advantage of not having to compute (and, most importantly, invert) the Gram matrix, we implemented \acp{RFSF} directly as a GPyTorch kernel.
-	This allowed a unified view and evaluation when comparing to well-known kernels like the \ac{SE} kernel.
-	Also, it allowed to just modifying the existing code for \acp{RFF}, reducing the risk of implementation errors.
+	This allows a unified view and evaluation when comparing to well-known kernels like the \ac{SE} kernel.
+	Also, it allowed to just modifying the existing implementation of \acp{RFF}, reducing the risk of mistakes.
 	We published our implementation on \href{https://github.com/fdamken/random-fourier-series-features}{GitHub}\footnote{\url{https://github.com/fdamken/random-fourier-series-features}}.
 % end
 
@@ -36,18 +36,17 @@ In the following, we will first present some implementation details (\cref{subse
 	Initializing the amplitudes as (periodic) \acp{ReLU} sets the connection to kernel learning and \acp{BNN} with the \ac{ReLU} being one of the most common activation functions.
 	Starting with a single harmonic similar to \acp{RFF} connects \acp{RFSF} closer to the idea behind \acp{RFF} and serves as an assessment of our hypothesis that \acp{RFSF} should have higher capacity than \acp{RFF} (i.e., if the marginal log-likelihood would not get better by touching the other amplitudes, they shall not change).
 
-	We compare our method to the \ac{SE} and \ac{RFF} kernel.
-	For some data sets (\ac{UCI} Boston, concrete, power, and yacht), we also compare to popular approaches for \acp{BNN}:
+	We compare our method to the \ac{SE} and \ac{RFF} kernels.
+	For some data sets (\ac{UCI} Boston, Concrete, Power, and Yacht), we also compare to popular approaches for \acp{BNN}:
 	\begin{itemize}
-		\item \emph{\ac{GBLL}:}
+		\item \emph{Gaussian Bayesian Last Layer (\acsu{GBLL})\cite{rasmussenGaussianProcessesMachine2006}:}
 			A \ac{BLL} \ac{NN} with Gaussian conjugate prior on the weight.
-			With $\vec{\phi}_{\vec{\theta}}(\vec{x})$ being the parameterized features induced by the \ac{NN} and $\mat{\Lambda}_0$ being the covariance of the prior, this is equivalent to a \ac{GP} with kernel $k_{\vec{\theta}}(\vec{x}, \vec{y}) = \vec{\phi}_{\vec{\theta}}(\vec{x})^\transposed \mat{\Lambda}_0^{-1} \vec{\phi}_{\vec{\theta}}(\vec{y})$\cite{rasmussenGaussianProcessesMachine2006}.
-		\item \emph{Ensemble}\cite{lakshminarayananSimpleScalablePredictive2017}
+%			With $\vec{\phi}_{\vec{\theta}}(\vec{x})$ being the parameterized features induced by the \ac{NN} and $\mat{\Lambda}_0$ being the covariance of the prior, this is equivalent to a \ac{GP} with kernel $k_{\vec{\theta}}(\vec{x}, \vec{y}) = \vec{\phi}_{\vec{\theta}}(\vec{x})^\transposed \mat{\Lambda}_0^{-1} \vec{\phi}_{\vec{\theta}}(\vec{y})$.
+		\item \emph{Ensemble\cite{lakshminarayananSimpleScalablePredictive2017}:}
 			An ensemble of \acp{NN} all of which provide mean and variance of the target.
 			Using some neat tricks during training, Ensemble provides predictions along with uncertainty quantification.
-		\item \emph{\ac{MAP}}
-			A regularized neural network.
-			\todo{extend this description...}
+		\item \emph{Maximum A-Posteriori (\acsu{MAP}):}
+			Regularized neural network trained to output mean and covariance of the target.
 	\end{itemize}
 	We include results for this models for a broader comparison, however, we did not implement them ourselves and took the results from\cite{watsonLatentDerivativeBayesian2021} (with permission).
 
@@ -90,21 +89,23 @@ In the following, we will first present some implementation details (\cref{subse
 % end
 
 \subsection{Results}  \label{subsec:results}
-	We first compare visually the quality of \acp{RFSF} to the \ac{SE} kernel on the synthetic data.
-	As this data is one-dimensional, it is straightforward to plot it.
+	We first compare visually the quality of \acp{RFSF} to the \ac{SE} kernel (and \acp{RFF}) on the synthetic data.
+	As this data is one-dimensional, it is straightforward to visualize.
 	\Cref{fig:syntheticResultPlot} (on \cpageref{fig:syntheticResultPlot}) shows the results of the aforementioned kernels on the synthetic data.
+	It can be seen that the \acp{RFF} are hardly distinguishable from \ac{SE} (which makes sense as \acp{RFF} can be proven to approximate the \ac{SE} kernel).
+	Therefore, we only discuss differences between \acp{RFSF} and the \ac{SE} kernel which can be transferred to comparing \acp{RFSF} to \acp{RFF}.
 	For every data set except the Gap-Cosine, both \acp{RFSF} and the \ac{SE} kernel approximate the true function reasonably, although \ac{SE} fails to capture discontinuities (Heaviside and Heavi-Cosine) and makes them extremely smooth.
 	However, both kernels exhibit a small length-scale not appropriate for the functions.
 	This is visible in the roughness of the \ac{GP} samples and is especially prevailing for the \ac{SE} on the Heaviside and Heavi-Cosine data sets (\cref{fig:syntheticResultPlotSeHeaviside,fig:syntheticResultPlotSeHeaviCosine}).
-	For the Gap-Cosine data set, the \ac{SE} kernel (\cref{fig:syntheticResultPlotSeGapCosine}) clearly outperforms \acp{RFSF} (\cref{fig:syntheticResultPlotRfsfGapCosine}) within the gap by actually capturing the overall trend (with the true function lying withing the confidence interval).
 	This shows that \acp{RFSF} can capture non-stationary trends (cf. \cref{fig:hypercube}) opposed to the \ac{SE} kernel.
+	For the Gap-Cosine data set, the \ac{SE} kernel (\cref{fig:syntheticResultPlotSeGapCosine}) clearly outperforms \acp{RFSF} (\cref{fig:syntheticResultPlotRfsfGapCosine}) within the gap by actually capturing the overall trend (with the true function lying withing the confidence interval).
 
 	Quantitative results for all data sets are summarized in \cref{tab:results}.
-	\Cref{tab:resultsSynthetic} contains results for the synthetic data (and cartpole) and \cref{tab:resultsUciJoe} contains \ac{UCI}-results and, for a broader comparison, some results from\cite{watsonLatentDerivativeBayesian2021}.
+	\Cref{tab:resultsSynthetic} contains results for the synthetic data (and Cartpole) and \cref{tab:resultsUciJoe} contains \ac{UCI}-results and, for a broader comparison, some results from\cite{watsonLatentDerivativeBayesian2021}.
 	The results for the remaining \ac{UCI} data sets not covered in \cref{tab:resultsUciJoe} are given in \cref{tab:resultsUciRest} in appendix \cref{app:remainingResults} for brevity (the results on the reduced data sets is sufficient for the discussion).
 
 	\subsubsection{Synthetic Data Sets}
-		On synthetic data, \acp{RFSF} perform roughly equal to the \ac{SE} kernel and \acp{RFF} on the Cosine data set in term of the log-likelihood and outperform both in terms of the \ac{RMSE} (again on the Cosine data set).
+		On synthetic data, \acp{RFSF} perform roughly equal to the \ac{SE} kernel and \acp{RFF} on the Cosine data set in terms of the log-likelihood and outperform both in terms of the \ac{RMSE} (again on the Cosine data set).
 		Also, they perform better on the Heaviside data set in terms of the log-likelihood.
 		However, for all other metrics (log-likelihood and \ac{RMSE} of Heavi-Cosine and Gap-Cosine as well as \ac{RMSE} on Heaviside), either the \ac{SE} kernel or \acp{RFF} outperform all variants of \acp{RFSF}.
 
@@ -113,70 +114,95 @@ In the following, we will first present some implementation details (\cref{subse
 	% end
 
 	\subsubsection{\acs{UCI} Data Sets}
-		In terms of the log-likelihood, \acp{RFSF} are either outperformed by or equal to the \ac{SE} kernel (once) and Ensemble (once equal, twice outperformed).
+		In terms of the log-likelihood, \acp{RFSF} are either outperformed by or equal to the \ac{SE} kernel and Ensemble.
 		For the remaining data sets in \cref{tab:resultsUciRest} for which\cite{watsonLatentDerivativeBayesian2021} do not report results, the results are similar.
 		Within the class of \acp{RFSF} variants, the Random initialization is often superior w.r.t. to log-likelihood and \ac{RMSE}.
 	% end
 
 	\subsubsection{Cartpole Data Set}
-		On the cartpole data set, the \ac{SE} kernel outperforms \acp{RFSF} and \acp{RFF} in both log-likelihood and \ac{RMSE} by far.
+		On the Cartpole data set, the \ac{SE} kernel outperforms \acp{RFSF} and \acp{RFF} in both log-likelihood and \ac{RMSE} by far.
 		For the different \acp{RFSF} variants, no clear distinction (difference of more than the measurement uncertainty) is visible.
 	% end
 
 	\begin{figure*}
 		\centering
-%		\begin{subfigure}{0.49\linewidth}
+%		\begin{subfigure}{0.32\linewidth}
 %			\centering
 %			\imageResultsGpCosineRfsf
-%			\caption{\acs{RFSF} Kernel on Cosine}
+%			\caption{\acsp{RFSF} on Cosine}
 %		\end{subfigure}
-%		\begin{subfigure}{0.49\linewidth}
+%		~
+%		\begin{subfigure}{0.32\linewidth}
 %			\centering
 %			\imageResultsGpCosineRbf
-%			\caption{\acs{SE} Kernel on Cosine}
+%			\caption{\acs{SE} on Cosine}
+%		\end{subfigure}
+%		~
+%		\begin{subfigure}{0.32\linewidth}
+%			\centering
+%			\imageResultsGpCosineRff
+%			\caption{\acsp{RFF} on Cosine}
 %		\end{subfigure}
 %		\\[0.5cm]
-		\begin{subfigure}{0.49\linewidth}
+		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\imageResultsGpHeavisideRfsf
-			\caption{\acs{RFSF} Kernel on Heaviside}
+			\caption{\acsp{RFSF} on Heaviside}
 		\end{subfigure}
 		~
-		\begin{subfigure}{0.49\linewidth}
+		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\imageResultsGpHeavisideRbf
-			\caption{\acs{SE} Kernel on Heaviside}
+			\caption{\acs{SE} on Heaviside}
 			\label{fig:syntheticResultPlotSeHeaviside}
 		\end{subfigure}
+		~
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\imageResultsGpHeavisideRff
+			\caption{\acsp{RFF} on Heaviside}
+		\end{subfigure}
 		\\[0.5cm]
-		\begin{subfigure}{0.49\linewidth}
+		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\imageResultsGpHeavicosineRfsf
-			\caption{\acs{RFSF} Kernel on Heavi-Cosine}
+			\caption{\acsp{RFSF} on Heavi-Cosine}
 		\end{subfigure}
 		~
-		\begin{subfigure}{0.49\linewidth}
+		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\imageResultsGpHeavicosineRbf
-			\caption{\acs{SE} Kernel on Heavi-Cosine}
+			\caption{\acs{SE} on Heavi-Cosine}
 			\label{fig:syntheticResultPlotSeHeaviCosine}
 		\end{subfigure}
+		~
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\imageResultsGpHeavicosineRff
+			\caption{\acsp{RFF} on Heavi-Cosine}
+		\end{subfigure}
 		\\[0.5cm]
-		\begin{subfigure}{0.49\linewidth}
+		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\imageResultsGpGapcosineRfsf
-			\caption{\acs{RFSF} Kernel on Gap-Cosine}
+			\caption{\acsp{RFSF} on Gap-Cosine}
 			\label{fig:syntheticResultPlotRfsfGapCosine}
 		\end{subfigure}
 		~
-		\begin{subfigure}{0.49\linewidth}
+		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\imageResultsGpGapcosineRbf
-			\caption{\acs{SE} Kernel on Gap-Cosine}
+			\caption{\acs{SE} on Gap-Cosine}
 			\label{fig:syntheticResultPlotSeGapCosine}
 		\end{subfigure}
+		~
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\imageResultsGpGapcosineRff
+			\caption{\acsp{RFF} on Gap-Cosine}
+		\end{subfigure}
 		\caption{
-			\acl{GP} regression results using an \acsp{RFSF} kernel for the synthetic data sets.
+			\acl{GP} regression results using \acsp{RFSF}, \acsp{SE}, and \acsp{RFF} kernels for the synthetic data sets.
 			The shaded areas depict the epistemic/aleatoric (posterior) uncertainty, the blue solid line depicts the (posterior) mean, the black stars are the training samples, and the black solid line depicts the true function.
 			The colorful lines are samples from the \acsp{GP}.
 			Axis labels and ticks where left out for brevity as the results are purely qualitative and specific numbers do not matter.
@@ -204,7 +230,7 @@ In the following, we will first present some implementation details (\cref{subse
 		\end{subtable}
 		\caption{
 			Evaluation results for the presented data sets.
-			For UCI and cartpole, the mean along with the measurement uncertainty are computed over the provided train/test splits.
+			For UCI and Cartpole, the mean along with the measurement uncertainty are computed over the provided train/test splits.
 			The synthetic data sets only have a single train/test split, hence no uncertainty can be provided.
 			Both the log-likelihood and \acs{RMSE} are reported where the higher and lower values are better, respectively.
 			The best values for a data set are depicted boldface.

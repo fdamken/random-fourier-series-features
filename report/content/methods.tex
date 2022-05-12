@@ -17,29 +17,28 @@
 	\end{equation}
 	where $k(\vec{x} - \vec{y})$ is a stationary kernel and $p(\vec{\omega})$ is its Fourier transform (which is a proper probability distribution due to Bochner's theorem\cite{steinInterpolationSpatialData1999}).
 	For the \ac{SE} kernel, $p(\vec{\omega})$ is tractable and equal to a standard normal distribution\cite{rasmussenGaussianProcessesMachine2006}.
-	As the integral in \cref{eq:rffExpectation} is intractable, it is usually approximated using Monte-Carlo estimation over $\vec{\omega}$ (another methods for evaluation the integral are, for example, quadrature methods\cite{daoGaussianQuadratureKernel2017}).
+	As the integral in \cref{eq:rffExpectation} is intractable, it is usually approximated using Monte-Carlo estimation over $\vec{\omega}$ (another method for evaluation the integral is, for example, quadrature\cite{daoGaussianQuadratureKernel2017}).
 	Let $\{ \vec{w}_j \}_{j = 1}^{D}$ be the particles sampled from $p(\vec{\omega})$.
-	The corresponding feature particles, $\vec{z}_{\vec{\omega}_j}(\cdot)$ are then concatenated, forming the complete feature $\vec{z}(\cdot)$ which is scaled by $1/\sqrt{D}$ such that the inner product yields the usual Monte Carlo approximation of an expectation.
+	The corresponding feature particles $\vec{z}_{\vec{\omega}_j}(\cdot)$ are then concatenated, forming the complete feature $\vec{z}(\cdot)$ which is scaled by $1/\sqrt{D}$ such that the inner product yields the usual Monte Carlo approximation of an expectation.
 % end
 
 \subsection{Random Fourier Series Features}
-	We extend \acp{RFF} to Random Fourier \emph{Series} Features (\acsu{RFSF}) by splitting up \cref{eq:rffFeature} further into sub-features with separate amplitudes for the sine/cosine component and adding the respective scaling factors for $\vec{x}$:
+	We extend \acp{RFF} to random Fourier \emph{series} features (\acsu{RFSF}) by splitting up \cref{eq:rffFeature} further into sub-features with separate amplitudes for the sine/cosine component and adding the respective scaling factors for $\vec{x}$:
 	\begin{equation}
 		\tilde{\vec{z}}_{\vec{\omega}}^{\,(k)}(\vec{x}) =
 			\begin{bmatrix}
-				a_k \cos(\pi k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}} / \tilde{T}) \\
-				b_k \sin(\pi k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}} / \tilde{T})
+				a_k \cos(\omega k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}}) \\
+				b_k \sin(\omega k \mel{\vec{\omega}}{\mat{\Lambda}^{-1}}{\vec{x}})
 			\end{bmatrix}\!.
 		\label{eq:rfsf}
 	\end{equation}
 	which are then summed over $k = 1, 2, \dots, M$.
-	The matrix $\mat{\Lambda}$ represents the length-scales which can be either isotropic for a single length-scale but also different for the input dimensions, leading to \ac{ARD}.
-	This formulation is inspired by the sine-cosine formulation of a Fourier series \cref{eq:sineCosineFourierSeries}, motivating the name.
+	The matrix $\mat{\Lambda}$ represents the length-scales which can be either isotropic for a single length-scale but also different for the input dimensions, allowing \ac{ARD}.
+	This formulation is inspired by the sine-cosine formulation of a Fourier series (\cref{eq:sineCosineFourierSeries}), motivating the name.
 	Note that the half-period $\tilde{T}$ has the function of a "secondary" length-scale applied equally to all input dimensions.
 
 	To find the optimal hyper-parameters $\vec{a}_{0:M}$, $\vec{b}_{0:M}$, and $\mat{\Lambda}$, we use the empirical Bayes approximation\cite[p.\,165]{bishopPatternRecognitionMachine2006}, i.e., maximize the marginal log-likelihood over the training data.
-	As will be seen in the evaluation section, the result is highly dependent on the half-period $\tilde{T}$, hence it will be treated as an additional hyper-parameter (see \cref{app:halfPeriodInfluence}).
-	Beyond the kernel's parameters, the data is assumed to have Gaussian aleatoric noise with zero mean and variance $\sigma_n^2$ which is again an additional hyper-parameter.
+	Beyond the kernel's parameters, the data is assumed to have Gaussian aleatoric noise with zero mean and variance $\sigma_n^2$ which is an additional hyper-parameter.
 
 	As said in the introduction, theoretical analysis is up to future work.
 	We will therefore directly move to empirical evaluation in the next section.

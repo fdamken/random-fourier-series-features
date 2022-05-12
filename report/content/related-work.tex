@@ -1,1 +1,19 @@
-\lipsum{1}
+We closely follow\cite{watsonLatentDerivativeBayesian2021} here.
+We structure related work into the origins of motivation for this work: \aclp{BNN} and \aclp{GP}.
+
+\paragraph{Bayesian Neural Networks}
+\acl{BNN} have a long history directly using \acp{NN} as statistical models\cite{mackayPracticalBayesianFramework1992} and for regularization\cite{hintonKeepingNeuralNetworks1993}.
+Many approaches are based on \ac{MCMC}\cite{andrieuIntroductionMCMCMachine2003,hoffmanNoUTurnSamplerAdaptively2014,chenStochasticGradientHamiltonian2014}, however, these approaches are computationally expensive and scale poorly with larger models.
+This motivated the development of \ac{VI} methods\cite{hintonKeepingNeuralNetworks1993,petersonExplorationsMeanField1989,gravesPracticalVariationalInference2011}.
+Some alternative approximation techniques are, for instance, Laplace approximation\cite{mackayPracticalBayesianFramework1992,denkerTransformingNeuralNetOutput1990,ritterScalableLaplaceApproximation2018}, ensembles\cite{lakshminarayananSimpleScalablePredictive2017,osbandRandomizedPriorFunctions2018,barberEnsembleLearningBayesian1998,pearceUncertaintyNeuralNetworks2020}, and expectation propagation\cite{hernandez-lobatoProbabilisticBackpropagationScalable2015}.
+Another alternative are \acp{BLL} networks where the last layer-weights are treated in a Bayesian fashion\cite{lazaro-gredillaMarginalizedNeuralNetwork2010}.
+They have successfully been applied in a variety of tasks\cite{snoekScalableBayesianOptimization2015,weberOptimizingBayesianLast2018,riquelmeDeepBayesianBandits2018,pinslerBayesianBatchActive2019,odonoghueUncertaintyBellmanEquation2018,oberBenchmarkingNeuralLinear2019}.
+
+
+\paragraph{Gaussian Processes}
+It was shown that \acp{NN} with infinite width are equivalent to \acp{GP} under mild conditions\cite{nealBayesianLearningNeural2012}.
+But also beyond this equivalence a lot of focus is put on the intersection of \acp{GP} and \acp{BNN}.
+\ac{DKL}\cite{wilsonDeepKernelLearning2016} is concerned with learning closed-form deep kernels using \acp{NN} to find more expressive covariance functions.
+A similar idea are manifold \acp{GP}\cite{calandraManifoldGaussianProcesses2016} which extract intermediate features from data on which a designed covariance function performs better.
+Despite the great success of \acp{GP}, exact inference is computationally expensive.
+This motivated the development of approximate \acp{GP} in many fashions such as inducing points and direct approximations of the kernel\cite{nystromUberPraktischeAuflosung1930,rahimiRandomFeaturesLargeScale2007}.

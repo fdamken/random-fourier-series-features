@@ -2,7 +2,7 @@
 \acrodef{AE}{auto-encoder}
 \acrodef{AI}{artificial intelligence}
 \acrodef{BC}{behavioral cloning}
-\acrodef{GP}{Gaussian process}
+\acrodef{GP}{Gaussian process} \acrodefplural{GP}{Gaussian processes}
 \acrodef{IA}{intelligent agent}
 \acrodef{IL}{imitation learning}
 \acrodef{ML}{machine learning}
@@ -10,6 +10,7 @@
 \acrodef{RL}{reinforcement learning}
 \acrodef{SE}{squared exponential}
 \acrodef{SH}{Single Harmonic}
+\acrodef{VI}{variational inference}
 
 % Three-Letter Acronyms.
 \acrodef{AAE}{adversarial auto-encoder}
@@ -25,21 +26,33 @@
 \acrodef{MAP}{maximum a-posteriori}
 \acrodef{MDP}{Markov decision process} \acrodefplural{MDP}{Markov decision processes}
 \acrodef{MPC}{model-predictive control}
+\acrodef{NLM}{neural linear model}
+\acrodef{NTK}{neural tangent kernel}
 \acrodef{RBF}{radial basis function}
 \acrodef{RFF}{random Fourier feature}
 \acrodef{SVM}{support vector machine}
-\acrodef{UCI}{University of California, Irvine} \acused{UCI}
+\acrodef{UCI}{University of California, Irvine}
 \acrodef{WAN}{wasserstein auto-encoder}
 \acrodef{XAI}{explainable \acs{AI}}
 \acrodef{XRL}{explainable \acs{RL}}
 
 % Four-Letter Acronyms.
 \acrodef{GBLL}{Gaussian Bayesian last layer}
+\acrodef{MCMC}{Markov-chain Monte Carlo}
 \acrodef{RFSF}{random Fourier series feature}
-\acrodef{RMSE}{root-mean-square error} \acused{RMSE}
+\acrodef{RMSE}{root-mean-square error}
 
 % Other Acronyms.
 \acrodef{IntRL}{interactive reinforcement learning}
 \acrodef{InvRL}{inverse reinforcement learning}
-\acrodef{ReLU}{rectified linear unit} \acused{ReLU}
+\acrodef{ReLU}{rectified linear unit}
 \acrodef{PeReLU}{periodic \acs{ReLU}}
+
+
+\let\realacresetall=\acresetall
+\renewcommand{\acresetall}{
+	\realacresetall
+	\acused{UCI}
+	\acused{RMSE}
+	\acused{ReLU}
+}

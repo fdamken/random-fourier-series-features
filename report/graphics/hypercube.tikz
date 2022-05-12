@@ -16,11 +16,11 @@
         ]
     \def\spread{4}
     \node [corner] (stationary-kernel-design)       at (      0,        0,        0) {\small SE};
-    \node [corner] (stationary-kernel-learning)     at (\spread,        0,        0) {\small Manifold GPs};
+    \node [corner] (stationary-kernel-learning)     at (\spread,        0,        0) {\small };
     \node [corner] (stationary-feature-design)      at (      0, -\spread,        0) {\small RFF};
     \node [corner] (stationary-feature-learning)    at (\spread, -\spread,        0) {\small RFSF};
     \node [corner] (nonstationary-kernel-design)    at (      0,        0, -\spread) {\small ArcSine};
-    \node [corner] (nonstationary-kernel-learning)  at (\spread,        0, -\spread) {\small NTK};
+    \node [corner] (nonstationary-kernel-learning)  at (\spread,        0, -\spread) {\small NTK, DKL};
     \node [corner] (nonstationary-feature-design)   at (      0, -\spread, -\spread) {\small Polynomial};
     \node [corner] (nonstationary-feature-learning) at (\spread, -\spread, -\spread) {\small RFSF, NLM};
     \draw [nonstationary] (stationary-kernel-design) -- (nonstationary-kernel-design);

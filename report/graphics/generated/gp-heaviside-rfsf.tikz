@@ -23,7 +23,7 @@ legend style={
 ticks=none,
 tick align=outside,
 tick pos=left,
-title={Heaviside},
+%title={Heaviside},
 x grid style={darkgray176},
 xmin=-1.09950000047684, xmax=1.08950001001358,
 xtick style={color=black},
@@ -38,7 +38,7 @@ table {%
 0 1
 0.990000009536743 1
 };
-\addlegendentry{True Func.}
+% \addlegendentry{True Func.}
 \path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2]
 (axis cs:-1,0.965388370379966)
 --(axis cs:-1,0.369365228059614)
@@ -444,7 +444,7 @@ table {%
 --(axis cs:-1,0.965388370379966)
 --cycle;
 \addlegendimage{area legend, draw=steelblue31119180, fill=steelblue31119180, opacity=0.2}
-\addlegendentry{Epistemic}
+% \addlegendentry{Epistemic}
 
 \path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
 (axis cs:-1,0.364989196298642)
@@ -851,7 +851,7 @@ table {%
 --(axis cs:-1,0.364989196298642)
 --cycle;
 \addlegendimage{area legend, draw=darkorange25512714, fill=darkorange25512714, opacity=0.2}
-\addlegendentry{Aleatoric}
+% \addlegendentry{Aleatoric}
 
 \path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
 (axis cs:-1,0.969764402140938)
@@ -1282,7 +1282,7 @@ x  y
 0.400000005960464 1.00803411006927
 0.449999988079071 0.993784070014954
 };
-\addlegendentry{Observed Data}
+% \addlegendentry{Observed Data}
 \addplot [semithick, darkorange25512714, opacity=0.3, forget plot]
 table {%
 -1 0.82401716709137
@@ -2393,7 +2393,7 @@ table {%
 0.970000028610229 0.290384769439697
 0.990000009536743 0.285448789596558
 };
-\addlegendentry{Mean}
+% \addlegendentry{Mean}
 \end{axis}
 
 \draw ({$(current bounding box.south west)!0!(current bounding box.south east)$}|-{$(current bounding box.south west)!0!(current bounding box.north west)$}) node[

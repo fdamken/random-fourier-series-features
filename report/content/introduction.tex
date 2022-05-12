@@ -11,6 +11,7 @@ Quantification of the uncertainty is useful in a variety of domains such as \ac{
 		Connections between various (Bayesian) regression models.
 		The three axis distinct them between using kernels vs. features (blue), relying on manually designing vs. learning (yellow), and stationary vs. non-stationary behavior (green).
 		\acsp{RFSF} (our method) are not clearly stationary or non-stationary and theoretical analysis is up to future research.
+		Abbreviations used in the figure: \acs{SE} (Squared Exponential), \acs{RFF} (Random Fourier Features), \acs{RFSF} (Random Fourier Series Features), \acs{NLM} (Neural Linear Model), \acs{NTK} (Neural Tangent Kernel), \acs{DKL} (Deep Kernel Learning)
 	}
 	\label{fig:hypercube}
 \end{figure}
@@ -22,8 +23,8 @@ Hence, they are not suitable for application in high-stakes domains such as medi
 
 A well-known alternative approach for Bayesian machine learning are \acp{GP}.
 \aclp{GP} allow exact inference leveraging linear regression.
-Using a kernel for lifting the inputs into a high- and possible infinite-dimensional feature space allows for great flexibility.
-Despite the great uncertainty estimation of \acp{GP}, their raw prediction power is limited and highly dependent on the kernel.
+Using a kernel for lifting the inputs into a high-, and possibly infinite-, dimensional feature space allows great flexibility.
+Despite the great uncertainty estimation of \acp{GP}, their raw prediction power is limited by and highly dependent on the kernel.
 This dependence is reflected in the amount of kernels that have been studied throughout the years\cite[ch.\,2]{duvenaudAutomaticModelConstruction2014}.
 Motivated by this limitation, methods for (deep) kernel learning (\acsu{DKL}) have been developed\cite{wilsonDeepKernelLearning2016,calandraManifoldGaussianProcesses2016,jacotNeuralTangentKernel2020}.
 However, exact inference with kernels is a tedious task requiring inversion of an \(N \times N\)-matrix (the Gram matrix) where \(N\) is the number of data points.
@@ -32,13 +33,12 @@ Approaches for reducing the computational complexity have been proposed such as 
 
 Alternatively, one can resort to Bayesian linear regression with features.
 To mimic \ac{GP} regression, these features are chosen to approximate a kernel, e.g., the \ac{SE} kernel.
-A well-known choice are \acp{RFF} that can approximate arbitrary kernels and are usually configured for the \ac{SE} kernel as this is possible in closed form\cite{rahimiRandomFeaturesLargeScale2007}.
+A well-known choice are \acp{RFF} that can approximate arbitrary stationary kernels and are often configured for the \ac{SE} kernel as this is possible in closed form\cite{rahimiRandomFeaturesLargeScale2007}.
 However, the \ac{SE} kernel usually produces results that are too smooth\cite{steinInterpolationSpatialData1999} and is, by design, not able to capture functions with non-stationary length-scale.
 
-\emph{Contribution:} We propose an extension of \acp{RFF}, \acp{RFSF}, that build a bridge between \acp{RFF}, \ac{DKL}, \acp{BNN}, and  by reducing the computational complexity of \ac{GP} regression due to working with features, enrich the capacity of \acp{GP} by adding more parameters and reducing the need of (manually) designed kernels, and using classical training methods known from \acp{NN} for optimizing the hyper-parameters.
+\emph{Contribution:} We propose an extension of \acp{RFF}, \acp{RFSF}, that build a bridge between (a) \acp{RFF}, (b) \ac{DKL}, and (c) \acp{BNN} by (a) reducing the computational complexity of \ac{GP} regression due to working with features, (b) enrich the capacity of \acp{GP} by adding more parameters and reducing the need of (manually) designed kernels, and (c) using classical training methods known from \acp{NN} for optimizing the hyper-parameters.
 \Cref{fig:hypercube} illustrates these connections on three axis: kernels vs. features, designing vs. learning, and stationary vs. non-stationary length-scales.
-As theoretical analysis of \acp{RFSF} are up to future work, it is open whether they belong to the stationary or non-stationary category.
-Nonetheless, out empirical results suggest that they are non-stationary.
+Despite the lack of a proof and given only empirical evidence, we found that \acp{RFSF} can represent various kernels and features, bridging the gap between stationary and non-stationary kernels.
 
 We will now highlight connections to related work (\cref{sec:relatedWork}).
 Subsequently, we will lay out some preliminaries (\cref{sec:preliminaries}), present the methodology of \acp{RFSF} in \cref{sec:methods}, and finally empirically evaluate and summarize our findings as well as provide direction for future research (\cref{sec:eval,sec:conclusion}).

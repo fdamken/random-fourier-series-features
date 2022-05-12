@@ -1,8 +1,6 @@
-The lack of a sense for uncertainty of \acp{NN} lead to an uptick in usage of \acp{GP} in control due to their outstanding uncertainty quantification.
-A major drawback of using \acp{GP} is that their performance highly depends on the choice of the kernel.
-To tackle this problem, methods for (deep) kernel learning (\acsu{DKL}) have been proposed throughout the years.
-However, a second major problem remains: (exact) inference in \acp{GP} is intractable for large data sets.
-Numerous methods have been proposed to remedy this problem such as inducing points and \acp{RFF}.
-We extend \acp{RFF} to \acp{RFSF} by incorporating ideas from Fourier (series) analysis.
-This combines the predictive power of \acp{NN} with the advantages of \acp{GP} and fights intractable inference.
-However, we found that the advantage was minimal and, in some cases, non-existent.
+Neural networks (\acspu{NN}) are powerful prediction models used in various domains such as robotics control.
+However, they lack a principled approach for uncertainty quantification.
+While research has been conducted towards \acp{BNN}, \acp{GP} remain the go-to approach for reliable uncertainty estimation, capturing both aleatoric and epistemic uncertainty.
+This weakness is due to the intractability of inference on \acp{BNN} and a lack of principled and scalable approximate inference methods.
+However, the success of a \ac{GP} highly depends on the kernel \emph{design}, i.e., the kernel is not learned from data.
+We propose \acp{RFSF}, an extension of the well-known \acp{RFF} to bridge the gap between the data-driven features of \acp{NN} and the powerful inductive biases and practical inference of \acp{GP}.

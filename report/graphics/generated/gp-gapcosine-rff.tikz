@@ -238,7 +238,7 @@ table {%
 1.85500001907349 0.6129070520401
 1.86500000953674 0.661311864852905
 };
-\addlegendentry{True Func.}
+% \addlegendentry{True Func.}
 \path [draw=steelblue31119180, fill=steelblue31119180, opacity=0.2]
 (axis cs:-1.625,0.921480432470096)
 --(axis cs:-1.625,-1.55896477291059)
@@ -944,7 +944,7 @@ table {%
 --(axis cs:-1.625,0.921480432470096)
 --cycle;
 \addlegendimage{area legend, draw=steelblue31119180, fill=steelblue31119180, opacity=0.2}
-\addlegendentry{Epistemic}
+% \addlegendentry{Epistemic}
 
 \path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
 (axis cs:-1.625,-1.55997018882869)
@@ -1651,7 +1651,7 @@ table {%
 --(axis cs:-1.625,-1.55997018882869)
 --cycle;
 \addlegendimage{area legend, draw=darkorange25512714, fill=darkorange25512714, opacity=0.2}
-\addlegendentry{Aleatoric}
+% \addlegendentry{Aleatoric}
 
 \path [draw=darkorange25512714, fill=darkorange25512714, opacity=0.2]
 (axis cs:-1.625,0.922485848388201)
@@ -2382,7 +2382,7 @@ x  y
 0.899999976158142 0.81705105304718
 0.949999988079071 0.944840610027313
 };
-\addlegendentry{Observed Data}
+% \addlegendentry{Observed Data}
 \addplot [semithick, darkorange25512714, opacity=0.3, forget plot]
 table {%
 -1.625 0.324228525161743
@@ -4264,7 +4264,7 @@ table {%
 1.84500002861023 -0.389383792877197
 1.86500000953674 -0.38968825340271
 };
-\addlegendentry{Mean}
+% \addlegendentry{Mean}
 \end{axis}
 
 \draw ({$(current bounding box.south west)!0!(current bounding box.south east)$}|-{$(current bounding box.south west)!0!(current bounding box.north west)$}) node[
