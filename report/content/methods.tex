@@ -1,3 +1,5 @@
+In this section we cover the methodology and core contributions of our work, staring with a discussion of \acp{RFF} and introducing the novel \acp{RFSF}.
+
 \subsection{Random Fourier Features}
 	By explicitly modeling the features, the inversion of the Gram matrix can be avoided by resorting to computing the distribution over the weights explicitly, i.e., "switching back" to Bayesian linear regression.
 	A well-known approach for this are \acp{RFF}\cite{rahimiRandomFeaturesLargeScale2007} which approximate the \ac{SE} kernel.
@@ -17,7 +19,7 @@
 	\end{equation}
 	where $k(\vec{x} - \vec{y})$ is a stationary kernel and $p(\vec{\omega})$ is its Fourier transform (which is a proper probability distribution due to Bochner's theorem\cite{steinInterpolationSpatialData1999}).
 	For the \ac{SE} kernel, $p(\vec{\omega})$ is tractable and equal to a standard normal distribution\cite{rasmussenGaussianProcessesMachine2006}.
-	As the integral in \cref{eq:rffExpectation} is intractable, it is usually approximated using Monte-Carlo estimation over $\vec{\omega}$ (another method for evaluation the integral is, for example, quadrature\cite{daoGaussianQuadratureKernel2017}).
+	As the integral in \cref{eq:rffExpectation} is intractable, it is usually approximated using Monte-Carlo estimation over $\vec{\omega}$.
 	Let $\{ \vec{w}_j \}_{j = 1}^{D}$ be the particles sampled from $p(\vec{\omega})$.
 	The corresponding feature particles $\vec{z}_{\vec{\omega}_j}(\cdot)$ are then concatenated, forming the complete feature $\vec{z}(\cdot)$ which is scaled by $1/\sqrt{D}$ such that the inner product yields the usual Monte Carlo approximation of an expectation.
 % end
@@ -32,7 +34,7 @@
 			\end{bmatrix}\!.
 		\label{eq:rfsf}
 	\end{equation}
-	which are then summed over $k = 1, 2, \dots, M$.
+	which are then summed over $k = 1, 2, \dots, K$.
 	The matrix $\mat{\Lambda}$ represents the length-scales which can be either isotropic for a single length-scale but also different for the input dimensions, allowing \ac{ARD}.
 	This formulation is inspired by the sine-cosine formulation of a Fourier series (\cref{eq:sineCosineFourierSeries}), motivating the name.
 	Note that the half-period $\tilde{T}$ has the function of a "secondary" length-scale applied equally to all input dimensions.

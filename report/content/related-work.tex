@@ -1,10 +1,10 @@
-We closely follow\cite{watsonLatentDerivativeBayesian2021} here.
+We closely follow the work of Watson et al.\cite{watsonLatentDerivativeBayesian2021} here.
 We structure related work into the origins of motivation for this work: \aclp{BNN} and \aclp{GP}.
 
 \paragraph{Bayesian Neural Networks}
-\acl{BNN} have a long history directly using \acp{NN} as statistical models\cite{mackayPracticalBayesianFramework1992} and for regularization\cite{hintonKeepingNeuralNetworks1993}.
+\acl{BNN} have a long history directly of using \acp{NN} as statistical models\cite{mackayPracticalBayesianFramework1992} and for regularization\cite{hintonKeepingNeuralNetworks1993}.
 Many approaches are based on \ac{MCMC}\cite{andrieuIntroductionMCMCMachine2003,hoffmanNoUTurnSamplerAdaptively2014,chenStochasticGradientHamiltonian2014}, however, these approaches are computationally expensive and scale poorly with larger models.
-This motivated the development of \ac{VI} methods\cite{hintonKeepingNeuralNetworks1993,petersonExplorationsMeanField1989,gravesPracticalVariationalInference2011}.
+This motivated the development of \ac{VI} methods for efficient approximation\cite{hintonKeepingNeuralNetworks1993,petersonExplorationsMeanField1989,gravesPracticalVariationalInference2011}.
 Some alternative approximation techniques are, for instance, Laplace approximation\cite{mackayPracticalBayesianFramework1992,denkerTransformingNeuralNetOutput1990,ritterScalableLaplaceApproximation2018}, ensembles\cite{lakshminarayananSimpleScalablePredictive2017,osbandRandomizedPriorFunctions2018,barberEnsembleLearningBayesian1998,pearceUncertaintyNeuralNetworks2020}, and expectation propagation\cite{hernandez-lobatoProbabilisticBackpropagationScalable2015}.
 Another alternative are \acp{BLL} networks where the last layer-weights are treated in a Bayesian fashion\cite{lazaro-gredillaMarginalizedNeuralNetwork2010}.
 They have successfully been applied in a variety of tasks\cite{snoekScalableBayesianOptimization2015,weberOptimizingBayesianLast2018,riquelmeDeepBayesianBandits2018,pinslerBayesianBatchActive2019,odonoghueUncertaintyBellmanEquation2018,oberBenchmarkingNeuralLinear2019}.

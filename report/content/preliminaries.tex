@@ -38,13 +38,12 @@
 %	Incorporating uncertainty allows the controller to vary its trust in the underlying model, avoiding unknown and potentially unsafe terrain.
 
 	\ac{GP} regression can be viewed in two fashions:
-	firstly, as an extension of linear regression to an infinite number of features.
-	This involves computing the limit $n \to \infty$ where $n$ is the number of features.
+	firstly, as an extension of linear regression to an infinite number of features involving computation of the limit $n \to \infty$ where $n$ is the number of features.
 	Secondly, as an infinite Gaussian distribution over a function space where every finite subset of the random variables is jointly Gaussian.
 	However, both definitions (or views) yield the exact same result.
 	For the rest of this paper we will stick to the former definition.
 
-	We closely follow\cite{rasmussenGaussianProcessesMachine2006} in terms of notation and will give a brief overview over it.
+	We closely follow Rasmussen and Williams\cite{rasmussenGaussianProcessesMachine2006} in terms of notation and will give a brief overview over it now.
 	Let \(\vec{x}_\ast\) and \(y_\ast\) be a test input and target\footnote{When predicting, the target is not known and the \ac{GP} defines a Gaussian distribution over it.}, respectively, then the \ac{GP} regression posterior is a Gaussian distribution with the following mean and variance:
 	\begin{equation}
 		\begin{aligned}
@@ -56,7 +55,7 @@
 	Here, \( \mat{K} \) denotes the Gram matrix on the training inputs, \(\vec{k}_\ast\) denotes the evaluation of the kernel between the test and train inputs organized into a column vector, and \(k_\ast\) is the kernel evaluation of the test input \(\vec{x}_\ast\); train targets are organized into \(\vec{y}\).
 
 	An exemplary kernel is the \ac{SE} kernel \( k_\mathrm{SE}(\vec{x} - \vec{y}) = \exp{ -\lVert \vec{x} - \vec{y} \rVert_2^2 / (2 \ell^2) } \) with the length-scale\footnote{The length-scale determines the "roughness" of the function samples\cite[p.\,15]{rasmussenGaussianProcessesMachine2006}.} \(\ell^2\).
-	However, it has been shown that this kernel often exhibits extremely smooth functions (as it is infinitely differentiable) often unrealistic for real-world data\cite{steinInterpolationSpatialData1999}.
+	However, it has been shown that this kernel often produces extremely smooth functions (as it is infinitely differentiable) often unrealistic for real-world data\cite{steinInterpolationSpatialData1999}.
 	Despite its drawbacks, the \ac{SE} kernel remains one of the most widely used kernels due to its simplicity\cite[p.\,83]{rasmussenGaussianProcessesMachine2006}.
 
 	While employing the "kernel trick" allows great flexibility with (potentially) infinite-dimensional feature spaces, it introduces major computational challenges due to the inversion of the Gram matrix in \cref{eq:gp}.

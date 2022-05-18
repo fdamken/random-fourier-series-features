@@ -16,7 +16,7 @@
         ]
     \def\spread{4}
     \node [corner] (stationary-kernel-design)       at (      0,        0,        0) {\small SE};
-    \node [corner] (stationary-kernel-learning)     at (\spread,        0,        0) {\small };
+    \node [corner] (stationary-kernel-learning)     at (\spread,        0,        0) {\small N/A\footnotemark[1]};
     \node [corner] (stationary-feature-design)      at (      0, -\spread,        0) {\small RFF};
     \node [corner] (stationary-feature-learning)    at (\spread, -\spread,        0) {\small RFSF};
     \node [corner] (nonstationary-kernel-design)    at (      0,        0, -\spread) {\small ArcSine};
