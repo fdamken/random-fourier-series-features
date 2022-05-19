@@ -64,7 +64,7 @@ def make_experiment(log_to_wandb: bool, slurm_array_job_id: Optional[str], slurm
         lr_scheduler_kwargs = {"gamma": 0.999}
         max_iter = 1000
         batch_size = 1000
-        save_model_every_n_iterations = 100
+        save_model_every_n_iterations = 10
         log_parameter_values = False
         log_parameter_grad_values = False
 

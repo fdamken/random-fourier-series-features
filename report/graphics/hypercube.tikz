@@ -36,16 +36,18 @@
     \draw [learning] (stationary-feature-design) -- (stationary-feature-learning);
     \draw [learning] (nonstationary-kernel-design) -- (nonstationary-kernel-learning);
 
-    \begin{scope}[xshift = -0.5cm, yshift = 2.5cm]
-        \coordinate (origin) at (0, 0, 0);
-        \coordinate [above right = 1 of origin] (nonstationary);
-        \coordinate [below       = 1 of origin] (feature);
-        \coordinate [right       = 1 of origin] (learning);
-        \node [nonstationary, above = 0 of nonstationary] {Non-Stationary};
-        \node [feature,       below = 0 of feature]       {Features};
-        \node [learning,      right = 0 of learning]      {Learning};
-        \draw [nonstationary] (origin) -- (nonstationary);
-        \draw [feature] (origin) -- (feature);
-        \draw [learning] (origin) -- (learning);
-    \end{scope}
+	\ifincludelegend{
+	    \begin{scope}[xshift = -0.5cm, yshift = 2.5cm]
+	        \coordinate (origin) at (0, 0, 0);
+	        \coordinate [above right = 1 of origin] (nonstationary);
+	        \coordinate [below       = 1 of origin] (feature);
+	        \coordinate [right       = 1 of origin] (learning);
+	        \node [nonstationary, above = 0 of nonstationary] {Non-Stationary};
+	        \node [feature,       below = 0 of feature]       {Features};
+	        \node [learning,      right = 0 of learning]      {Learning};
+	        \draw [nonstationary] (origin) -- (nonstationary);
+	        \draw [feature] (origin) -- (feature);
+	        \draw [learning] (origin) -- (learning);
+	    \end{scope}
+	}
 \end{tikzpicture}

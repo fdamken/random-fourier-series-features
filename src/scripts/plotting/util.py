@@ -17,6 +17,9 @@ class AccumulativeNormalization(colors.Normalize):
         self._update(A)
 
     def _update(self, A):
+        if A.size <= 0:
+            return
+
         vmin = np.min(A)
         if self.vmin is None or self.vmin > vmin:
             self.vmin = vmin

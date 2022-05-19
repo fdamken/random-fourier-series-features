@@ -1,0 +1,305 @@
+\documentclass[
+	USenglish,
+	aspectratio=43,
+	color={accentcolor=1c},
+	logo=true,
+	colorframetitle=true,
+	hyperref={pdfpagelabels=true},
+]{tudabeamer}
+
+% Core Packages.
+\usepackage[USenglish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% Math Packages.
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{physics}
+\usepackage{siunitx}
+% Other Packages.
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{eqparbox}
+\usepackage{datetime}
+\usepackage{multimedia}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tikzscale}
+% TikZ Libraries.
+\usetikzlibrary{calc, arrows.meta, positioning}
+
+% Style Definitions.
+\mode<presentation>
+\MakeOuterQuote{"}
+\captionsetup{labelformat=empty}
+\tikzset{> = { Latex[length = 2mm] }}
+\mathtoolsset{showonlyrefs, showmanualtags}
+\colorlet{pastelGreen}{TUDa-3c}
+\colorlet{pastelBlue}{TUDa-2b}
+\colorlet{pastelOrange}{TUDa-7c}
+\newcommand{\ifincludelegend}[1]{}
+\input{preamble/math-macros}
+\AtBeginSection{
+	\begin{frame}{\insertsectionhead \\ {\small Outline}}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+\AtBeginSubsection{
+	\begin{frame}{\insertsubsectionhead \\ {\small Outline}}
+		\tableofcontents[currentsection, currentsubsection]
+	\end{frame}
+}
+
+\newcommand{\hypOne}{
+	\begin{block}{Central Hypothesis}
+		Do random Fourier series features outperform random Fourier features?
+	\end{block}
+}
+%\newcommand{\hypTwo}{
+%	\begin{block}{Hypothesis 2}
+%		How do different amplitude initializations affect the performance?
+%	\end{block}
+%}
+
+\newcommand{\acs}[1]{#1}
+\newcommand{\acsp}[1]{#1s}
+\input{content/results}
+
+% Document Information.
+\title{Random Fourier Series Features}
+\subtitle{Defense \enquote{Expert Lab on Robot Learning}}
+\author{Fabian Damken}
+\institute{Intelligent Autonomous Systems}
+\department{Department of Computer Science}
+\date{\formatdate{20}{05}{2022}}
+
+\logo*{\includegraphics{graphics/ias-logo}}
+\titlegraphic*{\includegraphics{graphics/generated/title}}
+
+\begin{document}
+	\maketitle
+
+	\section{Motivation}
+		\begin{frame}{Deep Learning and Neural Networks}
+			\begin{itemize}
+				\item<+-> (Deep) neural networks dominate AI
+					\begin{itemize}
+						\item<+-> extremely expressive
+						\item<.-> great predictive power
+						\item<+-> lack of uncertainty estimation
+					\end{itemize}
+				\item<+-> Lead to the development of \emph{Bayesian} neural networks
+					\begin{itemize}
+						\item<+-> intractable exact inference
+						\item<.-> complicated training
+						\item<.-> unreliable uncertainty quantification
+						\item<.-> \dots
+					\end{itemize}
+			\end{itemize}
+		\end{frame}
+
+		\begin{frame}{Gaussian Processes (GPs)}
+			\begin{itemize}
+				\item<+-> GPs are still the go-to model for reliable uncertainty quantification
+				\item<+-> but performance highly depends on the kernel choice\dots
+				\item<.-> exact inference complexity is cubic w.r.t. number of data points
+					\begin{itemize}
+						\item prohibits online use of GPs
+					\end{itemize}
+			\end{itemize}
+		\end{frame}
+	% end
+
+	\section{Methodology}
+		\begin{frame}{Random Fourier Features}
+			\begin{equation}
+				\vec{z}_{\vec{\omega}}(\vec{x}) =
+					\begin{bmatrix}
+						\cos(\ip{\vec{\omega}}{\vec{x}}) \\
+						\sin(\ip{\vec{\omega}}{\vec{x}})
+					\end{bmatrix}
+			\end{equation}
+			\begin{itemize}
+				\item<+-> resort to "classical" Bayesian regression
+				\item<.-> explicit posterior over the weights
+				\item<+-> approximate every stationary kernel \( k(\cdot) \):
+			\end{itemize}
+			\onslide<.->{
+				\begin{gather}
+					k(\vec{x} - \vec{y}) = \E_{\vec{\omega} \sim p(\cdot)}\bigl[ \ip{\vec{z}_{\vec{\omega}}(\vec{x})}{\vec{z}_{\vec{\omega}}(\vec{y})} \bigr]
+				\end{gather}
+			}
+			\begin{itemize}
+				\item<+-> for the SE, \( p(\vec{\omega}) = \mathcal{N}(\vec{\omega} \given \vec{0}, \mat{I}) \)
+				\item<+-> SE kernel is extremely smooth
+			\end{itemize}
+		\end{frame}
+
+		\begin{frame}{Random Fourier \emph{Series} Features}
+			We extend random Fourier features:
+			\begin{equation}
+				\begin{aligned}
+					\vec{z}_{\vec{\omega}}(\vec{x}) &=
+						\begin{bmatrix}
+							\cos(\ip{\vec{\omega}}{\vec{x}}) \\
+							\sin(\ip{\vec{\omega}}{\vec{x}})
+						\end{bmatrix}
+				\end{aligned}
+				\qquad\longrightarrow\qquad
+				\begin{aligned}
+					\vec{z}_{\vec{\omega}}(\vec{x}) &= \sum_{k = 1}^{K} \vec{z}_{\vec{\omega}}^{(k)}(\vec{x}), \\
+					\vec{z}_{\vec{\omega}}^{(k)}(\vec{x}) &=
+						\begin{bmatrix}
+							a_k \cos(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}}) \\
+							b_k \sin(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}})
+						\end{bmatrix}
+				\end{aligned}
+			\end{equation}
+			\begin{itemize}
+				\item<+-> similar to the sine-cosine formulation of Fourier series
+				\item<.-> motivated the name
+			\end{itemize}
+		\end{frame}
+
+		\begin{frame}{Hyper-Parameter Optimization}
+			\begin{columns}
+				\begin{column}{0.5\linewidth}
+					\begin{itemize}
+						\item<+-> Hyper-Parameters
+							\begin{itemize}
+								\item \eqmakebox[hyperParams][l]{\(\vec{a}_{1:K}\)} (sine coefficients)
+								\item \eqmakebox[hyperParams][l]{\(\vec{b}_{1:K}\)} (cosine coefficients)
+								\item \eqmakebox[hyperParams][l]{\(\bm{\Lambda}\)}  (length-scales)
+								\item \eqmakebox[hyperParams][l]{\(\tilde{T}\)}     (half-period)
+								\item \eqmakebox[hyperParams][l]{\(\sigma_n^2\)}    (aleatoric noise variance)
+							\end{itemize}
+						\item<+-> maximization of the marginal log-likelihood
+						\item<.-> using the empirical Bayes approximation
+					\end{itemize}
+				\end{column}
+				\begin{column}{0.5\linewidth}
+					\begin{align}
+						\vec{z}_{\vec{\omega}}(\vec{x}) &= \sum_{k = 1}^{K} \vec{z}_{\vec{\omega}}^{(k)}(\vec{x}), \\
+						\vec{z}_{\vec{\omega}}^{(k)}(\vec{x}) &=
+							\begin{bmatrix}
+								a_k \cos(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}}) \\
+								b_k \sin(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}})
+							\end{bmatrix}
+					\end{align}
+				\end{column}
+			\end{columns}
+		\end{frame}
+	% end
+
+	\section{Evaluation}
+		\begin{frame}{Hypothesis}
+			\hypOne
+		\end{frame}
+
+		\begin{frame}{Evaluation}
+			\begin{itemize}
+				\item<+-> Datasets:
+					\begin{itemize}
+						\item Synthetic Data (Cosine, Heaviside, Heavi-Cosine, Gap-Cosine)
+						\item UCI (Boston, Concrete, Power, Yacht, Energy, Kin8nm, Naval, Protein, Wine)
+						\item Cartpole
+					\end{itemize}
+				\item<+-> Different RFSF Initializations:
+					\begin{itemize}
+						\item Random
+						\item ReLU
+						\item Single Harmonic (SH)
+					\end{itemize}
+			\end{itemize}
+		\end{frame}
+
+		\begin{frame}{How the Kernel Learns}
+			\begin{columns}
+				\begin{column}{0.5\linewidth}
+					\centering
+					\movie[loop]{\includegraphics[width=\linewidth]{graphics/kernel-animation/rfsf/prior-covariance.png}}{graphics/kernel-animation/rfsf/prior-covariance.webm}
+					RFSF on Gap-Cosine
+				\end{column}
+				\begin{column}{0.5\linewidth}
+					\centering
+					\movie[loop]{\includegraphics[width=\linewidth]{graphics/kernel-animation/rff/prior-covariance.png}}{graphics/kernel-animation/rff/prior-covariance.webm}
+					RFFs on Gap-Cosine
+				\end{column}
+			\end{columns}
+		\end{frame}
+
+		\begin{frame}{Results on the Synthetic Data}
+			\begin{center}
+				\begin{tabular}{c|cc}  % TODO: Change to TikZ file extension.
+					& RFSFs & RFFs \\ \midrule
+					\rotatebox{90}{\parbox{0.22\linewidth}{\centering Gap-Cosine}}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-gapcosine-rfsf.png}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-gapcosine-rff.png}
+					\\
+					\rotatebox{90}{\parbox{0.22\linewidth}{\centering Heavi-Cosine}}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-heavicosine-rfsf.png}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-heavicosine-rff.png}
+				\end{tabular}
+			\end{center}
+		\end{frame}
+
+		\begingroup
+		\let\scriptsize\relax
+		\begin{frame}{Quantified Results}{Synthetic Data Sets and Cartpole}
+			\begin{center}
+				\tiny
+				\tabResultsSynthetic
+			\end{center}
+		\end{frame}
+
+		\begin{frame}{Quantified Results}{UCI Data Sets}
+			\begin{center}
+				\tiny
+				\tabResultsUciJoe
+
+				\vspace{1pt}
+				\textsuperscript{\(\dagger\)}Results taken from Watson et al. (2021), "Latent Derivative Bayesian Last Layer Networks."
+			\end{center}
+		\end{frame}
+		\endgroup
+	% end
+
+	\section{Conclusion}
+		\begin{frame}{Conclusion}
+			\hypOne
+
+			\begin{itemize}
+				\item<+-> compared to RFFs, SE, and BNN methods
+				\item<+-> advantage of RFSFs is not consistent
+				\item<.-> no performance gain
+				\item<.-> also true for the SH initialization
+			\end{itemize}
+		\end{frame}
+
+		\begin{frame}{Future Work}
+			\begin{itemize}
+				\item theoretical analysis what RFSFs approximate
+				\item better understanding of the half-period initialization
+			\end{itemize}
+		\end{frame}
+	% end
+
+
+	\appendix
+	\section{Evaluation}
+		\begin{frame}{Quantified Results}{UCI Data Sets; Cont.}
+			\begin{center}
+				\tiny
+				\tabResultsUciRest
+			\end{center}
+		\end{frame}
+	% end
+\end{document}

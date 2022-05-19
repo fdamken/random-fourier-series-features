@@ -1,6 +1,7 @@
 from typing import Callable, Iterable, Optional, Tuple
 
 import gpytorch
+import numpy as np
 import scipy as sp
 import scipy.constants
 import torch
@@ -31,6 +32,7 @@ def animate_over_model_states(
     two_pass: bool = False,
     frame_duration: int = 50,
 ):
+    models = list(models)
     filenames = []
     passes = [True]
     if two_pass:
@@ -134,8 +136,8 @@ def plot_epistemic_covariance(
     norm: Optional[colors.Normalize] = None,
     fig_ax: Optional[Tuple[Figure, Axes]] = None,
 ) -> Figure:
-    inputs = torch.arange(-5, +5, 0.01)
-    inputs_transformed = pre_processor.transform_inputs(inputs)
+    inputs = torch.arange(-15, +15, 0.01)
+    inputs_transformed = pre_processor.transform_inputs(inputs.reshape((-1, 1)))
     targets = inputs
     if posterior:
         model.eval()
@@ -144,10 +146,32 @@ def plot_epistemic_covariance(
         model.set_train_data(inputs_transformed, pre_processor.transform_targets(targets), strict=False)
         model.train()
     x_min, x_max = inputs.min(), inputs.max()
-    fig, ax = plt.subplots() if fig_ax is None else fig_ax
-    mappable = ax.imshow(to_numpy(model(inputs_transformed).covariance_matrix), extent=[x_min, x_max, x_min, x_max], norm=norm)
-    if show_cbar:
-        fig.colorbar(mappable)
-    ax.set_aspect(1.0)
-    ax.set_title(f"{'Posterior' if posterior else 'Prior'} Covariance{title_suffix}")
+    fig, ax = plt.subplots(figsize=(40, 30)) if fig_ax is None else fig_ax
+
+    # class GradientTUDaColormap(colors.Colormap):
+    #     lo_color = np.array(colors.to_rgb("#004E8A"))
+    #     hi_color = np.array(colors.to_rgb("#B90F22"))
+    #     mid_color = np.array(colors.to_rgb("#FFFFFF"))
+    #
+    #     def __init__(self):
+    #         super().__init__("GradientTUDaColormap")
+    #
+    #     def __call__(self, x, alpha=None, bytes=False):
+    #         alpha = 1 if alpha is None else alpha
+    #         a, b = np.zeros((*x.shape, 3)), np.zeros((*x.shape, 3))
+    #         a[x < 0.5, :] = self.lo_color
+    #         b[x < 0.5, :] = self.mid_color
+    #         a[x >= 0.5, :] = self.mid_color
+    #         b[x >= 0.5, :] = self.hi_color
+    #         x = x[..., np.newaxis]
+    #         result = (1 - x) * a + x * b
+    #         alpha_channel = np.ones_like(x) * alpha
+    #         result = np.concatenate((result, alpha_channel), axis=-1)
+    #         return (result * 255).astype(np.uint8) if bytes else result
+
+    mappable = ax.imshow(to_numpy(model(inputs_transformed).covariance_matrix), extent=[x_min, x_max, x_min, x_max], norm=norm, cmap="coolwarm")
+    # if show_cbar:
+    #     fig.colorbar(mappable)
+    # ax.set_aspect(1.0)
+    # ax.set_title(f"{'Posterior' if posterior else 'Prior'} Covariance{title_suffix}")
     return fig
