@@ -26,6 +26,7 @@
 \usepackage{csquotes}
 \usepackage{eqparbox}
 \usepackage{datetime}
+\usepackage{layouts}
 \usepackage{multimedia}
 \usepackage{multicol}
 \usepackage{multirow}
@@ -60,7 +61,7 @@
 
 \newcommand{\hypOne}{
 	\begin{block}{Central Hypothesis}
-		Do random Fourier series features outperform random Fourier features?
+		Random Fourier series features outperform random Fourier features.
 	\end{block}
 }
 %\newcommand{\hypTwo}{
@@ -82,7 +83,7 @@
 \date{\formatdate{20}{05}{2022}}
 
 \logo*{\includegraphics{graphics/ias-logo}}
-\titlegraphic*{\includegraphics{graphics/generated/title}}
+\titlegraphic*{\includegraphics[height=6.4cm]{graphics/generated/title2}}
 
 \begin{document}
 	\maketitle
@@ -94,13 +95,13 @@
 					\begin{itemize}
 						\item<+-> extremely expressive
 						\item<.-> great predictive power
-						\item<+-> lack of uncertainty estimation
+						\item<+-> lack uncertainty estimation
 					\end{itemize}
 				\item<+-> Lead to the development of \emph{Bayesian} neural networks
 					\begin{itemize}
 						\item<+-> intractable exact inference
 						\item<.-> complicated training
-						\item<.-> unreliable uncertainty quantification
+%						\item<.-> unreliable uncertainty quantification
 						\item<.-> \dots
 					\end{itemize}
 			\end{itemize}
@@ -110,7 +111,10 @@
 			\begin{itemize}
 				\item<+-> GPs are still the go-to model for reliable uncertainty quantification
 				\item<+-> but performance highly depends on the kernel choice\dots
-				\item<.-> exact inference complexity is cubic w.r.t. number of data points
+					\begin{itemize}
+						\item tackled by kernel learning
+					\end{itemize}
+				\item<+-> exact inference complexity is cubic w.r.t. number of data points
 					\begin{itemize}
 						\item prohibits online use of GPs
 					\end{itemize}
@@ -134,12 +138,49 @@
 			\end{itemize}
 			\onslide<.->{
 				\begin{gather}
-					k(\vec{x} - \vec{y}) = \E_{\vec{\omega} \sim p(\cdot)}\bigl[ \ip{\vec{z}_{\vec{\omega}}(\vec{x})}{\vec{z}_{\vec{\omega}}(\vec{y})} \bigr]
+					k(\vec{x} - \vec{y})
+						= \E_{\vec{\omega} \sim p(\cdot)}\bigl[ \ip{\vec{z}_{\vec{\omega}}(\vec{x})}{\vec{z}_{\vec{\omega}}(\vec{y})} \bigr]
+						\approx \frac{1}{N} \sum_{i = 1}^{N} \ip{\vec{z}_{\vec{\omega}_i}(\vec{x})}{\vec{z}_{\vec{\omega}_i}(\vec{y})},\quad
+						\vec{\omega}_i \sim p(\cdot)
 				\end{gather}
 			}
+		\end{frame}
+
+		\begin{frame}{Random Fourier Features}{Approximating the Squared Exponential}
+			\onslide<+->{For the SE kernel: tractable Fourier transform}
+			\begin{gather}
+				\onslide<+->{
+					\begin{aligned}
+						k_\mathrm{SE}(\vec{x} - \vec{y}) &= \exp\bigl\{ \flatfrac{-\ip{\vec{x} - \vec{y}}{\vec{x} - \vec{y}}}{\,2} \bigr\} \\
+						p(\vec{\omega}) = \bigl(\mathcal{F} k_\mathrm{SE}\bigr)(\vec{\omega}) &= \mathcal{N}(\vec{\omega} \given \vec{0}, \mat{I})
+					\end{aligned} \\\\
+				}
+				\onslide<+->{
+					\begin{aligned}
+						\E\bigl[ \ip{\vec{z}_{\vec{\omega}}(\vec{x})}{\vec{z}_{\vec{\omega}}(\vec{y})} \bigr]
+							&= \E\Biggl[
+								\ip{
+									\begin{bmatrix}
+										\cos(\ip{\vec{\omega}}{\vec{x}}) \\
+										\sin(\ip{\vec{\omega}}{\vec{x}})
+									\end{bmatrix}
+								}{
+									\begin{bmatrix}
+										\cos(\ip{\vec{\omega}}{\vec{y}}) \\
+										\sin(\ip{\vec{\omega}}{\vec{y}})
+									\end{bmatrix}}
+								\Biggr] \\
+							&= \E\bigl[ \cos(\ip{\vec{\omega}}{\vec{x}}) \cos(\ip{\vec{\omega}}{\vec{y}}) + \sin(\ip{\vec{\omega}}{\vec{x}}) \sin(\ip{\vec{\omega}}{\vec{y}}) \bigr] \\
+							&= \E\bigl[ \cos(\ip{\vec{\omega}}{\vec{x} - \vec{y}}) \bigr]
+							 = \Re\bigl( \E\bigl[ \exp\{ i \ip{\vec{\omega}}{\vec{x} - \vec{y}} \} \bigr] \bigr) \\
+							&= \Re\bigl( \bigl(\mathcal{F}^{-1} p\bigr)(\vec{x} - \vec{y}) \bigr)
+							 = \Re\bigl( k_\mathrm{SE}(\vec{x} - \vec{y}) \bigr)
+							 = k_\mathrm{SE}(\vec{x} - \vec{y})
+					\end{aligned}
+				}
+			\end{gather}
 			\begin{itemize}
-				\item<+-> for the SE, \( p(\vec{\omega}) = \mathcal{N}(\vec{\omega} \given \vec{0}, \mat{I}) \)
-				\item<+-> SE kernel is extremely smooth
+				\item<+-> SE kernel is extremely smooth (Stein, 1999)
 			\end{itemize}
 		\end{frame}
 
@@ -153,7 +194,7 @@
 							\sin(\ip{\vec{\omega}}{\vec{x}})
 						\end{bmatrix}
 				\end{aligned}
-				\qquad\longrightarrow\qquad
+				\quad\longrightarrow\qquad
 				\begin{aligned}
 					\vec{z}_{\vec{\omega}}(\vec{x}) &= \sum_{k = 1}^{K} \vec{z}_{\vec{\omega}}^{(k)}(\vec{x}), \\
 					\vec{z}_{\vec{\omega}}^{(k)}(\vec{x}) &=
@@ -165,37 +206,19 @@
 			\end{equation}
 			\begin{itemize}
 				\item<+-> similar to the sine-cosine formulation of Fourier series
-				\item<.-> motivated the name
 			\end{itemize}
 		\end{frame}
 
-		\begin{frame}{Hyper-Parameter Optimization}
-			\begin{columns}
-				\begin{column}{0.5\linewidth}
-					\begin{itemize}
-						\item<+-> Hyper-Parameters
-							\begin{itemize}
-								\item \eqmakebox[hyperParams][l]{\(\vec{a}_{1:K}\)} (sine coefficients)
-								\item \eqmakebox[hyperParams][l]{\(\vec{b}_{1:K}\)} (cosine coefficients)
-								\item \eqmakebox[hyperParams][l]{\(\bm{\Lambda}\)}  (length-scales)
-								\item \eqmakebox[hyperParams][l]{\(\tilde{T}\)}     (half-period)
-								\item \eqmakebox[hyperParams][l]{\(\sigma_n^2\)}    (aleatoric noise variance)
-							\end{itemize}
-						\item<+-> maximization of the marginal log-likelihood
-						\item<.-> using the empirical Bayes approximation
-					\end{itemize}
-				\end{column}
-				\begin{column}{0.5\linewidth}
-					\begin{align}
-						\vec{z}_{\vec{\omega}}(\vec{x}) &= \sum_{k = 1}^{K} \vec{z}_{\vec{\omega}}^{(k)}(\vec{x}), \\
-						\vec{z}_{\vec{\omega}}^{(k)}(\vec{x}) &=
-							\begin{bmatrix}
-								a_k \cos(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}}) \\
-								b_k \sin(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}})
-							\end{bmatrix}
-					\end{align}
-				\end{column}
-			\end{columns}
+		\begin{frame}{Fourier Series}{Sine-Cosine Formulation}
+%					\\
+%					a_k = \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2 \tilde{T}}\! f(x) \cos(\omega k x) \dd{x} \qquad
+%					b_k = \frac{1}{\tilde{T}} \int_{x_0}^{x_0 + 2 \tilde{T}}\! f(x) \sin(\omega k x) \dd{x}
+			\begin{equation}
+				\hat{f}_K(x) = \frac{a_0}{2} + \sum_{k = 1}^{K} a_k \cos(\pi \tilde{T}^{-1} k x) + b_k \sin(\pi \tilde{T}^{-1} k x)
+			\end{equation}
+			\begin{center}
+				\includegraphics[width=0.55\linewidth]{graphics/generated/relu.pdf}
+			\end{center}
 		\end{frame}
 	% end
 
@@ -238,15 +261,15 @@
 
 		\begin{frame}{Results on the Synthetic Data}
 			\begin{center}
-				\begin{tabular}{c|cc}  % TODO: Change to TikZ file extension.
+				\begin{tabular}{c|cc}
 					& RFSFs & RFFs \\ \midrule
 					\rotatebox{90}{\parbox{0.22\linewidth}{\centering Gap-Cosine}}
-					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-gapcosine-rfsf.png}
-					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-gapcosine-rff.png}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-gapcosine-rfsf.tikz}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-gapcosine-rff.tikz}
 					\\
 					\rotatebox{90}{\parbox{0.22\linewidth}{\centering Heavi-Cosine}}
-					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-heavicosine-rfsf.png}
-					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-heavicosine-rff.png}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-heavicosine-rfsf.tikz}
+					& \includegraphics[width=0.4\linewidth, height=0.22\linewidth]{graphics/generated/gp-heavicosine-rff.tikz}
 				\end{tabular}
 			\end{center}
 		\end{frame}
@@ -256,17 +279,43 @@
 		\begin{frame}{Quantified Results}{Synthetic Data Sets and Cartpole}
 			\begin{center}
 				\tiny
-				\tabResultsSynthetic
+				\begin{tabular}{c|cc|ccccc}
+					\toprule
+					& & & \multicolumn{5}{c}{\textbf{Data Set}} \\[1pt]
+					& \multicolumn{2}{c|}{\textbf{Model}}         & Cosine                 & Heaviside              & Heavi-Cosine            & Gap-Cosine             & Cartpole                          \\
+					\midrule \multirow{5}{*}{\rotatebox{90}{\textbf{Log-Lik.}}}
+					& \multirow[t]{3}{*}{\textit{RFSF}} & \textit{Random}     & \textit{\textbf{\texttt{2.43}}} & \textit{\texttt{0.11}}          & \textit{\texttt{-1.66}}          & \textit{\texttt{1.27}}          & \textit{\texttt{~-9.88\,±\,1.86}}          \\
+					&                                & \textit{\acs{ReLU}} & \textit{\texttt{2.34}}          & \textit{\textbf{\texttt{0.80}}} & \textit{\texttt{-0.90}}          & \textit{\texttt{1.50}}          & \textit{\texttt{-12.30\,±\,2.31}}          \\
+					&                                & \textit{\acs{SH}}   & \textit{\texttt{2.37}}          & \textit{\textbf{\texttt{0.21}}} & \textit{\texttt{-1.23}}          & \textit{\texttt{1.52}}          & \textit{\texttt{~-9.73\,±\,2.10}}          \\
+					& \multirow[t]{2}{*}{\acs{GP}}   & \acs{SE}   & \textbf{\texttt{2.44}} & \texttt{0.73}          & \textbf{\texttt{~0.77}} & \textbf{\texttt{2.58}} & \textbf{\texttt{~-3.21\,±\,1.64}} \\
+					&                                & \acs{RFF}  & \textbf{\texttt{2.44}} & \texttt{0.73}          & \textbf{\texttt{~0.78}} & \textbf{\texttt{2.59}} & \texttt{~-7.38\,±\,1.94}          \\
+					\bottomrule
+				\end{tabular}
 			\end{center}
 		\end{frame}
 
 		\begin{frame}{Quantified Results}{UCI Data Sets}
 			\begin{center}
 				\tiny
-				\tabResultsUciJoe
-
-				\vspace{1pt}
-				\textsuperscript{\(\dagger\)}Results taken from Watson et al. (2021), "Latent Derivative Bayesian Last Layer Networks."
+				\begin{tabular}{c|cc|cccc}
+					\toprule
+					& & & \multicolumn{4}{c}{\textbf{Data Set}} \\[1pt]
+					& \multicolumn{2}{c|}{\textbf{Model}}                               & Boston                           & Concrete                         & Power                            & Yacht                            \\
+					\midrule \multirow{11}{*}{\rotatebox{90}{\textbf{Log-Lik.}}}
+					& \multirow[t]{3}{*}{\textit{RFSF}}             & \textit{Random}           & \textit{\texttt{-2.40\,±\,0.05}}          & \textit{\textbf{\texttt{-2.94\,±\,0.05}}} & \textit{\texttt{-2.78\,±\,0.01}}          & \textit{\texttt{-0.80\,±\,0.02}}          \\
+					&                                            & \textit{\acs{ReLU}}       & \textit{\texttt{-2.39\,±\,0.05}}          & \textit{\textbf{\texttt{-2.93\,±\,0.04}}} & \textit{\texttt{-2.80\,±\,0.01}}          & \textit{\texttt{-0.86\,±\,0.02}}          \\
+					&                                            & \textit{\acs{SH}}         & \textit{\texttt{-2.44\,±\,0.06}}          & \textit{\textbf{\texttt{-2.94\,±\,0.05}}} & \textit{\texttt{-2.78\,±\,0.01}}          & \textit{\texttt{-0.83\,±\,0.02}}          \\
+					& \multirow[t]{2}{*}{\acs{GP}}               & \acs{SE}         & \textbf{\texttt{-2.38\,±\,0.05}} & \textbf{\texttt{-2.98\,±\,0.06}} & \texttt{-2.82\,±\,0.01}          & \texttt{-0.80\,±\,0.02}          \\
+					&                                            & \acs{RFF}        & \texttt{-2.40\,±\,0.06}          & \textbf{\texttt{-3.01\,±\,0.05}} & \texttt{-2.84\,±\,0.01}          & \texttt{-0.80\,±\,0.02}          \\
+					& \multirow[t]{2}{*}{\acs{GBLL}}\footnotemark[1] & Leaky \acs{ReLU} & \texttt{-2.90\,±\,0.05}          & \texttt{-3.09\,±\,0.03}          & \texttt{-2.77\,±\,0.01}          & \texttt{-1.67\,±\,0.11}          \\
+					&                                            & Tanh             & \texttt{-3.06\,±\,0.03}          & \texttt{-3.21\,±\,0.03}          & \texttt{-2.83\,±\,0.01}          & \texttt{-0.70\,±\,0.10}          \\
+					& \multirow[t]{2}{*}{Ensemble}\footnotemark[1]   & Leaky \acs{ReLU} & \texttt{-2.48\,±\,0.09}          & \textbf{\texttt{-3.04\,±\,0.08}} & \textbf{\texttt{-2.70\,±\,0.01}} & \texttt{-0.35\,±\,0.07}          \\
+					&                                            & Tanh             & \texttt{-2.48\,±\,0.08}          & \textbf{\texttt{-3.03\,±\,0.07}} & \textbf{\texttt{-2.72\,±\,0.01}} & \textbf{\texttt{-0.03\,±\,0.05}} \\
+					& \multirow[t]{2}{*}{\acs{MAP}}\footnotemark[1]  & Leaky \acs{ReLU} & \texttt{-2.60\,±\,0.07}          & \texttt{-3.04\,±\,0.04}          & \texttt{-2.77\,±\,0.01}          & \texttt{-5.14\,±\,1.62}          \\
+					&                                            & Tanh             & \texttt{-2.59\,±\,0.06}          & \texttt{-3.11\,±\,0.04}          & \texttt{-2.76\,±\,0.01}          & \texttt{-1.77\,±\,0.53}          \\
+					\bottomrule
+				\end{tabular}
+				\footnotetext[1]{Results taken from Watson et al. (2021), "Latent Derivative Bayesian Last Layer Networks."}
 			\end{center}
 		\end{frame}
 		\endgroup
@@ -274,10 +323,10 @@
 
 	\section{Conclusion}
 		\begin{frame}{Conclusion}
-			\hypOne
+			\onslide<+->{\hypOne}
 
 			\begin{itemize}
-				\item<+-> compared to RFFs, SE, and BNN methods
+				\item<+-> we compared to RFFs, SE, and BNN methods
 				\item<+-> advantage of RFSFs is not consistent
 				\item<.-> no performance gain
 				\item<.-> also true for the SH initialization
@@ -294,11 +343,53 @@
 
 
 	\appendix
+	\section{Methodology}
+		\begin{frame}{Hyper-Parameter Optimization}
+			\begin{columns}
+				\begin{column}{0.5\linewidth}
+					\begin{itemize}
+						\item Hyper-Parameters
+							\begin{itemize}
+								\item \eqmakebox[hyperParams][l]{\(\vec{a}_{1:K}\)} (sine coefficients)
+								\item \eqmakebox[hyperParams][l]{\(\vec{b}_{1:K}\)} (cosine coefficients)
+								\item \eqmakebox[hyperParams][l]{\(\bm{\Lambda}\)}  (length-scales)
+								\item \eqmakebox[hyperParams][l]{\(\tilde{T}\)}     (half-period)
+								\item \eqmakebox[hyperParams][l]{\(\sigma_n^2\)}    (aleatoric noise variance)
+							\end{itemize}
+						\item maximization of the marginal log-likelihood
+						\item using the empirical Bayes approximation
+					\end{itemize}
+				\end{column}
+				\begin{column}{0.5\linewidth}
+					\begin{align}
+						\vec{z}_{\vec{\omega}}(\vec{x}) &= \sum_{k = 1}^{K} \vec{z}_{\vec{\omega}}^{(k)}(\vec{x}), \\
+						\vec{z}_{\vec{\omega}}^{(k)}(\vec{x}) &=
+							\begin{bmatrix}
+								a_k \cos(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}}) \\
+								b_k \sin(\pi \tilde{T}^{-1} k \mel{\vec{\omega}}{\bm{\Lambda}^{-1}}{\vec{x}})
+							\end{bmatrix}
+					\end{align}
+				\end{column}
+			\end{columns}
+		\end{frame}
+	% end
+
 	\section{Evaluation}
 		\begin{frame}{Quantified Results}{UCI Data Sets; Cont.}
 			\begin{center}
 				\tiny
-				\tabResultsUciRest
+				\begin{tabular}{c|cc|ccccc}
+					\toprule
+					& & & \multicolumn{5}{c}{\textbf{Data Set}} \\[1pt]
+					& \multicolumn{2}{c|}{\textbf{Model}}             & Energy                           & Kin8nm                           & Naval                                 & Protein                              & Wine                             \\
+					\midrule \multirow{5}{*}{\rotatebox{90}{\textbf{Log-Lik.}}}
+					& \multirow[t]{3}{*}{\textit{\acs{RFSF}}} & \textit{Random}         & \textit{\textbf{\texttt{-0.70\,±\,0.02}}} & \textit{\texttt{~0.68\,±\,0.05}}          & \textit{\texttt{~~-78.19\,±\,~69.72}}          & \textit{\texttt{~~-2.94\,±\,~~0.03}}          & \textit{\texttt{-0.11\,±\,0.07}}          \\
+					&                                & \textit{\acs{ReLU}}     & \textit{\texttt{-0.74\,±\,0.02}}          & \textit{\textbf{\texttt{~0.97\,±\,0.03}}} & \textit{\texttt{~-172.57\,±\,104.83}}          & \textit{\texttt{-629.05\,±\,384.60}}          & \textit{\texttt{-0.11\,±\,0.06}}          \\
+					&                                & \textit{\acs{SH}}       & \textit{\texttt{-0.74\,±\,0.02}}          & \textit{\texttt{~0.52\,±\,0.07}}          & \textit{\texttt{~~-62.69\,±\,~55.40}}          & \textit{\texttt{~~-2.96\,±\,~~0.03}}          & \textit{\textbf{\texttt{ 0.01\,±\,0.06}}} \\
+					& \multirow[t]{2}{*}{\acs{GP}}   & \acs{SE}       & \textbf{\texttt{-0.68\,±\,0.02}} & \texttt{-0.22\,±\,0.24}          & \textbf{\texttt{~~~~6.91\,±\,~~0.15}} & \textbf{\texttt{~~-2.89\,±\,~~0.00}} & \texttt{-0.84\,±\,0.05}          \\
+					&                                & \acs{RFF}      & \textbf{\texttt{-0.69\,±\,0.02}} & \texttt{~0.75\,±\,0.04}          & \texttt{-1941.56\,±\,248.64}          & \texttt{~~-2.90\,±\,~~0.00}          & \texttt{-0.89\,±\,0.04}          \\
+					\bottomrule
+				\end{tabular}
 			\end{center}
 		\end{frame}
 	% end
