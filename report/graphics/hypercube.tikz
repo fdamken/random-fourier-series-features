@@ -48,6 +48,7 @@
 	        \draw [nonstationary] (origin) -- (nonstationary);
 	        \draw [feature] (origin) -- (feature);
 	        \draw [learning] (origin) -- (learning);
+	        \node [draw, circle, fill = white, inner sep = 0pt, minimum width = 5pt] {};
 	    \end{scope}
 	}
 \end{tikzpicture}
